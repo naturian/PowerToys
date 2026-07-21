@@ -63,8 +63,9 @@
            die Quellcode-Vorschau benoetigt. Die .wxs enthaelt NUR Monaco-Assets, keine
            Vorschau-Handler-Registrierung. -->
       <ComponentGroupRef Id="FileExplorerPreviewComponentGroup" />
-      <!-- Deutsche Satelliten-DLLs (de-DE) fuer die WPF-Modul-Editoren -->
-      <ComponentGroupRef Id="GermanSatellitesComponentGroup" />
+      <!-- Deutsche WPF-Satelliten (de-DE) ENTFERNT: offizielle Satelliten sind Version 0.99.1.0,
+           lokale WPF-Module 0.0.1.0 -> .NET-Versions-Mismatch liesse die Editoren abstuerzen.
+           WPF-Editoren laufen englisch; Settings + WinUI3-Module bleiben deutsch (via .pri). -->
       <!-- Gewuenschte Module mit eigener Asset-Gruppe -->
       <ComponentGroupRef Id="FileLocksmithComponentGroup" />
       <ComponentGroupRef Id="ImageResizerComponentGroup" />
