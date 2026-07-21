@@ -127,7 +127,6 @@ call powershell.exe -NonInteractive -executionpolicy Unrestricted -File $(MSBuil
     <Compile Include="Peek.wxs" />
     <Compile Include="PowerRename.wxs" />
     <Compile Include="Workspaces.wxs" />
-    <Compile Include="German.wxs" />   <!-- Deutsche de-DE-Satelliten der WPF-Module -->
     <!-- Nicht gewuenschte Module aus dem Build entfernt: AdvancedPaste, Awake, CmdPal,
          ColorPicker, EnvironmentVariables, Hosts, KeyboardManager, LightSwitch,
          MouseWithoutBorders, NewPlus, PowerDisplay, RegistryPreview, Run, ShortcutGuide.

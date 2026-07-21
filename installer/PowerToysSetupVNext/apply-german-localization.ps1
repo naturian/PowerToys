@@ -42,19 +42,12 @@ foreach ($sub in @('WinUI3Apps', '')) {
 }
 Write-Host "[GERMAN] $priCount multilinguale .pri ueberlagert."
 
-# 2. de-DE-Satelliten der gewuenschten WPF-Module
-$deTarget = Join-Path $my 'de-DE'
-New-Item -ItemType Directory -Path $deTarget -Force | Out-Null
-$wanted = @(
-    'PowerToys.FancyZonesEditor.resources.dll',
-    'PowerToys.PowerOCR.resources.dll',
-    'PowerToys.WorkspacesEditor.resources.dll'
-)
-$offDe = Join-Path $OfficialRoot 'de-DE'
-$copied = 0
-foreach ($f in $wanted) {
-    $src = Join-Path $offDe $f
-    if (Test-Path $src) { Copy-Item $src $deTarget -Force; $copied++ }
-    else { Write-Warning "de-DE-Satellit fehlt im offiziellen Release: $f" }
-}
-Write-Host "[GERMAN] $copied de-DE-Modul-Satelliten kopiert (ModernWpf-Satelliten baut der lokale Build selbst)."
+# 2. WPF-Modul-Satelliten (de-DE) werden BEWUSST NICHT uebernommen:
+#    Die offiziellen Satelliten sind Version 0.99.1.0, die lokal gebauten WPF-Module aber
+#    0.0.1.0. .NET verlangt uebereinstimmende Satelliten-Versionen -> Mismatch wuerde die
+#    Editoren (FancyZones/TextExtractor/Workspaces) beim Laden der de-DE-Ressourcen abstuerzen
+#    lassen. Diese Editoren laufen daher auf Englisch (Fallback auf neutrale Ressourcen).
+#    Das Haupt-Settings-UI und die WinUI3-Module sind ueber ihre .pri (oben) weiterhin deutsch.
+$stale = Join-Path $my 'de-DE'
+if (Test-Path $stale) { Remove-Item $stale -Recurse -Force }
+Write-Host "[GERMAN] WPF-de-DE-Satelliten uebersprungen (Versions-Mismatch); Editoren laufen auf Englisch."
