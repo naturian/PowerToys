@@ -35,6 +35,10 @@ Set-Location $repoRoot
 $env:NUGET_PACKAGES = Join-Path $env:USERPROFILE '.nuget\packages'
 $relax = '/p:NuGetAudit=false /p:TreatWarningsAsErrors=false /p:MSBuildTreatWarningsAsErrors=false /p:RunAnalyzersDuringBuild=false /p:WarningLevel=0'
 
+# --- 0. Modulauswahl anwenden (selected-modules.txt -> main.cpp / DashboardViewModel.cs / Product.wxs) ---
+Write-Host '[0/5] Modulauswahl aus selected-modules.txt anwenden...'
+& "$repoRoot\installer\PowerToysSetupVNext\Configure-Modules.ps1" -RepoRoot $repoRoot
+
 # --- 1. Submodule ---
 Write-Host '[1/5] Submodule initialisieren...'
 git -C $repoRoot submodule update --init --depth 1
