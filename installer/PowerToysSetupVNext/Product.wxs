@@ -57,6 +57,10 @@
       <ComponentGroupRef Id="WindowsAppSDKComponentGroup" />
       <ComponentGroupRef Id="ToolComponentGroup" />
       <ComponentGroupRef Id="MonacoSRCHeatGenerated" />
+      <!-- Monaco-Editor-Assets (index.html, Sprachen, monacoSRC-Verzeichnisse) - von Peek fuer
+           die Quellcode-Vorschau benoetigt. Die .wxs enthaelt NUR Monaco-Assets, keine
+           Vorschau-Handler-Registrierung. -->
+      <ComponentGroupRef Id="FileExplorerPreviewComponentGroup" />
       <!-- Gewuenschte Module mit eigener Asset-Gruppe -->
       <ComponentGroupRef Id="FileLocksmithComponentGroup" />
       <ComponentGroupRef Id="ImageResizerComponentGroup" />
