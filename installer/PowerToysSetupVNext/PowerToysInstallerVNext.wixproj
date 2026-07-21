@@ -114,15 +114,10 @@ call powershell.exe -NonInteractive -executionpolicy Unrestricted -File $(MSBuil
     <Compile Include="BaseApplications.wxs" />
     <Compile Include="WinUI3Applications.wxs" />
     <Compile Include="Settings.wxs" />
-    <Compile Include="Resources.wxs" />
     <Compile Include="Tools.wxs" />
     <Compile Include="WinAppSDK.wxs" />
     <Compile Include="DscResources.wxs" />
-    <!-- Run.wxs kompiliert (nur wegen Verzeichnis-Definitionen der Plugin-Ordner, die
-         Resources.wxs fuer Lokalisierung referenziert). RunComponentGroup ist in Product.wxs
-         NICHT referenziert -> wird beim Linken verworfen; keine Run-Binaries im MSI.
-         Der Build setzt Run.wxs nach dem Harvest auf pristine zurueck (leere Platzhalter). -->
-    <Compile Include="Run.wxs" />
+    <!-- Resources.wxs (Lokalisierung) und Run.wxs (PowerToys Run) entfernt - siehe Product.wxs. -->
     <!-- Monaco-Editor-Assets (index.html + Verzeichnisse) - von Peek benoetigt -->
     <Compile Include="FileExplorerPreview.wxs" />
     <Compile Include="MonacoSRC.wxs" />

@@ -52,7 +52,9 @@
       <ComponentGroupRef Id="BaseApplicationsComponentGroup" />
       <ComponentGroupRef Id="WinUI3ApplicationsComponentGroup" />
       <ComponentGroupRef Id="SettingsComponentGroup" />
-      <ComponentGroupRef Id="ResourcesComponentGroup" />
+      <!-- ResourcesComponentGroup (Lokalisierung) entfernt: die uebersetzten Satelliten-DLLs
+           werden nur von Microsofts interner Loc-Pipeline erzeugt und existieren in einem
+           lokalen/Community-Build nicht. Ergebnis: englischsprachige Oberflaeche. -->
       <ComponentGroupRef Id="DscResourcesComponentGroup" />
       <ComponentGroupRef Id="WindowsAppSDKComponentGroup" />
       <ComponentGroupRef Id="ToolComponentGroup" />
@@ -61,11 +63,6 @@
            die Quellcode-Vorschau benoetigt. Die .wxs enthaelt NUR Monaco-Assets, keine
            Vorschau-Handler-Registrierung. -->
       <ComponentGroupRef Id="FileExplorerPreviewComponentGroup" />
-      <!-- RunComponentGroup enthaelt bei uebersprungenem Run-Harvest KEINE Binaries, nur die
-           Ordner-/Cleanup-Komponenten. Referenz noetig, damit die von Resources.wxs (Run-
-           Lokalisierung) verwendeten Plugin-Verzeichnisse keine verwaisten Komponenten erzeugen.
-           PowerToys Run selbst wird NICHT installiert (keine Launcher-Binaries im Paket). -->
-      <ComponentGroupRef Id="RunComponentGroup" />
       <!-- Gewuenschte Module mit eigener Asset-Gruppe -->
       <ComponentGroupRef Id="FileLocksmithComponentGroup" />
       <ComponentGroupRef Id="ImageResizerComponentGroup" />
