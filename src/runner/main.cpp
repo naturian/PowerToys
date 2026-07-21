@@ -253,19 +253,21 @@ int runner(bool isProcessElevated, bool openSettings, std::string settingsWindow
 
         // Load PowerToys DLLs
 
-        // MINIMIERTER BUILD: nur die 9 gewuenschten Module. Alle anderen Eintraege wurden
-        // entfernt, damit der Runner nicht die (nicht paketierten) DLLs zu laden versucht
-        // und "DLL fehlt"-Fehler wirft.
+        // MINIMIERTER BUILD: nur die ausgewaehlten Module. Der Inhalt zwischen den GENERATED-
+        // Markern wird aus selected-modules.txt erzeugt (Configure-Modules.ps1) - NICHT von Hand
+        // editieren. Sonst wuerde der Runner nicht paketierte DLLs laden -> "DLL fehlt"-Fehler.
         std::vector<std::wstring_view> knownModules = {
+            // BEGIN_GENERATED_MODULES
             L"PowerToys.FancyZonesModuleInterface.dll",
-            L"WinUI3Apps/PowerToys.ImageResizerExt.dll",
-            L"WinUI3Apps/PowerToys.PowerRenameExt.dll",
             L"PowerToys.AlwaysOnTopModuleInterface.dll",
-            L"PowerToys.PowerOCRModuleInterface.dll",
-            L"WinUI3Apps/PowerToys.FileLocksmithExt.dll",
-            L"WinUI3Apps/PowerToys.Peek.dll",
             L"PowerToys.CropAndLockModuleInterface.dll",
+            L"PowerToys.PowerOCRModuleInterface.dll",
             L"PowerToys.WorkspacesModuleInterface.dll",
+            L"WinUI3Apps/PowerToys.ImageResizerExt.dll",
+            L"WinUI3Apps/PowerToys.FileLocksmithExt.dll",
+            L"WinUI3Apps/PowerToys.PowerRenameExt.dll",
+            L"WinUI3Apps/PowerToys.Peek.dll",
+            // END_GENERATED_MODULES
         };
 
         for (auto moduleSubdir : knownModules)

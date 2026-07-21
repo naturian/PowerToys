@@ -49,17 +49,21 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
         // MINIMIERTER BUILD: nur diese 9 Module sind installiert und werden auf der Startseite
         // (Dashboard) angezeigt. Alle anderen Module sind nicht paketiert.
+        // Inhalt zwischen den GENERATED-Markern wird aus selected-modules.txt erzeugt
+        // (Configure-Modules.ps1) - NICHT von Hand editieren.
         private static readonly HashSet<ModuleType> InstalledModules = new HashSet<ModuleType>
         {
+            // BEGIN_GENERATED_MODULES
             ModuleType.AlwaysOnTop,
             ModuleType.CropAndLock,
             ModuleType.FancyZones,
             ModuleType.FileLocksmith,
             ModuleType.ImageResizer,
             ModuleType.Peek,
-            ModuleType.PowerRename,
             ModuleType.PowerOCR,
+            ModuleType.PowerRename,
             ModuleType.Workspaces,
+            // END_GENERATED_MODULES
         };
 
         // Master list of module items that is sorted and projected into AllModules.

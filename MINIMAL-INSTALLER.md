@@ -20,6 +20,27 @@ Screen Ruler, Registry Preview, Shortcut Guide, New+, ZoomIt, Environment Variab
 LightSwitch, PowerDisplay, Datei-Explorer-Vorschauhandler, …) werden **nicht paketiert
 und nicht installiert** – ihre Binaries sind nicht im MSI enthalten.
 
+## Module selbst festlegen (zentrale Liste + Rebuild)
+Die gewünschten Module stehen in **einer** Datei: `installer/PowerToysSetupVNext/selected-modules.txt`
+(ein Schlüssel pro Zeile). Ein Generator leitet daraus automatisch alle vier Stellen ab:
+
+```
+selected-modules.txt  ──▶  Configure-Modules.ps1  ──▶  main.cpp (Runner-Ladeliste)
+        (Auswahl)              (+ Modules-Database.ps1)   DashboardViewModel.cs (Startseite)
+                                                          Product.wxs (WiX-Gruppen)
+                               filter-minimal-modules.ps1  (löscht Binaries nicht gewählter Module)
+```
+
+Workflow:
+1. `selected-modules.txt` anpassen (Schlüssel aus `Modules-Database.ps1`).
+2. `tools\build\build-minimal-installer.ps1` ausführen – ruft zuerst `Configure-Modules.ps1`,
+   baut dann Runner + Settings, filtert und paketiert.
+
+`Modules-Database.ps1` ist die einzige Wahrheitsquelle (pro Modul: ModuleType, Runner-DLL,
+Datei-Muster, WiX-Gruppe, Monaco-Bedarf, Baubarkeit). **CmdPal, ZoomIt, Run** sind als
+*nicht baubar* markiert (brauchen VS 2026 bzw. haben tiefe Kopplungen) – der Generator
+verweigert sie mit klarer Meldung. Kopplungen (z. B. Peek→Monaco) löst der Generator automatisch.
+
 ## Warum v0.99.1?
 Ab v0.100 zielt PowerToys auf **.NET 10 / MSBuild 18 (Visual Studio 2026)**. v0.99.1 ist die
 letzte stabile Version auf **.NET 9**, die sich mit **Visual Studio 2022** bauen lässt.

@@ -1,4 +1,4 @@
-﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
 
   <?include $(sys.CURRENTDIR)\Common.wxi?>
 
@@ -40,42 +40,30 @@
     <Property Id="ARPPRODUCTICON" Value="powertoys.exe" />
 
     <Feature Id="CoreFeature" Title="PowerToys" AllowAdvertise="no" TypicalDefault="install" Description="Contains all PowerToys features." AllowAbsent="no">
-      <!-- === MINIMIERTER BUILD ===
-           Nur diese Module werden paketiert: TextExtractor, AlwaysOnTop, CropAndLock,
-           FancyZones, Workspaces, ImageResizer, FileLocksmith, PowerRename, Peek.
-           Die Binaries von TextExtractor/AlwaysOnTop/CropAndLock/FancyZones kommen aus
-           dem Catch-all (BaseApplications/WinUI3Applications) und haben keine eigene Gruppe.
-           Alle nicht gewuenschten Modulgruppen sind entfernt; ihre Binaries werden zusaetzlich
-           per Filter-Skript aus dem Build-Output geloescht. -->
+      <!-- === MINIMIERTER, KONFIGURIERBARER BUILD ===
+           Infrastruktur ist immer dabei. Die modulspezifischen Gruppen zwischen den GENERATED-
+           Markern erzeugt Configure-Modules.ps1 aus selected-modules.txt - NICHT von Hand editieren.
+           Module ohne eigene Gruppe (FancyZones, AlwaysOnTop, CropAndLock, TextExtractor, MouseUtils,
+           QuickAccent, ScreenRuler, GrabAndMove) kommen aus dem Catch-all; ihre Binaries steuert der
+           Filter. ResourcesComponentGroup (Lokalisierung) ist entfernt (nur interne Loc-Pipeline). -->
       <!-- Infrastruktur (immer noetig) -->
       <ComponentGroupRef Id="CoreComponents" />
       <ComponentGroupRef Id="BaseApplicationsComponentGroup" />
       <ComponentGroupRef Id="WinUI3ApplicationsComponentGroup" />
       <ComponentGroupRef Id="SettingsComponentGroup" />
-      <!-- ResourcesComponentGroup (Lokalisierung) entfernt: die uebersetzten Satelliten-DLLs
-           werden nur von Microsofts interner Loc-Pipeline erzeugt und existieren in einem
-           lokalen/Community-Build nicht. Ergebnis: englischsprachige Oberflaeche. -->
       <ComponentGroupRef Id="DscResourcesComponentGroup" />
       <ComponentGroupRef Id="WindowsAppSDKComponentGroup" />
       <ComponentGroupRef Id="ToolComponentGroup" />
-      <ComponentGroupRef Id="MonacoSRCHeatGenerated" />
-      <!-- Monaco-Editor-Assets (index.html, Sprachen, monacoSRC-Verzeichnisse) - von Peek fuer
-           die Quellcode-Vorschau benoetigt. Die .wxs enthaelt NUR Monaco-Assets, keine
-           Vorschau-Handler-Registrierung. -->
+      <!-- Modulspezifische + Monaco-Gruppen (generiert): -->
+      <!-- BEGIN_GENERATED_MODULES -->
       <ComponentGroupRef Id="FileExplorerPreviewComponentGroup" />
-      <!-- Deutsche WPF-Satelliten (de-DE) ENTFERNT: offizielle Satelliten sind Version 0.99.1.0,
-           lokale WPF-Module 0.0.1.0 -> .NET-Versions-Mismatch liesse die Editoren abstuerzen.
-           WPF-Editoren laufen englisch; Settings + WinUI3-Module bleiben deutsch (via .pri). -->
-      <!-- Gewuenschte Module mit eigener Asset-Gruppe -->
-      <ComponentGroupRef Id="FileLocksmithComponentGroup" />
-      <ComponentGroupRef Id="ImageResizerComponentGroup" />
-      <ComponentGroupRef Id="PeekComponentGroup" />
-      <ComponentGroupRef Id="PowerRenameComponentGroup" />
+      <ComponentGroupRef Id="MonacoSRCHeatGenerated" />
       <ComponentGroupRef Id="WorkspacesComponentGroup" />
-      <!-- Entfernt (nicht gewuenscht): Awake, ColorPicker, FileExplorerPreview, Hosts,
-           KeyboardManager, LightSwitch, PowerDisplay, RegistryPreview, Run (PowerToys Run),
-           ShortcutGuide, MouseWithoutBorders, EnvironmentVariables, AdvancedPaste,
-           NewPlus, NewPlusTemplates, CmdPal (Command Palette). -->
+      <ComponentGroupRef Id="ImageResizerComponentGroup" />
+      <ComponentGroupRef Id="FileLocksmithComponentGroup" />
+      <ComponentGroupRef Id="PowerRenameComponentGroup" />
+      <ComponentGroupRef Id="PeekComponentGroup" />
+      <!-- END_GENERATED_MODULES -->
     </Feature>
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLFOLDER]" After="CostFinalize" Sequence="execute" />

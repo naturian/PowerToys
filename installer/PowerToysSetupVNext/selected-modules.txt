@@ -1,0 +1,22 @@
+# === Ausgewaehlte PowerToys-Module fuer den minimierten Installer ===
+# Eine Zeile pro Modul (Schluessel aus Modules-Database.ps1). # = Kommentar.
+# Nach dem Aendern:  tools\build\build-minimal-installer.ps1  ausfuehren.
+#
+# Verfuegbare Schluessel (baubar mit VS 2022):
+#   FancyZones, AlwaysOnTop, CropAndLock, TextExtractor, QuickAccent, ScreenRuler,
+#   GrabAndMove, MouseUtils, Workspaces, ImageResizer, FileLocksmith, PowerRename, Peek,
+#   ColorPicker, Awake, Hosts, KeyboardManager, EnvironmentVariables, RegistryPreview,
+#   ShortcutGuide, MouseWithoutBorders, AdvancedPaste, NewPlus, PowerDisplay, LightSwitch,
+#   FileExplorerPreview
+#
+# NICHT baubar in dieser Umgebung (brauchen VS 2026): CmdPal, ZoomIt, Run
+
+FancyZones
+AlwaysOnTop
+CropAndLock
+TextExtractor
+Workspaces
+ImageResizer
+FileLocksmith
+PowerRename
+Peek
