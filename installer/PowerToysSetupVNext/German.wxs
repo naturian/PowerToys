@@ -1,0 +1,33 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+  <?include $(sys.CURRENTDIR)\Common.wxi?>
+
+  <!-- Deutsche Satelliten-DLLs (de-DE) fuer die WPF-Module der gewuenschten Features:
+       FancyZones-Editor, TextExtractor (PowerOCR), Workspaces-Editor, sowie das WPF-UI-
+       Framework ModernWpf. Die WinUI3-Module (Settings, Peek, FileLocksmith, PowerRename,
+       ImageResizer) sind bereits ueber ihre multilingualen .pri lokalisiert (Catch-all).
+       Quelle der Modul-Satelliten: offizielles PowerToys-v0.99.1-Release. -->
+  <Fragment>
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Directory Id="GermanSatellitesFolder" Name="de-DE" />
+    </DirectoryRef>
+
+    <DirectoryRef Id="GermanSatellitesFolder" FileSource="$(var.BinDir)de-DE\">
+      <Component Id="GermanSatellites_Component" Guid="3D0F402B-4E6D-4CB2-B98B-BB52DE5E7C2E" Bitness="always64">
+        <RegistryKey Root="$(var.RegistryScope)" Key="Software\Classes\powertoys\components">
+          <RegistryValue Type="string" Name="GermanSatellites_Component" Value="" KeyPath="yes" />
+        </RegistryKey>
+        <File Id="de_FancyZonesEditor" Source="$(var.BinDir)de-DE\PowerToys.FancyZonesEditor.resources.dll" />
+        <File Id="de_PowerOCR" Source="$(var.BinDir)de-DE\PowerToys.PowerOCR.resources.dll" />
+        <File Id="de_WorkspacesEditor" Source="$(var.BinDir)de-DE\PowerToys.WorkspacesEditor.resources.dll" />
+        <File Id="de_ModernWpf" Source="$(var.BinDir)de-DE\ModernWpf.resources.dll" />
+        <File Id="de_ModernWpfControls" Source="$(var.BinDir)de-DE\ModernWpf.Controls.resources.dll" />
+        <RemoveFolder Id="RemoveGermanSatellitesFolder" On="uninstall" />
+      </Component>
+    </DirectoryRef>
+
+    <ComponentGroup Id="GermanSatellitesComponentGroup">
+      <ComponentRef Id="GermanSatellites_Component" />
+    </ComponentGroup>
+  </Fragment>
+</Wix>
