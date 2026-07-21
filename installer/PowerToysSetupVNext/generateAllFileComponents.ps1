@@ -24,6 +24,9 @@ Function Generate-FileList() {
         [bool]$isLauncherPlugin
     )
 
+    # MINIMIERTER BUILD: Run.wxs (PowerToys Run) wird nicht paketiert - Harvest ueberspringen,
+    # damit Run.wxs pristine (leere Platzhalter) bleibt und sauber kompiliert.
+    if ($wxsFilePath -match 'Run\.wxs$') { return }
     $fileWxs = Get-Content $wxsFilePath;
 
     $fileExclusionList = @("*.pdb", "*.lastcodeanalysissucceeded", "createdump.exe", "powertoys.exe")
@@ -78,6 +81,7 @@ Function Generate-FileComponents() {
         [string]$wxsFilePath
     )
 
+    if ($wxsFilePath -match 'Run\.wxs$') { return }
     $wxsFile = Get-Content $wxsFilePath;
 
     $wxsFile | ForEach-Object {
