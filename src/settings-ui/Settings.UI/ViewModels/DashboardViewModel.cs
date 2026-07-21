@@ -47,6 +47,21 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
         private readonly QuickAccessViewModel _quickAccessViewModel;
 
+        // MINIMIERTER BUILD: nur diese 9 Module sind installiert und werden auf der Startseite
+        // (Dashboard) angezeigt. Alle anderen Module sind nicht paketiert.
+        private static readonly HashSet<ModuleType> InstalledModules = new HashSet<ModuleType>
+        {
+            ModuleType.AlwaysOnTop,
+            ModuleType.CropAndLock,
+            ModuleType.FancyZones,
+            ModuleType.FileLocksmith,
+            ModuleType.ImageResizer,
+            ModuleType.Peek,
+            ModuleType.PowerRename,
+            ModuleType.PowerOCR,
+            ModuleType.Workspaces,
+        };
+
         // Master list of module items that is sorted and projected into AllModules.
         private List<DashboardListItem> _moduleItems = new List<DashboardListItem>();
 
@@ -209,6 +224,12 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
             foreach (ModuleType moduleType in Enum.GetValues<ModuleType>())
             {
                 if (moduleType == ModuleType.GeneralSettings)
+                {
+                    continue;
+                }
+
+                // MINIMIERTER BUILD: nur die tatsaechlich installierten Module auf der Startseite anzeigen.
+                if (!InstalledModules.Contains(moduleType))
                 {
                     continue;
                 }
