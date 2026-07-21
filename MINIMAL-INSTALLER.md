@@ -38,6 +38,9 @@ nicht. Der Ausschluss erfolgt über zwei Hebel:
    Infrastruktur; nicht gewünschte Modul-`.wxs` sind aus der Compile-Liste des `.wixproj`
    entfernt. `FileExplorerPreview.wxs` bleibt erhalten – es enthält **nur** die Monaco-Editor-
    Assets (`index.html` etc.), die **Peek** für die Quellcode-Vorschau braucht.
+3. **`src/runner/main.cpp`** – die fest codierte Modulliste (`knownModules`) MUSS auf die 9
+   gewünschten Module reduziert werden. Sonst versucht der Runner beim Start die (nicht
+   paketierten) DLLs der entfernten Module zu laden und wirft „DLL fehlt"-Fehler.
 
 ## Bauen
 ```powershell
@@ -64,8 +67,12 @@ Ergebnis (maschinenweit): `installer\PowerToysSetupVNext\x64\Release\MachineSetu
 **Deutsche Oberfläche.** Die übersetzten Ressourcen liegen nicht im öffentlichen Repo, werden
 aber aus einem **offiziellen PowerToys-v0.99.1-Release** entnommen:
 - WinUI3-Module (Settings, Peek, FileLocksmith, PowerRename, ImageResizer): multilinguale
-  `.pri`-Dateien (enthalten alle Sprachen inkl. Deutsch) – per Overlay.
-- WPF-Modul-Editoren (FancyZones, TextExtractor, Workspaces): `de-DE`-Satelliten-DLLs.
+  `.pri`-Dateien (enthalten alle Sprachen inkl. Deutsch) – per Overlay. **→ Deutsch.**
+- WPF-Modul-Editoren (FancyZones-Editor, TextExtractor, Workspaces-Editor): **bleiben Englisch.**
+  Die de-DE-Satelliten des offiziellen Release sind Version 0.99.1.0, die lokal gebauten
+  WPF-Module aber 0.0.1.0 → .NET-Versions-Mismatch würde diese Editoren abstürzen lassen.
+  Für vollständiges Deutsch auch dort müsste die Build-Version auf 0.99.1 gesetzt und die
+  WPF-Module neu gebaut werden (siehe `src/Version.props`; berührt zusätzlich die DSC-Pfade).
 
 Extraktion des offiziellen Release:
 ```powershell
