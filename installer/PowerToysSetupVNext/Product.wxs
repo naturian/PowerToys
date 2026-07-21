@@ -63,6 +63,8 @@
            die Quellcode-Vorschau benoetigt. Die .wxs enthaelt NUR Monaco-Assets, keine
            Vorschau-Handler-Registrierung. -->
       <ComponentGroupRef Id="FileExplorerPreviewComponentGroup" />
+      <!-- Deutsche Satelliten-DLLs (de-DE) fuer die WPF-Modul-Editoren -->
+      <ComponentGroupRef Id="GermanSatellitesComponentGroup" />
       <!-- Gewuenschte Module mit eigener Asset-Gruppe -->
       <ComponentGroupRef Id="FileLocksmithComponentGroup" />
       <ComponentGroupRef Id="ImageResizerComponentGroup" />
