@@ -1,4 +1,4 @@
-<UserControl
+﻿<UserControl
     x:Class="Microsoft.PowerToys.Settings.UI.Views.ShellPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -188,56 +188,48 @@
                     <NavigationViewItem.MenuItems>
                         <NavigationViewItem
                             x:Name="AdvancedPasteNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="Shell_AdvancedPaste"
                             helpers:NavHelper.NavigateTo="views:AdvancedPastePage"
                             AutomationProperties.AutomationId="AdvancedPasteNavItem"
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/AdvancedPaste.png}" />
                         <NavigationViewItem
                             x:Name="AwakeNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="Shell_Awake"
                             helpers:NavHelper.NavigateTo="views:AwakePage"
                             AutomationProperties.AutomationId="AwakeNavItem"
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/Awake.png}" />
                         <NavigationViewItem
                             x:Name="CmdPalNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="Shell_CmdPal"
                             helpers:NavHelper.NavigateTo="views:CmdPalPage"
                             AutomationProperties.AutomationId="CmdPalNavItem"
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/CmdPal.png}" />
                         <NavigationViewItem
                             x:Name="ColorPickerNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="Shell_ColorPicker"
                             helpers:NavHelper.NavigateTo="views:ColorPickerPage"
                             AutomationProperties.AutomationId="ColorPickerNavItem"
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/ColorPicker.png}" />
                         <NavigationViewItem
                             x:Name="LightSwitchNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="Shell_LightSwitch"
                             helpers:NavHelper.NavigateTo="views:LightSwitchPage"
                             AutomationProperties.AutomationId="LightSwitchNavItem"
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/LightSwitch.png}" />
                         <NavigationViewItem
                             x:Name="PowerLauncherNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="Shell_PowerLauncher"
                             helpers:NavHelper.NavigateTo="views:PowerLauncherPage"
                             AutomationProperties.AutomationId="PowerLauncherNavItem"
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/PowerToysRun.png}" />
                         <NavigationViewItem
                             x:Name="MeasureToolNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="Shell_MeasureTool"
                             helpers:NavHelper.NavigateTo="views:MeasureToolPage"
                             AutomationProperties.AutomationId="ScreenRulerNavItem"
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/ScreenRuler.png}" />
                         <NavigationViewItem
                             x:Name="ShortcutGuideNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="Shell_ShortcutGuide"
                             helpers:NavHelper.NavigateTo="views:ShortcutGuidePage"
                             AutomationProperties.AutomationId="ShortcutGuideNavItem"
@@ -250,7 +242,6 @@
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/TextExtractor.png}" />
                         <NavigationViewItem
                             x:Name="ZoomItNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="Shell_ZoomIt"
                             helpers:NavHelper.NavigateTo="views:ZoomItPage"
                             AutomationProperties.AutomationId="ZoomItNavItem"
@@ -289,7 +280,6 @@
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/FancyZones.png}" />
                         <NavigationViewItem
                             x:Name="GrabAndMoveNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="Shell_GrabAndMove"
                             helpers:NavHelper.NavigateTo="views:GrabAndMovePage"
                             AutomationProperties.AutomationId="GrabAndMoveNavItem"
@@ -310,7 +300,6 @@
                 <!--  Input / Output  -->
                 <NavigationViewItem
                     x:Name="InputOutputNavigationItem"
-                    Visibility="Collapsed"
                     x:Uid="Shell_TopLevelInputOutput"
                     AutomationProperties.AutomationId="InputOutputNavItem"
                     Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/InputOutput.png}"
@@ -366,7 +355,6 @@
                     <NavigationViewItem.MenuItems>
                         <NavigationViewItem
                             x:Name="PowerPreviewNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="Shell_PowerPreview"
                             helpers:NavHelper.NavigateTo="views:PowerPreviewPage"
                             AutomationProperties.AutomationId="PowerPreviewNavItem"
@@ -386,7 +374,6 @@
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/ImageResizer.png}" />
                         <NavigationViewItem
                             x:Name="NewPlusNavigationItem"
-                            Visibility="Collapsed"
                             x:Uid="NewPlus_Product_Name"
                             helpers:NavHelper.NavigateTo="views:NewPlusPage"
                             AutomationProperties.AutomationId="NewPlusNavItem"
@@ -409,7 +396,6 @@
                 <!--  Advanced  -->
                 <NavigationViewItem
                     x:Name="AdvancedNavigationItem"
-                    Visibility="Collapsed"
                     x:Uid="Shell_TopLevelAdvanced"
                     AutomationProperties.AutomationId="AdvancedNavItem"
                     Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/Advanced.png}"
