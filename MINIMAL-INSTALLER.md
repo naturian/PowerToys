@@ -42,15 +42,48 @@ nicht. Der Ausschluss erfolgt über zwei Hebel:
 ## Bauen
 ```powershell
 # Aus dem Repo-Wurzelverzeichnis, in einer Developer-PowerShell für VS 2022:
-tools\build\build-minimal-installer.ps1
+tools\build\build-minimal-installer.ps1                 # englischer Per-User-MSI
 ```
 Das Skript initialisiert die Submodule, baut die benötigten Projekte + Diagnose-Tools,
-filtert den Ausgabeordner und baut den MSI. Ergebnis:
-`installer\PowerToysSetupVNext\x64\Release\UserSetup\PowerToysUserSetup-0.0.1-x64.msi`
+filtert den Ausgabeordner und baut den MSI.
+
+Für **Deutsch** + **maschinenweit** zusätzlich (siehe unten):
+```powershell
+# 1. Deutsche Lokalisierung aus offiziellem Release überlagern (einmalig extrahieren, s.u.)
+installer\PowerToysSetupVNext\apply-german-localization.ps1 -OfficialRoot <extrahiertes-PowerToys>
+# 2. Filter + Harvest + Machine-MSI (PerUser=false)  -> siehe "Deutsch" unten
+```
+Ergebnis (maschinenweit): `installer\PowerToysSetupVNext\x64\Release\MachineSetup\PowerToysSetup-0.0.1-x64.msi`
 
 > Referenz-Build: Solution-Build der benötigten Projekte + `runner` + `PowerToys.Settings`,
 > danach Filter + WiX. CmdPal (AOT-Fehler) und ZoomIt (Toolset v145) werden nicht gebaut –
 > beide sind nicht gewünscht.
+
+## Deutsch, Geister-Seiten, maschinenweit
+
+**Deutsche Oberfläche.** Die übersetzten Ressourcen liegen nicht im öffentlichen Repo, werden
+aber aus einem **offiziellen PowerToys-v0.99.1-Release** entnommen:
+- WinUI3-Module (Settings, Peek, FileLocksmith, PowerRename, ImageResizer): multilinguale
+  `.pri`-Dateien (enthalten alle Sprachen inkl. Deutsch) – per Overlay.
+- WPF-Modul-Editoren (FancyZones, TextExtractor, Workspaces): `de-DE`-Satelliten-DLLs.
+
+Extraktion des offiziellen Release:
+```powershell
+wix burn extract PowerToysSetup-0.99.1-x64.exe -o out -oba ba
+msiexec /a out\WixAttachedContainer\PowerToysSetup-0.99.1-x64.msi /qn TARGETDIR=<dir>
+# -> OfficialRoot = <dir>\PFiles64\PowerToys
+```
+Danach `apply-german-localization.ps1 -OfficialRoot <dir>\PFiles64\PowerToys`.
+
+**Geister-Seiten ausgeblendet.** Die Settings-Navigation blendet die Einträge nicht
+installierter Module aus. Umgesetzt im **Code-Behind** (`ShellPage.xaml.cs` →
+`HideUninstalledModules()`), NICHT in der XAML – denn die kompilierte XAML (`ShellPage.xbf`)
+ist als `EmbeddedData` in der `.pri` gespeichert; würde man die XAML ändern, ginge die
+Änderung beim Überlagern der deutschen `.pri` verloren. Der Code-Behind-Weg ist mit dem
+`.pri`-Overlay kompatibel.
+
+**Maschinenweit.** `/p:PerUser=false` erzeugt `MachineSetup\PowerToysSetup-*.msi`
+(Scope per-machine, ALLUSERS=1) – für Unternehmens-Deployment (SCCM/Intune/GPO-Softwareverteilung).
 
 ## Voraussetzungen
 - Visual Studio 2022 (17.14+) mit „Desktopentwicklung mit C++" (inkl. Spectre-Libs, ATL)
@@ -60,22 +93,23 @@ filtert den Ausgabeordner und baut den MSI. Ergebnis:
 - `nuget.config`: nuget.org (primär) + CommunityToolkit-Labs-Feed. Der ursprüngliche
   shine-oss-Feed lieferte diverse Runtime-/AOT-Pakete nicht zuverlässig (HTTP 503/401).
 
-## Bekannte Einschränkungen
-- **Nur Englisch.** Die übersetzten Satelliten-DLLs (`*.resources.dll`) werden ausschließlich
-  von Microsofts interner Lokalisierungs-Pipeline erzeugt und liegen **nicht** im öffentlichen
-  Repo. Ein lokaler/Community-Build ist daher zwangsläufig englischsprachig
-  (`Resources.wxs` wurde deshalb aus dem Paket entfernt).
-- **Geister-Seiten in den Einstellungen.** Die Settings-UI ist monolithisch und zeigt auch
-  Seiten für nicht installierte Module. Da deren Binaries fehlen, lädt der Runner sie nicht –
-  die Seiten sind ohne Funktion. Die eigentliche Anforderung („Module nicht installiert") ist
-  erfüllt (keine Modul-Binaries auf dem System).
-- **Per-User-Installer.** Für maschinenweite Installation (Unternehmens-Deployment)
-  `/p:PerUser=false` verwenden – erzeugt `MachineSetup\PowerToysMachineSetup-*.msi`.
+## Bekannte Einschränkungen / Hinweise
+- **Deutsch stammt aus dem offiziellen Release.** Ohne den Overlay-Schritt ist ein reiner
+  Quellcode-Build englischsprachig (Übersetzungen liegen nicht im öffentlichen Repo). Der
+  Overlay entnimmt sie dem offiziellen v0.99.1-Release derselben Version (Ressourcennamen
+  identisch → kompatibel).
+- **Standard-`build-minimal-installer.ps1` erzeugt Englisch/Per-User.** Deutsch + maschinenweit
+  erfordern die zwei zusätzlichen Schritte oben.
+- **Nur Deutsch + Englisch relevant.** Die überlagerten `.pri` sind zwar multilingual (alle
+  Sprachen), die WPF-Satelliten wurden bewusst auf `de-DE` beschränkt.
 
-## Geänderte Dateien
-- `installer/PowerToysSetupVNext/Product.wxs` – Feature-Komponentengruppen minimiert
-- `installer/PowerToysSetupVNext/PowerToysInstallerVNext.wixproj` – Compile-Liste minimiert
+## Geänderte / neue Dateien
+- `installer/PowerToysSetupVNext/Product.wxs` – Feature-Komponentengruppen minimiert + GermanSatellites
+- `installer/PowerToysSetupVNext/PowerToysInstallerVNext.wixproj` – Compile-Liste minimiert + German.wxs
 - `installer/PowerToysSetupVNext/generateAllFileComponents.ps1` – Run-Harvest übersprungen
 - `installer/PowerToysSetupVNext/filter-minimal-modules.ps1` – **neu**, Output-Filter
+- `installer/PowerToysSetupVNext/German.wxs` – **neu**, de-DE-Satelliten der WPF-Module
+- `installer/PowerToysSetupVNext/apply-german-localization.ps1` – **neu**, PRI/Satelliten-Overlay
+- `src/settings-ui/Settings.UI/SettingsXAML/Views/ShellPage.xaml.cs` – Geister-Seiten ausblenden
 - `tools/build/build-minimal-installer.ps1` – **neu**, Gesamt-Pipeline
 - `nuget.config` – zuverlässige Paketquellen
