@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include <ShellScalingApi.h>
 #include <lmcons.h>
 #include <filesystem>
@@ -267,6 +267,8 @@ int runner(bool isProcessElevated, bool openSettings, std::string settingsWindow
             L"WinUI3Apps/PowerToys.FileLocksmithExt.dll",
             L"WinUI3Apps/PowerToys.PowerRenameExt.dll",
             L"WinUI3Apps/PowerToys.Peek.dll",
+            L"PowerToys.ColorPicker.dll",
+            L"WinUI3Apps/PowerToys.MeasureToolModuleInterface.dll",
             // END_GENERATED_MODULES
         };
 

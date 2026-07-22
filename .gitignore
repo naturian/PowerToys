@@ -370,3 +370,6 @@ installer/*/*.wxs.bk
 .squad-workstream
 .github/agents/**squad**.md
 .github/workflows/**squad**.yml
+
+# Minimierter Installer: gebaute MSIs (zu gross fuer Git)
+dist/

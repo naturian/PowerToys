@@ -20,3 +20,5 @@ ImageResizer
 FileLocksmith
 PowerRename
 Peek
+ColorPicker
+ScreenRuler

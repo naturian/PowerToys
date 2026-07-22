@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation
+﻿// Copyright (c) Microsoft Corporation
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -55,10 +55,12 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
         {
             // BEGIN_GENERATED_MODULES
             ModuleType.AlwaysOnTop,
+            ModuleType.ColorPicker,
             ModuleType.CropAndLock,
             ModuleType.FancyZones,
             ModuleType.FileLocksmith,
             ModuleType.ImageResizer,
+            ModuleType.MeasureTool,
             ModuleType.Peek,
             ModuleType.PowerOCR,
             ModuleType.PowerRename,
