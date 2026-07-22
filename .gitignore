@@ -375,3 +375,6 @@ installer/*/*.wxs.bk
 vcpkg_installed/
 
 deps/vcpkg/
+
+# Minimierter Installer: gebaute MSIs (zu gross fuer Git)
+dist/
