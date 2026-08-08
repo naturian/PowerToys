@@ -49,7 +49,7 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
         private readonly QuickAccessViewModel _quickAccessViewModel;
 
-        // MINIMIERTER BUILD: nur diese 9 Module sind installiert und werden auf der Startseite
+        // MINIMIERTER BUILD: nur die ausgewaehlten Module sind installiert und werden auf der Startseite
         // (Dashboard) angezeigt. Alle anderen Module sind nicht paketiert.
         // Inhalt zwischen den GENERATED-Markern wird aus selected-modules.txt erzeugt
         // (Configure-Modules.ps1) - NICHT von Hand editieren.
@@ -64,6 +64,7 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
             ModuleType.ImageResizer,
             ModuleType.MeasureTool,
             ModuleType.Peek,
+            ModuleType.PowerDisplay,
             ModuleType.PowerOCR,
             ModuleType.PowerRename,
             ModuleType.Workspaces,

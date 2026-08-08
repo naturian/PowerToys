@@ -269,6 +269,7 @@ int runner(bool isProcessElevated, bool openSettings, std::string settingsWindow
             L"WinUI3Apps/PowerToys.Peek.dll",
             L"PowerToys.ColorPicker.dll",
             L"WinUI3Apps/PowerToys.MeasureToolModuleInterface.dll",
+            L"PowerToys.PowerDisplayModuleInterface.dll",
             // END_GENERATED_MODULES
         };
 

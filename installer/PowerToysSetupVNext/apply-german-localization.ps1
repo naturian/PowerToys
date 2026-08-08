@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
 Ueberlagert den (englischen) lokalen Build-Output mit den deutschen (multilingualen)
-Lokalisierungsdateien aus einem offiziellen PowerToys-v0.99.1-Release.
+Lokalisierungsdateien aus einem offiziellen PowerToys-v0.100.2-Release.
 
 Hintergrund: Die uebersetzten Ressourcen liegen NICHT im oeffentlichen Repo (nur en-us);
 sie stammen aus Microsofts interner Loc-Pipeline. Wir entnehmen sie dem offiziellen Release:
@@ -11,8 +11,8 @@ sie stammen aus Microsofts interner Loc-Pipeline. Wir entnehmen sie dem offiziel
 .PARAMETER OfficialRoot
 Pfad zum extrahierten offiziellen PowerToys-Verzeichnis (enthaelt WinUI3Apps\ und de-DE\).
 Extraktion z.B.:
-  wix burn extract PowerToysSetup-0.99.1-x64.exe -o out -oba ba
-  msiexec /a out\WixAttachedContainer\PowerToysSetup-0.99.1-x64.msi /qn TARGETDIR=<dir>
+  wix burn extract PowerToysSetup-0.100.2-x64.exe -o out -oba ba
+  msiexec /a out\WixAttachedContainer\PowerToysSetup-0.100.2-x64.msi /qn TARGETDIR=<dir>
   -> OfficialRoot = <dir>\PFiles64\PowerToys
 
 .PARAMETER Platform / Configuration
@@ -43,7 +43,7 @@ foreach ($sub in @('WinUI3Apps', '')) {
 Write-Host "[GERMAN] $priCount multilinguale .pri ueberlagert."
 
 # 2. WPF-Modul-Satelliten (de-DE) werden BEWUSST NICHT uebernommen:
-#    Die offiziellen Satelliten sind Version 0.99.1.0, die lokal gebauten WPF-Module aber
+#    Die offiziellen Satelliten sind Version 0.100.2.0, die lokal gebauten WPF-Module aber
 #    0.0.1.0. .NET verlangt uebereinstimmende Satelliten-Versionen -> Mismatch wuerde die
 #    Editoren (FancyZones/TextExtractor/Workspaces) beim Laden der de-DE-Ressourcen abstuerzen
 #    lassen. Diese Editoren laufen daher auf Englisch (Fallback auf neutrale Ressourcen).

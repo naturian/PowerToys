@@ -6,7 +6,7 @@ sammeln alles in Release\ bzw. Release\WinUI3Apps\ ein).
 
 Konfigurationsgetrieben: die zu loeschenden Muster ergeben sich aus den NICHT in
 selected-modules.txt gewaehlten Modulen (Modules-Database.ps1).
-Es werden NUR .dll/.exe/.pdb in den beiden (nicht-rekursiven) Catch-all-Wurzeln geloescht.
+Es werden passende Dateien und modulbezogene Ausgabeordner rekursiv geloescht.
 #>
 param(
     [string]$Platform = 'x64',
@@ -21,8 +21,6 @@ if (-not $ConfigFile) { $ConfigFile = Join-Path $here 'selected-modules.txt' }
 
 $releaseRoot = Join-Path $RepoRoot "$Platform\$Configuration"
 if (-not (Test-Path $releaseRoot)) { throw "Build-Output nicht gefunden: $releaseRoot" }
-$winui = Join-Path $releaseRoot 'WinUI3Apps'
-$scopeDirs = @($releaseRoot, $winui) | Where-Object { Test-Path $_ }
 
 # Ausgewaehlte Module
 $selected = Get-Content $ConfigFile | ForEach-Object { ($_ -replace '#.*$', '').Trim() } | Where-Object { $_ -ne '' }
@@ -32,34 +30,51 @@ $deny = [System.Collections.Generic.List[string]]::new()
 foreach ($k in $ModuleDatabase.Keys) {
     if ($selected -contains $k) { continue }
     foreach ($p in $ModuleDatabase[$k].FilterPatterns) { if ($deny -notcontains $p) { $deny.Add($p) } }
+    foreach ($type in $ModuleDatabase[$k].ModuleTypes) {
+        $dscPattern = "microsoft.powertoys.$type.settings.dsc.resource.json"
+        if ($deny -notcontains $dscPattern) { $deny.Add($dscPattern) }
+    }
 }
 
 # Diese Dateien nie loeschen (Settings-UI laedt sie zur Laufzeit).
 $keep = $FilterKeepAlways | ForEach-Object { $_.ToLowerInvariant() }
 
-$exts = @('.dll', '.exe', '.pdb')
 $deleted = 0
 $keptExceptions = @()
-foreach ($dir in $scopeDirs) {
-    Get-ChildItem -Path $dir -File | ForEach-Object {
-        $file = $_
-        if ($exts -notcontains $file.Extension.ToLowerInvariant()) { return }
-        $matched = $false
-        foreach ($pat in $deny) { if ($file.Name -like $pat) { $matched = $true; break } }
-        if (-not $matched) { return }
-        if ($keep -contains $file.Name.ToLowerInvariant()) { $keptExceptions += $file.Name; return }
-        Remove-Item $file.FullName -Force
-        $deleted++
+Get-ChildItem -LiteralPath $releaseRoot -File -Recurse | ForEach-Object {
+    $file = $_
+    $matched = $false
+    foreach ($pat in $deny) { if ($file.Name -like $pat) { $matched = $true; break } }
+    if (-not $matched) { return }
+    if ($keep -contains $file.Name.ToLowerInvariant()) { $keptExceptions += $file.Name; return }
+    Remove-Item -LiteralPath $file.FullName -Force
+    $deleted++
+}
+
+# Modulbezogene Ordner tiefste zuerst entfernen.
+$denyDirNames = [System.Collections.Generic.List[string]]::new()
+foreach ($k in $ModuleDatabase.Keys) {
+    if ($selected -contains $k) { continue }
+    foreach ($name in $ModuleFilterDirectories[$k]) {
+        if ($denyDirNames -notcontains $name) { $denyDirNames.Add($name) }
+    }
+}
+$deletedDirs = 0
+Get-ChildItem -LiteralPath $releaseRoot -Directory -Recurse |
+    Sort-Object { $_.FullName.Length } -Descending |
+    Where-Object { $denyDirNames -contains $_.Name } |
+    ForEach-Object {
+        Remove-Item -LiteralPath $_.FullName -Recurse -Force
+        $deletedDirs++
+    }
+
+foreach ($name in $denyDirNames) {
+    $candidate = Join-Path $releaseRoot $name
+    if (Test-Path -LiteralPath $candidate) {
+        Remove-Item -LiteralPath $candidate -Recurse -Force
+        $deletedDirs++
     }
 }
 
-# Unterordner nicht ausgewaehlter Module (werden ohnehin nicht paketiert - Aufraeumen).
-if ($selected -notcontains 'Run') {
-    $rp = Join-Path $releaseRoot 'RunPlugins'; if (Test-Path $rp) { Remove-Item $rp -Recurse -Force }
-}
-if ($selected -notcontains 'CmdPal') {
-    $cp = Join-Path $winui 'CmdPal'; if (Test-Path $cp) { Remove-Item $cp -Recurse -Force }
-}
-
-Write-Host "[FILTER] $deleted Datei(en) nicht ausgewaehlter Module entfernt."
+Write-Host "[FILTER] $deleted Datei(en), $deletedDirs Ordner nicht ausgewaehlter Module entfernt."
 if ($keptExceptions.Count) { Write-Host "[FILTER] Als Settings-Abhaengigkeit behalten: $(($keptExceptions | Sort-Object -Unique) -join ', ')" }

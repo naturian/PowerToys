@@ -122,14 +122,16 @@ call powershell.exe -NonInteractive -executionpolicy Unrestricted -File $(MSBuil
     <Compile Include="FileExplorerPreview.wxs" />
     <Compile Include="MonacoSRC.wxs" />
     <!-- === Gewuenschte Module === -->
+    <Compile Include="ColorPicker.wxs" />
     <Compile Include="FileLocksmith.wxs" />
     <Compile Include="ImageResizer.wxs" />
     <Compile Include="Peek.wxs" />
+    <Compile Include="PowerDisplay.wxs" />
     <Compile Include="PowerRename.wxs" />
     <Compile Include="Workspaces.wxs" />
     <!-- Nicht gewuenschte Module aus dem Build entfernt: AdvancedPaste, Awake, CmdPal,
-         ColorPicker, EnvironmentVariables, Hosts, KeyboardManager, LightSwitch,
-         MouseWithoutBorders, NewPlus, PowerDisplay, RegistryPreview, Run, ShortcutGuide.
+         EnvironmentVariables, Hosts, KeyboardManager, LightSwitch,
+         MouseWithoutBorders, NewPlus, RegistryPreview, Run, ShortcutGuide.
          (TextExtractor, AlwaysOnTop, CropAndLock, FancyZones haben keine eigene .wxs -
          ihre Binaries kommen aus dem Catch-all BaseApplications/WinUI3Applications.) -->
   </ItemGroup>

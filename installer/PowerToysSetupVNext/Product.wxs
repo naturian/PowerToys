@@ -63,6 +63,8 @@
       <ComponentGroupRef Id="FileLocksmithComponentGroup" />
       <ComponentGroupRef Id="PowerRenameComponentGroup" />
       <ComponentGroupRef Id="PeekComponentGroup" />
+      <ComponentGroupRef Id="ColorPickerComponentGroup" />
+      <ComponentGroupRef Id="PowerDisplayComponentGroup" />
       <!-- END_GENERATED_MODULES -->
     </Feature>
 

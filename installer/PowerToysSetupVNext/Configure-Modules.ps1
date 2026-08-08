@@ -50,14 +50,19 @@ if ($needMonaco) {
 
 # --- Marker-Ersetzung ---
 function Set-GeneratedRegion([string]$Path, [string]$Indent, [string[]]$Lines) {
-    $content = Get-Content $Path -Raw
+    $bytes = [IO.File]::ReadAllBytes($Path)
+    $hasUtf8Bom = $bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF
+    $offset = if ($hasUtf8Bom) { 3 } else { 0 }
+    $content = [Text.Encoding]::UTF8.GetString($bytes, $offset, $bytes.Length - $offset)
+    $newLine = if ($content.Contains("`r`n")) { "`r`n" } else { "`n" }
     $begin = [regex]::Escape('BEGIN_GENERATED_MODULES')
     $end = [regex]::Escape('END_GENERATED_MODULES')
     $pattern = "(?s)(.*?$begin[^\r\n]*\r?\n).*?(\s*[^\r\n]*$end)"
     if ($content -notmatch $pattern) { throw "GENERATED-Marker nicht gefunden in $Path" }
-    $body = ($Lines | ForEach-Object { "$Indent$_" }) -join "`r`n"
-    $new = [regex]::Replace($content, $pattern, { param($mm) $mm.Groups[1].Value + $body + "`r`n" + $mm.Groups[2].Value.TrimStart("`r","`n") }, [Text.RegularExpressions.RegexOptions]::Singleline)
-    Set-Content -Path $Path -Value $new -NoNewline
+    $body = ($Lines | ForEach-Object { "$Indent$_" }) -join $newLine
+    $new = [regex]::Replace($content, $pattern, { param($mm) $mm.Groups[1].Value + $body + $newLine + $mm.Groups[2].Value.TrimStart("`r","`n") }, [Text.RegularExpressions.RegexOptions]::Singleline)
+    $encoding = [Text.UTF8Encoding]::new($hasUtf8Bom)
+    [IO.File]::WriteAllText($Path, $new, $encoding)
     Write-Host "  [OK] $([IO.Path]::GetFileName($Path)) aktualisiert."
 }
 
@@ -72,5 +77,23 @@ Set-GeneratedRegion (Join-Path $RepoRoot 'src\settings-ui\Settings.UI\ViewModels
 # 3) WiX (Product.wxs)
 $wixLines = $wixGroups | ForEach-Object { "<ComponentGroupRef Id=`"$_`" />" }
 Set-GeneratedRegion (Join-Path $RepoRoot 'installer\PowerToysSetupVNext\Product.wxs') '      ' $wixLines
+
+# CmdPal ist in der Minimal-Pipeline nicht waehlbar. Upstream legt seine WinMD
+# trotzdem in BaseApplications ab; ohne Bereinigung wuerde sie mitpaketiert.
+$baseApplicationsPath = Join-Path $RepoRoot 'installer\PowerToysSetupVNext\BaseApplications.wxs'
+$baseBytes = [IO.File]::ReadAllBytes($baseApplicationsPath)
+$baseHasBom = $baseBytes.Length -ge 3 -and $baseBytes[0] -eq 0xEF -and $baseBytes[1] -eq 0xBB -and $baseBytes[2] -eq 0xBF
+$baseOffset = if ($baseHasBom) { 3 } else { 0 }
+$baseContent = [Text.Encoding]::UTF8.GetString($baseBytes, $baseOffset, $baseBytes.Length - $baseOffset)
+$baseContent = [regex]::Replace(
+    $baseContent,
+    '(?s)\s*<!-- winmd must be in WinUI3Apps.*?<DirectoryRef Id="WinUI3AppsInstallFolder">.*?</DirectoryRef>',
+    '')
+$baseContent = [regex]::Replace(
+    $baseContent,
+    '\s*<ComponentRef Id="Microsoft_CommandPalette_Extensions_winmd"\s*/>',
+    '')
+[IO.File]::WriteAllText($baseApplicationsPath, $baseContent, [Text.UTF8Encoding]::new($baseHasBom))
+Write-Host '  [OK] BaseApplications.wxs von CmdPal-WinMD bereinigt.'
 
 Write-Host "[CONFIG] Fertig. Jetzt Runner + Settings neu bauen und Installer erzeugen (build-minimal-installer.ps1)."

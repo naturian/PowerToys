@@ -20,7 +20,7 @@ $ModuleDatabase = [ordered]@{
     'TextExtractor'       = @{ ModuleTypes=@('PowerOCR');         RunnerDlls=@('PowerToys.PowerOCRModuleInterface.dll'); FilterPatterns=@('PowerToys.PowerOCR*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true }
     'QuickAccent'         = @{ ModuleTypes=@('PowerAccent');      RunnerDlls=@('PowerToys.PowerAccentModuleInterface.dll'); FilterPatterns=@('PowerToys.PowerAccent*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true }
     'ScreenRuler'         = @{ ModuleTypes=@('MeasureTool');      RunnerDlls=@('WinUI3Apps/PowerToys.MeasureToolModuleInterface.dll'); FilterPatterns=@('PowerToys.MeasureTool*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true }
-    'GrabAndMove'         = @{ ModuleTypes=@('GrabAndMove');      RunnerDlls=@('PowerToys.CursorWrap.dll'); FilterPatterns=@('PowerToys.GrabAndMove*','PowerToys.CursorWrap*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true }
+    'GrabAndMove'         = @{ ModuleTypes=@('GrabAndMove');      RunnerDlls=@('PowerToys.GrabAndMoveModuleInterface.dll'); FilterPatterns=@('PowerToys.GrabAndMove*','PowerToys.CursorWrap*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true }
     'MouseUtils'          = @{ ModuleTypes=@('FindMyMouse','MouseHighlighter','MouseJump','MousePointerCrosshairs'); RunnerDlls=@('PowerToys.FindMyMouse.dll','PowerToys.MouseHighlighter.dll','PowerToys.MouseJump.dll','PowerToys.MousePointerCrosshairs.dll'); FilterPatterns=@('PowerToys.FindMyMouse*','PowerToys.MouseHighlighter*','PowerToys.MouseJump.dll','PowerToys.MouseJump.pdb','PowerToys.MouseJumpUI*','PowerToys.MousePointerCrosshairs*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true; Note='Mausdienstprogramme (4 Werkzeuge in einer Gruppe). MouseJump.Common.dll bleibt immer (Settings-Abhaengigkeit).' }
 
     # ---- Mit eigener WiX-Gruppe ----
@@ -30,23 +30,56 @@ $ModuleDatabase = [ordered]@{
     'PowerRename'         = @{ ModuleTypes=@('PowerRename');      RunnerDlls=@('WinUI3Apps/PowerToys.PowerRenameExt.dll'); FilterPatterns=@('PowerToys.PowerRename*'); WixGroups=@('PowerRenameComponentGroup'); NeedsMonaco=$false; Buildable=$true }
     'Peek'                = @{ ModuleTypes=@('Peek');             RunnerDlls=@('WinUI3Apps/PowerToys.Peek.dll'); FilterPatterns=@('PowerToys.Peek.*','PowerToys.Peek.UI*'); WixGroups=@('PeekComponentGroup'); NeedsMonaco=$true; Buildable=$true }
     'ColorPicker'         = @{ ModuleTypes=@('ColorPicker');      RunnerDlls=@('PowerToys.ColorPicker.dll'); FilterPatterns=@('PowerToys.ColorPicker*'); WixGroups=@('ColorPickerComponentGroup'); NeedsMonaco=$false; Buildable=$true }
-    'Awake'               = @{ ModuleTypes=@('Awake');            RunnerDlls=@('PowerToys.AwakeModuleInterface.dll'); FilterPatterns=@('PowerToys.Awake*'); WixGroups=@('AwakeComponentGroup'); NeedsMonaco=$false; Buildable=$true }
+    'Awake'               = @{ ModuleTypes=@('Awake');            RunnerDlls=@('PowerToys.AwakeModuleInterface.dll'); FilterPatterns=@('PowerToys.Awake*','Awake.ModuleServices*'); WixGroups=@('AwakeComponentGroup'); NeedsMonaco=$false; Buildable=$true }
     'Hosts'               = @{ ModuleTypes=@('Hosts');            RunnerDlls=@('WinUI3Apps/PowerToys.HostsModuleInterface.dll'); FilterPatterns=@('PowerToys.Hosts*'); WixGroups=@('HostsComponentGroup'); NeedsMonaco=$false; Buildable=$true }
     'KeyboardManager'     = @{ ModuleTypes=@('KeyboardManager');  RunnerDlls=@('PowerToys.KeyboardManager.dll'); FilterPatterns=@('PowerToys.KeyboardManager*'); WixGroups=@('KeyboardManagerComponentGroup'); NeedsMonaco=$false; Buildable=$true }
     'EnvironmentVariables'= @{ ModuleTypes=@('EnvironmentVariables'); RunnerDlls=@('WinUI3Apps/PowerToys.EnvironmentVariablesModuleInterface.dll'); FilterPatterns=@('PowerToys.EnvironmentVariables*'); WixGroups=@('EnvironmentVariablesComponentGroup'); NeedsMonaco=$false; Buildable=$true }
     'RegistryPreview'     = @{ ModuleTypes=@('RegistryPreview');  RunnerDlls=@('WinUI3Apps/PowerToys.RegistryPreviewExt.dll'); FilterPatterns=@('PowerToys.RegistryPreview*'); WixGroups=@('RegistryPreviewComponentGroup'); NeedsMonaco=$true; Buildable=$true }
-    'ShortcutGuide'       = @{ ModuleTypes=@('ShortcutGuide');    RunnerDlls=@('PowerToys.ShortcutGuideModuleInterface.dll'); FilterPatterns=@('PowerToys.ShortcutGuide*'); WixGroups=@('ShortcutGuideComponentGroup'); NeedsMonaco=$false; Buildable=$true }
+    'ShortcutGuide'       = @{ ModuleTypes=@('ShortcutGuide');    RunnerDlls=@('WinUI3Apps/PowerToys.ShortcutGuideModuleInterface.dll'); FilterPatterns=@('PowerToys.ShortcutGuide*'); WixGroups=@('ShortcutGuideComponentGroup'); NeedsMonaco=$false; Buildable=$true }
     'MouseWithoutBorders' = @{ ModuleTypes=@('MouseWithoutBorders'); RunnerDlls=@('PowerToys.MouseWithoutBordersModuleInterface.dll'); FilterPatterns=@('PowerToys.MouseWithoutBorders*'); WixGroups=@('MouseWithoutBordersComponentGroup'); NeedsMonaco=$false; Buildable=$true }
     'AdvancedPaste'       = @{ ModuleTypes=@('AdvancedPaste');    RunnerDlls=@('PowerToys.AdvancedPasteModuleInterface.dll'); FilterPatterns=@('PowerToys.AdvancedPaste*'); WixGroups=@('AdvancedPasteComponentGroup'); NeedsMonaco=$false; Buildable=$true }
-    'NewPlus'             = @{ ModuleTypes=@('NewPlus');          RunnerDlls=@('WinUI3Apps/PowerToys.NewPlus.ShellExtension.dll'); FilterPatterns=@('PowerToys.NewPlus*'); WixGroups=@('NewPlusComponentGroup','NewPlusTemplatesComponentGroup'); NeedsMonaco=$false; Buildable=$true }
+    'NewPlus'             = @{ ModuleTypes=@('NewPlus');          RunnerDlls=@('WinUI3Apps/PowerToys.NewPlus.ShellExtension.dll'); FilterPatterns=@('PowerToys.NewPlus*','NewPlus*'); WixGroups=@('NewPlusComponentGroup','NewPlusTemplatesComponentGroup'); NeedsMonaco=$false; Buildable=$true }
     'PowerDisplay'        = @{ ModuleTypes=@('PowerDisplay');     RunnerDlls=@('PowerToys.PowerDisplayModuleInterface.dll'); FilterPatterns=@('PowerToys.PowerDisplay.dll','PowerToys.PowerDisplay.exe','PowerToys.PowerDisplay.pdb','PowerToys.PowerDisplayModuleInterface*'); WixGroups=@('PowerDisplayComponentGroup'); NeedsMonaco=$false; Buildable=$true; Note='PowerDisplay.Models.dll bleibt immer (Settings-Abhaengigkeit).' }
     'LightSwitch'         = @{ ModuleTypes=@('LightSwitch');      RunnerDlls=@('PowerToys.LightSwitchModuleInterface.dll'); FilterPatterns=@('PowerToys.LightSwitch*'); WixGroups=@('LightSwitchComponentGroup'); NeedsMonaco=$false; Buildable=$true }
     'FileExplorerPreview' = @{ ModuleTypes=@();                   RunnerDlls=@('PowerToys.powerpreview.dll'); FilterPatterns=@('PowerToys.powerpreview*','PowerToys.Markdown*','PowerToys.Svg*','PowerToys.Pdf*','PowerToys.Gcode*','PowerToys.Bgcode*','PowerToys.Qoi*','PowerToys.Stl*','PowerToys.MonacoPreviewHandler*'); WixGroups=@('FileExplorerPreviewComponentGroup'); NeedsMonaco=$true; Buildable=$true; Note='Datei-Explorer-Vorschauhandler. Achtung: liefert auch die Monaco-Assets, die Peek braucht.' }
 
-    # ---- Nicht in dieser Umgebung baubar / nicht unterstuetzt ----
-    'CmdPal'              = @{ ModuleTypes=@('CmdPal');           RunnerDlls=@('PowerToys.CmdPalModuleInterface.dll'); FilterPatterns=@('PowerToys.CmdPal*','Microsoft.CmdPal*','Microsoft.CommandPalette*'); WixGroups=@('CmdPalComponentGroup'); NeedsMonaco=$false; Buildable=$false; Note='Command Palette: AOT-Build scheitert mit VS 2022 (braucht VS 2026).' }
-    'ZoomIt'              = @{ ModuleTypes=@('ZoomIt');           RunnerDlls=@('PowerToys.ZoomItModuleInterface.dll'); FilterPatterns=@('PowerToys.ZoomItModuleInterface*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$false; Note='ZoomIt: Plattform-Toolset v145 noetig (VS 2026). ZoomItSettingsInterop.dll bleibt immer (Settings-Abhaengigkeit).' }
-    'Run'                 = @{ ModuleTypes=@('PowerLauncher');    RunnerDlls=@('PowerToys.Launcher.dll'); FilterPatterns=@('PowerToys.PowerLauncher*','PowerToys.Launcher*','Wox.*'); WixGroups=@('RunComponentGroup'); NeedsMonaco=$false; Buildable=$false; Note='PowerToys Run: tiefe Kopplung an Resources.wxs/RunPlugins; im minimierten Setup derzeit nicht unterstuetzt.' }
+    # ---- Noch nicht in die Minimal-Pipeline integriert ----
+    'CmdPal'              = @{ ModuleTypes=@('CmdPal');           RunnerDlls=@('PowerToys.CmdPalModuleInterface.dll'); FilterPatterns=@('PowerToys.CmdPal*','Microsoft.CmdPal*','Microsoft.CommandPalette*','CmdPal*'); WixGroups=@('CmdPalComponentGroup'); NeedsMonaco=$false; Buildable=$false; Note='Command Palette: MSIX/AOT-Paketierung ist noch nicht in die Minimal-Pipeline integriert.' }
+    'ZoomIt'              = @{ ModuleTypes=@('ZoomIt');           RunnerDlls=@('PowerToys.ZoomItModuleInterface.dll'); FilterPatterns=@('PowerToys.ZoomIt*','ZoomIt*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$false; Note='ZoomIt: Build-/Paketierungspfad ist noch nicht in die Minimal-Pipeline integriert. ZoomItSettingsInterop.dll bleibt immer (Settings-Abhaengigkeit).' }
+    'Run'                 = @{ ModuleTypes=@('PowerLauncher');    RunnerDlls=@('PowerToys.Launcher.dll'); FilterPatterns=@('PowerToys.PowerLauncher*','PowerToys.Launcher*','PowerLauncher*','Wox.*'); WixGroups=@('RunComponentGroup'); NeedsMonaco=$false; Buildable=$false; Note='PowerToys Run: tiefe Kopplung an Resources.wxs/RunPlugins; im minimierten Setup derzeit nicht unterstuetzt.' }
+}
+
+# Rekursiv zu entfernende Ausgabeordner. Exakte Namen; gemeinsam benoetigte
+# Verzeichnisse (etwa Monaco fuer Peek) stehen bewusst nicht hier.
+$ModuleFilterDirectories = @{
+    'FancyZones'=@('FancyZones','FancyZonesXAML')
+    'AlwaysOnTop'=@('AlwaysOnTop','AlwaysOnTopXAML')
+    'CropAndLock'=@('CropAndLock','CropAndLockXAML')
+    'TextExtractor'=@('PowerOCR','PowerOCRXAML')
+    'QuickAccent'=@('PowerAccent','PowerAccentXAML')
+    'ScreenRuler'=@('MeasureTool','MeasureToolXAML')
+    'GrabAndMove'=@('GrabAndMove','CursorWrap')
+    'MouseUtils'=@('FindMyMouse','MouseHighlighter','MouseJump','MousePointerCrosshairs')
+    'Workspaces'=@('Workspaces','WorkspacesXAML')
+    'ImageResizer'=@('ImageResizer','ImageResizerXAML')
+    'FileLocksmith'=@('FileLocksmith','FileLocksmithXAML')
+    'PowerRename'=@('PowerRename','PowerRenameXAML')
+    'Peek'=@('Peek','PeekXAML','Peek.FilePreviewer')
+    'ColorPicker'=@('ColorPicker','ColorPickerXAML')
+    'Awake'=@('Awake','AwakeXAML')
+    'Hosts'=@('Hosts','HostsXAML','PowerToys.HostsUILib')
+    'KeyboardManager'=@('KeyboardManager','KeyboardManagerEditor','KeyboardManagerEditorXAML')
+    'EnvironmentVariables'=@('EnvironmentVariables','EnvironmentVariablesXAML','PowerToys.EnvironmentVariablesUILib')
+    'RegistryPreview'=@('RegistryPreview','RegistryPreviewXAML','PowerToys.RegistryPreviewUILib')
+    'ShortcutGuide'=@('ShortcutGuide','ShortcutGuideXAML')
+    'MouseWithoutBorders'=@('MouseWithoutBorders','MouseWithoutBordersXAML')
+    'AdvancedPaste'=@('AdvancedPaste','AdvancedPasteXAML')
+    'NewPlus'=@('NewPlus','NewPlusXAML')
+    'PowerDisplay'=@('PowerDisplay','PowerDisplayXAML')
+    'LightSwitch'=@('LightSwitch','LightSwitchXAML')
+    'CmdPal'=@('CmdPal','CmdPalExtensions')
+    'ZoomIt'=@('ZoomIt','ZoomItXAML')
+    'Run'=@('RunPlugins','PowerLauncher','PowerLauncherXAML')
 }
 
 # Dateien, die NIE geloescht werden, obwohl sie zu einem (evtl. abgewaehlten) Modul passen -
