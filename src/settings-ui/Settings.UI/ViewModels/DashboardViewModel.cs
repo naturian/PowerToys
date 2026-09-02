@@ -49,6 +49,35 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
         private readonly QuickAccessViewModel _quickAccessViewModel;
 
+        // MINIMIERTER BUILD: nur die ausgewaehlten Module sind installiert und werden auf der Startseite
+        // (Dashboard) angezeigt. Alle anderen Module sind nicht paketiert.
+        // Inhalt zwischen den GENERATED-Markern wird aus selected-modules.txt erzeugt
+        // (Configure-Modules.ps1) - NICHT von Hand editieren.
+        private static readonly HashSet<ModuleType> InstalledModules = new HashSet<ModuleType>
+        {
+            // BEGIN_GENERATED_MODULES
+            ModuleType.AdvancedPaste,
+            ModuleType.AltWindowCycle,
+            ModuleType.AlwaysOnTop,
+            ModuleType.ColorPicker,
+            ModuleType.CropAndLock,
+            ModuleType.CursorWrap,
+            ModuleType.FancyZones,
+            ModuleType.FileLocksmith,
+            ModuleType.FindMyMouse,
+            ModuleType.ImageResizer,
+            ModuleType.MeasureTool,
+            ModuleType.MouseHighlighter,
+            ModuleType.MouseJump,
+            ModuleType.MousePointerCrosshairs,
+            ModuleType.Peek,
+            ModuleType.PowerDisplay,
+            ModuleType.PowerOCR,
+            ModuleType.PowerRename,
+            ModuleType.Workspaces,
+            // END_GENERATED_MODULES
+        };
+
         // Master list of module items that is sorted and projected into AllModules.
         private List<DashboardListItem> _moduleItems = new List<DashboardListItem>();
 
@@ -211,6 +240,12 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
             foreach (ModuleType moduleType in Enum.GetValues<ModuleType>())
             {
                 if (moduleType == ModuleType.GeneralSettings)
+                {
+                    continue;
+                }
+
+                // MINIMIERTER BUILD: nur die tatsaechlich installierten Module auf der Startseite anzeigen.
+                if (!InstalledModules.Contains(moduleType))
                 {
                     continue;
                 }

@@ -110,9 +110,37 @@ namespace Microsoft.PowerToys.Settings.UI.Views
         /// Initializes a new instance of the <see cref="ShellPage"/> class.
         /// Shell page constructor.
         /// </summary>
+        // MINIMIERTER BUILD: Nav-Eintraege nicht installierter Module ausblenden.
+        private void HideUninstalledModules()
+        {
+            var toHide = new[]
+            {
+                AwakeNavigationItem, CmdPalNavigationItem,
+                LightSwitchNavigationItem, PowerLauncherNavigationItem, ShortcutGuideNavigationItem,
+                ZoomItNavigationItem, GrabAndMoveNavigationItem,
+                KeyboardManagerNavigationItem, MouseWithoutBordersNavigationItem, QuickAccentNavigationItem,
+                PowerPreviewNavigationItem,
+                NewPlusNavigationItem, AdvancedNavigationItem,
+            };
+
+            foreach (var item in toHide)
+            {
+                if (item != null)
+                {
+                    item.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
         public ShellPage()
         {
             InitializeComponent();
+
+            // MINIMIERTER BUILD: Navigationseintraege nicht installierter Module ausblenden
+            // (Geister-Seiten). Wird per Code gemacht (nicht in XAML), damit die kompilierte
+            // XAML/PRI identisch zur offiziellen bleibt und die deutsche PRI ueberlagert werden kann.
+            HideUninstalledModules();
+
             SetWindowTitle();
             var settingsUtils = SettingsUtils.Default;
             var generalSettingsRepository = SettingsRepository<GeneralSettings>.GetInstance(settingsUtils);

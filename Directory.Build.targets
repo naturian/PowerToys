@@ -101,9 +101,23 @@
     <Lib Remove="@(Lib)" />
     <ProjectReference Remove="@(ProjectReference)" />
     <None Remove="@(None)" />
+    <CopyFileToFolders Remove="@(CopyFileToFolders)" />
     <ResourceCompile Remove="@(ResourceCompile)" />
     <Midl Remove="@(Midl)" />
   </ItemGroup>
+
+  <!-- Item removal alone does not suppress VC pre/post-build events. -->
+  <ItemDefinitionGroup Condition="'$(_IsSkippedTestProject)' == 'true' and '$(MSBuildProjectExtension)' == '.vcxproj'">
+    <PreBuildEvent>
+      <Command />
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command />
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command />
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
 
   <!-- Note: For C++ skipped test projects, build is effectively skipped by removing all compile items above.
        We don't define empty Build/Rebuild/Clean targets here because MSBuild Target definitions with Condition

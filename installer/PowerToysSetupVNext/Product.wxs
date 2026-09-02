@@ -40,37 +40,34 @@
     <Property Id="ARPPRODUCTICON" Value="powertoys.exe" />
 
     <Feature Id="CoreFeature" Title="PowerToys" AllowAdvertise="no" TypicalDefault="install" Description="Contains all PowerToys features." AllowAbsent="no">
+      <!-- === MINIMIERTER, KONFIGURIERBARER BUILD ===
+           Infrastruktur ist immer dabei. Die modulspezifischen Gruppen zwischen den GENERATED-
+           Markern erzeugt Configure-Modules.ps1 aus selected-modules.txt - NICHT von Hand editieren.
+           Module ohne eigene Gruppe (FancyZones, AlwaysOnTop, CropAndLock, TextExtractor, MouseUtils,
+           QuickAccent, ScreenRuler, GrabAndMove, WindowHopper) kommen aus dem Catch-all; ihre Binaries steuert der
+           Filter. ResourcesComponentGroup (Lokalisierung) ist entfernt (nur interne Loc-Pipeline). -->
+      <!-- Infrastruktur (immer noetig) -->
       <ComponentGroupRef Id="CoreComponents" />
       <ComponentGroupRef Id="BaseApplicationsComponentGroup" />
       <ComponentGroupRef Id="WinUI3ApplicationsComponentGroup" />
-      <ComponentGroupRef Id="AwakeComponentGroup" />
-      <ComponentGroupRef Id="ColorPickerComponentGroup" />
-      <ComponentGroupRef Id="FileExplorerPreviewComponentGroup" />
-      <ComponentGroupRef Id="FileLocksmithComponentGroup" />
-      <ComponentGroupRef Id="HostsComponentGroup" />
-      <ComponentGroupRef Id="ImageResizerComponentGroup" />
-      <ComponentGroupRef Id="KeyboardManagerComponentGroup" />
-      <ComponentGroupRef Id="LightSwitchComponentGroup" />
-      <ComponentGroupRef Id="PeekComponentGroup" />
-      <ComponentGroupRef Id="PowerRenameComponentGroup" />
-      <ComponentGroupRef Id="PowerDisplayComponentGroup" />
-      <ComponentGroupRef Id="RegistryPreviewComponentGroup" />
-      <ComponentGroupRef Id="RunComponentGroup" />
       <ComponentGroupRef Id="SettingsComponentGroup" />
-      <ComponentGroupRef Id="ShortcutGuideComponentGroup" />
-      <ComponentGroupRef Id="MouseWithoutBordersComponentGroup" />
-      <ComponentGroupRef Id="EnvironmentVariablesComponentGroup" />
-      <ComponentGroupRef Id="AdvancedPasteComponentGroup" />
-      <ComponentGroupRef Id="NewPlusComponentGroup" />
-      <ComponentGroupRef Id="NewPlusTemplatesComponentGroup" />
-      <ComponentGroupRef Id="ResourcesComponentGroup" />
       <ComponentGroupRef Id="DscResourcesComponentGroup" />
       <ComponentGroupRef Id="WindowsAppSDKComponentGroup" />
       <ComponentGroupRef Id="ToolComponentGroup" />
       <ComponentGroupRef Id="CliShimsComponentGroup" />
+      <!-- Modulspezifische + Monaco-Gruppen (generiert): -->
+      <!-- BEGIN_GENERATED_MODULES -->
+      <ComponentGroupRef Id="FileExplorerPreviewComponentGroup" />
       <ComponentGroupRef Id="MonacoSRCHeatGenerated" />
       <ComponentGroupRef Id="WorkspacesComponentGroup" />
-      <ComponentGroupRef Id="CmdPalComponentGroup" />
+      <ComponentGroupRef Id="ImageResizerComponentGroup" />
+      <ComponentGroupRef Id="FileLocksmithComponentGroup" />
+      <ComponentGroupRef Id="PowerRenameComponentGroup" />
+      <ComponentGroupRef Id="PeekComponentGroup" />
+      <ComponentGroupRef Id="ColorPickerComponentGroup" />
+      <ComponentGroupRef Id="PowerDisplayComponentGroup" />
+      <ComponentGroupRef Id="AdvancedPasteComponentGroup" />
+      <!-- END_GENERATED_MODULES -->
     </Feature>
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLFOLDER]" After="CostFinalize" Sequence="execute" />

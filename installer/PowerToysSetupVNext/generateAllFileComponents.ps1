@@ -4,6 +4,25 @@ Param(
     [string]$platform
 )
 
+$installerProjectPath = Join-Path $PSScriptRoot 'PowerToysInstallerVNext.wixproj'
+$installerProject = [xml](Get-Content -LiteralPath $installerProjectPath -Raw)
+$compiledWixSources = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+
+foreach ($compileItem in @($installerProject.Project.ItemGroup.Compile)) {
+    if ($compileItem.Include) {
+        [void]$compiledWixSources.Add([System.IO.Path]::GetFileName([string]$compileItem.Include))
+    }
+}
+
+Function Test-WixSourceIncluded() {
+    Param(
+        [Parameter(Mandatory = $True, Position = 1)]
+        [string]$wxsFilePath
+    )
+
+    return $compiledWixSources.Contains([System.IO.Path]::GetFileName($wxsFilePath))
+}
+
 Function Generate-FileList() {
     [CmdletBinding()]
     Param(
@@ -24,6 +43,9 @@ Function Generate-FileList() {
         [bool]$isLauncherPlugin
     )
 
+    # A minimal installer compiles only the selected WiX sources. Do not harvest files for
+    # excluded modules: their build output has already been removed by the module filter.
+    if (-not (Test-WixSourceIncluded $wxsFilePath)) { return }
     $fileWxs = Get-Content $wxsFilePath;
 
     $fileExclusionList = @("*.pdb", "*.lastcodeanalysissucceeded", "createdump.exe", "powertoys.exe")
@@ -70,6 +92,10 @@ Function Generate-FileList() {
         }
     }
 
+    if (-not $fileDepsRoot -or -not (Test-Path -LiteralPath $fileDepsRoot)) {
+        return
+    }
+
     $fileExclusionList = $fileExclusionList | Where-Object {$_ -notin $dllsToIgnore}
 
     if ($isLauncherPlugin -eq $True) {
@@ -93,6 +119,7 @@ Function Generate-FileComponents() {
         [string]$wxsFilePath
     )
 
+    if (-not (Test-WixSourceIncluded $wxsFilePath)) { return }
     $wxsFile = Get-Content $wxsFilePath;
 
     $wxsFile | ForEach-Object {
@@ -414,15 +441,17 @@ Generate-FileComponents -fileListName "ValueGeneratorImagesCmpFiles" -wxsFilePat
 # may not run reliably under -graph mode in solution builds).
 $sgManifestsSrc = "$PSScriptRoot..\..\..\src\modules\ShortcutGuide\ShortcutGuide.Ui\Assets\ShortcutGuide\Manifests"
 $sgManifestsDst = "$PSScriptRoot..\..\..\$platform\Release\WinUI3Apps\Assets\ShortcutGuide\Manifests"
-Write-Host "ShortcutGuide manifests: src=$sgManifestsSrc exists=$(Test-Path $sgManifestsSrc)"
-Write-Host "ShortcutGuide manifests: dst=$sgManifestsDst exists=$(Test-Path $sgManifestsDst)"
-if (Test-Path $sgManifestsSrc) {
-    New-Item -Path $sgManifestsDst -ItemType Directory -Force | Out-Null
-    Copy-Item "$sgManifestsSrc\*.yml" -Destination $sgManifestsDst -Force
-    $copied = (Get-ChildItem "$sgManifestsDst\*.yml" -ErrorAction SilentlyContinue).Count
-    Write-Host "ShortcutGuide manifests: copied $copied yml files to build output"
-} else {
-    Write-Host "WARNING: ShortcutGuide manifest source not found at $sgManifestsSrc"
+if (Test-WixSourceIncluded (Join-Path $PSScriptRoot 'ShortcutGuide.wxs')) {
+    Write-Host "ShortcutGuide manifests: src=$sgManifestsSrc exists=$(Test-Path $sgManifestsSrc)"
+    Write-Host "ShortcutGuide manifests: dst=$sgManifestsDst exists=$(Test-Path $sgManifestsDst)"
+    if (Test-Path $sgManifestsSrc) {
+        New-Item -Path $sgManifestsDst -ItemType Directory -Force | Out-Null
+        Copy-Item "$sgManifestsSrc\*.yml" -Destination $sgManifestsDst -Force
+        $copied = (Get-ChildItem "$sgManifestsDst\*.yml" -ErrorAction SilentlyContinue).Count
+        Write-Host "ShortcutGuide manifests: copied $copied yml files to build output"
+    } else {
+        Write-Host "WARNING: ShortcutGuide manifest source not found at $sgManifestsSrc"
+    }
 }
 Generate-FileList -fileDepsJson "" -fileListName ShortcutGuideAssetsFiles -wxsFilePath $PSScriptRoot\ShortcutGuide.wxs -depsPath "$PSScriptRoot..\..\..\$platform\Release\WinUI3Apps\Assets\ShortcutGuide\"
 Generate-FileComponents -fileListName "ShortcutGuideAssetsFiles" -wxsFilePath $PSScriptRoot\ShortcutGuide.wxs

@@ -253,42 +253,31 @@ int runner(bool isProcessElevated, bool openSettings, std::string settingsWindow
 
         // Load PowerToys DLLs
 
+        // MINIMIERTER BUILD: nur die ausgewaehlten Module. Der Inhalt zwischen den GENERATED-
+        // Markern wird aus selected-modules.txt erzeugt (Configure-Modules.ps1) - NICHT von Hand
+        // editieren. Sonst wuerde der Runner nicht paketierte DLLs laden -> "DLL fehlt"-Fehler.
         std::vector<std::wstring_view> knownModules = {
+            // BEGIN_GENERATED_MODULES
             L"PowerToys.FancyZonesModuleInterface.dll",
-            L"PowerToys.powerpreview.dll",
+            L"PowerToys.AlwaysOnTopModuleInterface.dll",
+            L"PowerToys.CropAndLockModuleInterface.dll",
+            L"PowerToys.PowerOCRModuleInterface.dll",
+            L"PowerToys.WorkspacesModuleInterface.dll",
             L"WinUI3Apps/PowerToys.ImageResizerExt.dll",
-            L"PowerToys.KeyboardManager.dll",
-            L"PowerToys.Launcher.dll",
+            L"WinUI3Apps/PowerToys.FileLocksmithExt.dll",
             L"WinUI3Apps/PowerToys.PowerRenameExt.dll",
-            L"WinUI3Apps/PowerToys.ShortcutGuideModuleInterface.dll",
+            L"WinUI3Apps/PowerToys.Peek.dll",
             L"PowerToys.ColorPicker.dll",
-            L"PowerToys.AwakeModuleInterface.dll",
+            L"WinUI3Apps/PowerToys.MeasureToolModuleInterface.dll",
+            L"PowerToys.PowerDisplayModuleInterface.dll",
+            L"PowerToys.CursorWrap.dll",
             L"PowerToys.FindMyMouse.dll",
             L"PowerToys.MouseHighlighter.dll",
             L"WinUI3Apps/PowerToys.MouseJump.dll",
-            L"PowerToys.AlwaysOnTopModuleInterface.dll",
             L"PowerToys.MousePointerCrosshairs.dll",
-            L"PowerToys.CursorWrap.dll",
-            L"PowerToys.PowerAccentModuleInterface.dll",
-            L"PowerToys.PowerOCRModuleInterface.dll",
-            L"PowerToys.AdvancedPasteModuleInterface.dll",
-            L"WinUI3Apps/PowerToys.FileLocksmithExt.dll",
-            L"WinUI3Apps/PowerToys.RegistryPreviewExt.dll",
-            L"WinUI3Apps/PowerToys.MeasureToolModuleInterface.dll",
-            L"WinUI3Apps/PowerToys.NewPlus.ShellExtension.dll",
-            L"WinUI3Apps/PowerToys.HostsModuleInterface.dll",
-            L"WinUI3Apps/PowerToys.Peek.dll",
-            L"WinUI3Apps/PowerToys.EnvironmentVariablesModuleInterface.dll",
-            L"PowerToys.MouseWithoutBordersModuleInterface.dll",
-            L"PowerToys.CropAndLockModuleInterface.dll",
-            L"PowerToys.CmdNotFoundModuleInterface.dll",
-            L"PowerToys.WorkspacesModuleInterface.dll",
-            L"PowerToys.CmdPalModuleInterface.dll",
-            L"PowerToys.ZoomItModuleInterface.dll",
-            L"PowerToys.LightSwitchModuleInterface.dll",
-            L"PowerToys.PowerDisplayModuleInterface.dll",
-            L"PowerToys.GrabAndMoveModuleInterface.dll",
             L"PowerToys.AltWindowCycle.dll",
+            L"PowerToys.AdvancedPasteModuleInterface.dll",
+            // END_GENERATED_MODULES
         };
 
         for (auto moduleSubdir : knownModules)
@@ -302,7 +291,7 @@ int runner(bool isProcessElevated, bool openSettings, std::string settingsWindow
             {
                 std::wstring errorMessage = POWER_TOYS_MODULE_LOAD_FAIL;
                 errorMessage += moduleSubdir;
-                
+
 #ifdef _DEBUG
                 // In debug mode, simply log the warning and continue execution.
                 // This contrasts with the past approach where developers had to build all modules

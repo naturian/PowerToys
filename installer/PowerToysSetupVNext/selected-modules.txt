@@ -1,0 +1,28 @@
+# === Ausgewaehlte PowerToys-Module fuer den minimierten Installer ===
+# Eine Zeile pro Modul (Schluessel aus Modules-Database.ps1). # = Kommentar.
+# Nach dem Aendern:  tools\build\build-minimal-installer.ps1  ausfuehren.
+#
+# Von der Minimal-Pipeline unterstuetzte Schluessel:
+#   FancyZones, AlwaysOnTop, CropAndLock, TextExtractor, QuickAccent, ScreenRuler,
+#   GrabAndMove, MouseUtils, WindowHopper, Workspaces, ImageResizer, FileLocksmith, PowerRename, Peek,
+#   ColorPicker, Awake, Hosts, KeyboardManager, EnvironmentVariables, RegistryPreview,
+#   ShortcutGuide, MouseWithoutBorders, AdvancedPaste, NewPlus, PowerDisplay, LightSwitch,
+#   FileExplorerPreview
+#
+# Noch nicht von der Minimal-Pipeline unterstuetzt: CmdPal, CmdNotFound, ZoomIt, Run
+
+FancyZones
+AlwaysOnTop
+CropAndLock
+TextExtractor
+Workspaces
+ImageResizer
+FileLocksmith
+PowerRename
+Peek
+ColorPicker
+ScreenRuler
+PowerDisplay
+MouseUtils
+WindowHopper
+AdvancedPaste
