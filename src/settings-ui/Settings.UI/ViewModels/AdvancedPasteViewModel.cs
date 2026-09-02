@@ -245,15 +245,7 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
                 RemoveLegacyOpenAICredential();
             }
 
-            const bool shouldEnableAI = true;
-            bool enabledChanged = false;
-            if (properties.IsAIEnabled != shouldEnableAI)
-            {
-                properties.IsAIEnabled = shouldEnableAI;
-                enabledChanged = true;
-            }
-
-            bool shouldPersist = configurationUpdated || enabledChanged || legacyAdvancedAIConsumed;
+            bool shouldPersist = configurationUpdated || legacyAdvancedAIConsumed;
 
             if (shouldPersist)
             {
@@ -262,11 +254,6 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
                 if (configurationUpdated)
                 {
                     OnPropertyChanged(nameof(PasteAIConfiguration));
-                }
-
-                if (enabledChanged)
-                {
-                    OnPropertyChanged(nameof(IsAIEnabled));
                 }
             }
         }
@@ -870,23 +857,7 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
         {
             try
             {
-                bool stateChanged = false;
-
-                if (_advancedPasteSettings.Properties.IsAIEnabled)
-                {
-                    _advancedPasteSettings.Properties.IsAIEnabled = false;
-                    stateChanged = true;
-                }
-
-                if (stateChanged)
-                {
-                    SaveAndNotifySettings();
-                }
-                else
-                {
-                    NotifySettingsChanged();
-                }
-
+                NotifySettingsChanged();
                 OnPropertyChanged(nameof(IsAIEnabled));
             }
             catch (Exception)
@@ -896,35 +867,7 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
         internal void EnableAI()
         {
-            try
-            {
-                if (IsOnlineAIModelsDisallowedByGPO)
-                {
-                    return;
-                }
-
-                bool stateChanged = false;
-
-                if (!_advancedPasteSettings.Properties.IsAIEnabled)
-                {
-                    _advancedPasteSettings.Properties.IsAIEnabled = true;
-                    stateChanged = true;
-                }
-
-                if (stateChanged)
-                {
-                    SaveAndNotifySettings();
-                }
-                else
-                {
-                    NotifySettingsChanged();
-                }
-
-                OnPropertyChanged(nameof(IsAIEnabled));
-            }
-            catch (Exception)
-            {
-            }
+            OnPropertyChanged(nameof(IsAIEnabled));
         }
 
         internal void SavePasteAIApiKey(string providerId, string serviceType, string apiKey)
@@ -1278,12 +1221,6 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
             if (target is null || source is null)
             {
                 return;
-            }
-
-            if (target.IsAIEnabled != source.IsAIEnabled)
-            {
-                target.IsAIEnabled = source.IsAIEnabled;
-                OnPropertyChanged(nameof(IsAIEnabled));
             }
 
             if (target.ShowCustomPreview != source.ShowCustomPreview)

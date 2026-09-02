@@ -234,15 +234,7 @@ namespace AdvancedPaste.Settings
                 RemoveLegacyOpenAICredential();
             }
 
-            const bool shouldEnableAI = true;
-            bool enabledUpdated = false;
-            if (properties.IsAIEnabled != shouldEnableAI)
-            {
-                properties.IsAIEnabled = shouldEnableAI;
-                enabledUpdated = true;
-            }
-
-            return configurationUpdated || enabledUpdated || legacyAdvancedAIConsumed;
+            return configurationUpdated || legacyAdvancedAIConsumed;
         }
 
         private static PasswordCredential TryGetLegacyOpenAICredential()

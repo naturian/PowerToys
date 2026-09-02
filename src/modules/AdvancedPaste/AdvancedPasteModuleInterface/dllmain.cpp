@@ -58,8 +58,6 @@ namespace
     const wchar_t JSON_KEY_ADVANCED_PASTE_UI_HOTKEY[] = L"advanced-paste-ui-hotkey";
     const wchar_t JSON_KEY_PASTE_AS_MARKDOWN_HOTKEY[] = L"paste-as-markdown-hotkey";
     const wchar_t JSON_KEY_PASTE_AS_JSON_HOTKEY[] = L"paste-as-json-hotkey";
-    const wchar_t JSON_KEY_IS_AI_ENABLED[] = L"IsAIEnabled";
-    const wchar_t JSON_KEY_IS_OPEN_AI_ENABLED[] = L"IsOpenAIEnabled";
     const wchar_t JSON_KEY_SHOW_CUSTOM_PREVIEW[] = L"ShowCustomPreview";
     const wchar_t JSON_KEY_AUTO_COPY_SELECTION_CUSTOM_ACTION[] = L"AutoCopySelectionForCustomActionHotkey";
     const wchar_t JSON_KEY_PASTE_AI_CONFIGURATION[] = L"paste-ai-configuration";
@@ -103,7 +101,6 @@ private:
     using CustomAction = ActionData<int>;
     std::vector<CustomAction> m_custom_actions;
 
-    bool m_is_ai_enabled = false;
     bool m_is_advanced_ai_enabled = false;
     bool m_preview_custom_format_output = true;
     bool m_auto_copy_selection_custom_action = false;
@@ -161,9 +158,8 @@ private:
 
     bool is_ai_enabled()
     {
-        return gpo_policy_enabled_configuration() != powertoys_gpo::gpo_rule_configured_disabled &&
-               powertoys_gpo::getAllowedAdvancedPasteOnlineAIModelsValue() != powertoys_gpo::gpo_rule_configured_disabled &&
-               m_is_ai_enabled;
+        // Paste with AI is intentionally locked off in this build.
+        return false;
     }
 
     static std::wstring kebab_to_pascal_case(const std::wstring& kebab_str)
@@ -350,19 +346,6 @@ private:
             const auto propertiesObject = settingsObject.GetNamedObject(JSON_KEY_PROPERTIES);
 
             m_is_advanced_ai_enabled = has_advanced_ai_provider(propertiesObject);
-
-            if (propertiesObject.HasKey(JSON_KEY_IS_AI_ENABLED))
-            {
-                m_is_ai_enabled = propertiesObject.GetNamedObject(JSON_KEY_IS_AI_ENABLED).GetNamedBoolean(JSON_KEY_VALUE, false);
-            }
-            else if (propertiesObject.HasKey(JSON_KEY_IS_OPEN_AI_ENABLED))
-            {
-                m_is_ai_enabled = propertiesObject.GetNamedObject(JSON_KEY_IS_OPEN_AI_ENABLED).GetNamedBoolean(JSON_KEY_VALUE, false);
-            }
-            else
-            {
-                m_is_ai_enabled = false;
-            }
 
             if (propertiesObject.HasKey(JSON_KEY_SHOW_CUSTOM_PREVIEW))
             {

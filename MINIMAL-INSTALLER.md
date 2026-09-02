@@ -29,8 +29,8 @@ Der erzeugte MSI enthält diese 16 Modulgruppen:
 Pointer Crosshairs. Nicht ausgewählte Module werden vor dem WiX-Harvest aus dem Build-Output
 entfernt und nicht installiert.
 
-In Erweitertes Einfügen ist „Paste with AI“ bei neuen Einstellungen zunächst deaktiviert.
-Bereits vorhandene Nutzerkonfigurationen werden nicht überschrieben.
+In Erweitertes Einfügen ist „Paste with AI“ dauerhaft gesperrt.
+Auch bestehende oder manuell geänderte Einstellungen können die Funktion nicht aktivieren.
 
 ## Modulauswahl
 

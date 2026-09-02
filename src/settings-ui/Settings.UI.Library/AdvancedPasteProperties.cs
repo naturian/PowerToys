@@ -24,7 +24,6 @@ namespace Microsoft.PowerToys.Settings.UI.Library
             PasteAsJsonShortcut = new();
             CustomActions = new();
             AdditionalActions = new();
-            IsAIEnabled = false;
             ShowCustomPreview = true;
             ShowAIPaste = true;
             CloseAfterLosingFocus = false;
@@ -33,8 +32,9 @@ namespace Microsoft.PowerToys.Settings.UI.Library
             PasteAIConfiguration = new();
         }
 
+        // Paste with AI is intentionally locked off in this build. Keeping the property preserves JSON compatibility.
         [JsonConverter(typeof(BoolPropertyJsonConverter))]
-        public bool IsAIEnabled { get; set; }
+        public bool IsAIEnabled => false;
 
         private bool? _legacyAdvancedAIEnabled;
 
