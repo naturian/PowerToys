@@ -23,6 +23,7 @@ Peek
 ColorPicker
 ScreenRuler
 PowerDisplay
+LightSwitch
 MouseUtils
 WindowHopper
 AdvancedPaste

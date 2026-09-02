@@ -116,7 +116,7 @@ namespace Microsoft.PowerToys.Settings.UI.Views
             var toHide = new[]
             {
                 AwakeNavigationItem, CmdPalNavigationItem,
-                LightSwitchNavigationItem, PowerLauncherNavigationItem, ShortcutGuideNavigationItem,
+                PowerLauncherNavigationItem, ShortcutGuideNavigationItem,
                 ZoomItNavigationItem, GrabAndMoveNavigationItem,
                 KeyboardManagerNavigationItem, MouseWithoutBordersNavigationItem, QuickAccentNavigationItem,
                 PowerPreviewNavigationItem,

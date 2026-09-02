@@ -4,7 +4,7 @@ Dieser Branch basiert direkt auf dem aktuellen `origin/main` von Microsoft Power
 Versionierung bleibt unverändert aus `src/Version.props`; die Minimal-Pipeline setzt keine
 künstliche Release-Version.
 
-Der erzeugte MSI enthält diese 15 Modulgruppen:
+Der erzeugte MSI enthält diese 16 Modulgruppen:
 
 | Modul | Interner Schlüssel |
 |---|---|
@@ -20,6 +20,7 @@ Der erzeugte MSI enthält diese 15 Modulgruppen:
 | Farbauswahl | `ColorPicker` |
 | Bildschirmlineal | `ScreenRuler` / `MeasureTool` |
 | Bildschirmsteuerung | `PowerDisplay` |
+| Automatischer Hell-/Dunkelmodus | `LightSwitch` |
 | Mausdienstprogramme | `MouseUtils` |
 | Window Hopper | `WindowHopper` / `AltWindowCycle` |
 | Erweitertes Einfügen | `AdvancedPaste` |
@@ -27,6 +28,9 @@ Der erzeugte MSI enthält diese 15 Modulgruppen:
 `MouseUtils` umfasst Cursor Wrap, Find My Mouse, Mouse Highlighter, Mouse Jump und Mouse
 Pointer Crosshairs. Nicht ausgewählte Module werden vor dem WiX-Harvest aus dem Build-Output
 entfernt und nicht installiert.
+
+In Erweitertes Einfügen ist „Paste with AI“ bei neuen Einstellungen zunächst deaktiviert.
+Bereits vorhandene Nutzerkonfigurationen werden nicht überschrieben.
 
 ## Modulauswahl
 

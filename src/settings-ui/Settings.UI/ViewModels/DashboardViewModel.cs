@@ -66,6 +66,7 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
             ModuleType.FileLocksmith,
             ModuleType.FindMyMouse,
             ModuleType.ImageResizer,
+            ModuleType.LightSwitch,
             ModuleType.MeasureTool,
             ModuleType.MouseHighlighter,
             ModuleType.MouseJump,
@@ -75,6 +76,7 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
             ModuleType.PowerOCR,
             ModuleType.PowerRename,
             ModuleType.Workspaces,
+
             // END_GENERATED_MODULES
         };
 

@@ -66,6 +66,7 @@
       <ComponentGroupRef Id="PeekComponentGroup" />
       <ComponentGroupRef Id="ColorPickerComponentGroup" />
       <ComponentGroupRef Id="PowerDisplayComponentGroup" />
+      <ComponentGroupRef Id="LightSwitchComponentGroup" />
       <ComponentGroupRef Id="AdvancedPasteComponentGroup" />
       <!-- END_GENERATED_MODULES -->
     </Feature>

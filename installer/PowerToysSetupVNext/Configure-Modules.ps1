@@ -59,7 +59,7 @@ function Set-GeneratedRegion([string]$Path, [string]$Indent, [string[]]$Lines) {
     $end = [regex]::Escape('END_GENERATED_MODULES')
     $pattern = "(?s)(.*?$begin[^\r\n]*\r?\n).*?(\s*[^\r\n]*$end)"
     if ($content -notmatch $pattern) { throw "GENERATED-Marker nicht gefunden in $Path" }
-    $body = ($Lines | ForEach-Object { "$Indent$_" }) -join $newLine
+    $body = ($Lines | ForEach-Object { if ($_ -eq '') { '' } else { "$Indent$_" } }) -join $newLine
     $new = [regex]::Replace($content, $pattern, { param($mm) $mm.Groups[1].Value + $body + $newLine + $mm.Groups[2].Value.TrimStart("`r","`n") }, [Text.RegularExpressions.RegexOptions]::Singleline)
     $encoding = [Text.UTF8Encoding]::new($hasUtf8Bom)
     [IO.File]::WriteAllText($Path, $new, $encoding)
@@ -71,7 +71,7 @@ $runnerLines = $runnerDlls | ForEach-Object { "L`"$_`"," }
 Set-GeneratedRegion (Join-Path $RepoRoot 'src\runner\main.cpp') '            ' $runnerLines
 
 # 2) Dashboard (DashboardViewModel.cs)
-$dashLines = $moduleTypes | Sort-Object | ForEach-Object { "ModuleType.$_," }
+$dashLines = @($moduleTypes | Sort-Object | ForEach-Object { "ModuleType.$_," }) + ''
 Set-GeneratedRegion (Join-Path $RepoRoot 'src\settings-ui\Settings.UI\ViewModels\DashboardViewModel.cs') '            ' $dashLines
 
 # 3) WiX (Product.wxs)

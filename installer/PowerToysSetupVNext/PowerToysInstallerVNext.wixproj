@@ -135,9 +135,10 @@ call powershell.exe -NonInteractive -executionpolicy Unrestricted -File $(MSBuil
     <Compile Include="Peek.wxs" />
     <Compile Include="PowerDisplay.wxs" />
     <Compile Include="PowerRename.wxs" />
+    <Compile Include="LightSwitch.wxs" />
     <Compile Include="Workspaces.wxs" />
     <!-- Nicht gewuenschte Module aus dem Build entfernt: Awake, CmdPal,
-         EnvironmentVariables, Hosts, KeyboardManager, LightSwitch,
+         EnvironmentVariables, Hosts, KeyboardManager,
          MouseWithoutBorders, NewPlus, RegistryPreview, Run, ShortcutGuide.
          (TextExtractor, AlwaysOnTop, CropAndLock, FancyZones haben keine eigene .wxs -
          ihre Binaries kommen aus dem Catch-all BaseApplications/WinUI3Applications.) -->
