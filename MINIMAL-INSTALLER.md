@@ -94,10 +94,22 @@ Monaco-/File-Explorer-Preview-Komponentengruppen.
 
 ## Lokalisierung
 
-Der Quellcode-Build ist standardmäßig Englisch. Das vorhandene
-`apply-german-localization.ps1` kann Ressourcen aus einem offiziellen Paket überlagern. Diese
-Ressourcen müssen binär zur ausgecheckten Quelle passen. Für einen beliebigen `main`-Commit ohne
-passendes offizielles Paket darf kein älteres Release-Overlay verwendet werden.
+Der öffentliche Quellcode enthält standardmäßig nur englische PowerToys-Ressourcen. Für diesen
+Firmen-Build sind vollständige `de-DE`-RESW/RESX-Dateien eingecheckt. Sie wurden mit
+`import-german-localization.ps1` aus dem signierten Microsoft-Build `v0.101.2432.0` extrahiert und
+auf die Ressourcenschlüssel des aktuellen Main-Stands übertragen. Dabei werden ausdrücklich keine
+fremden PRI- oder Satelliten-Binärdateien kopiert; XAML und Assembly-Versionen bleiben konsistent.
+
+Beim Aktualisieren des Main-Stands müssen die deutschen Quellen mit einem möglichst passenden
+offiziellen Paket neu importiert und anschließend geprüft werden:
+
+```powershell
+installer\PowerToysSetupVNext\import-german-localization.ps1 -OfficialRoot <extrahiertes PowerToys-Verzeichnis>
+tools\build\test-minimal-release.ps1
+```
+
+Die Build-Pipeline bricht ab, sobald ein deutscher Schlüssel fehlt. Nach dem Kompilieren prüft sie
+außerdem die tatsächlich erzeugten PRI-Dateien und die WPF-Satellitenassemblies.
 
 ## Wichtige Dateien
 
@@ -105,4 +117,6 @@ passendes offizielles Paket darf kein älteres Release-Overlay verwendet werden.
 - `installer/PowerToysSetupVNext/Modules-Database.ps1` – zentrale Modulmetadaten
 - `installer/PowerToysSetupVNext/Configure-Modules.ps1` – Generator
 - `installer/PowerToysSetupVNext/filter-minimal-modules.ps1` – Output-Filter
+- `installer/PowerToysSetupVNext/import-german-localization.ps1` – sichere Aktualisierung der deutschen Quellen
 - `tools/build/build-minimal-installer.ps1` – Gesamt-Pipeline
+- `tools/build/test-minimal-release.ps1` – Release- und Lokalisierungsregressionen

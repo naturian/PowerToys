@@ -119,11 +119,13 @@ call powershell.exe -NonInteractive -executionpolicy Unrestricted -File $(MSBuil
     <Compile Include="BaseApplications.wxs" />
     <Compile Include="WinUI3Applications.wxs" />
     <Compile Include="Settings.wxs" />
+    <Compile Include="GermanLocalization.wxs" />
     <Compile Include="Tools.wxs" />
     <Compile Include="WinAppSDK.wxs" />
     <Compile Include="DscResources.wxs" />
     <Compile Include="CliShims.wxs" />
-    <!-- Resources.wxs (Lokalisierung) und Run.wxs (PowerToys Run) entfernt - siehe Product.wxs. -->
+    <!-- Resources.wxs (vollstaendige interne Loc-Pipeline) und Run.wxs (PowerToys Run) entfernt.
+         GermanLocalization.wxs paketiert stattdessen die eingecheckten de-DE-Ressourcen. -->
     <!-- Auswahl + benoetigte Monaco-Quellen werden von Configure-Modules.ps1 erzeugt. -->
     <!-- BEGIN_GENERATED_MODULES -->
     <Compile Include="FileExplorerPreview.wxs" />

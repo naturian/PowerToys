@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle.Title" xml:space="preserve">
+    <value>Vorschau</value>
+    <comment>Name of application.</comment>
+  </data>
+  <data name="AppTitle_FileCounts_Text" xml:space="preserve">
+    <value>({0}/{1})</value>
+    <comment>Text for the file count in the title bar. 0: the index of the current file. 1: the total number of files selected.</comment>
+  </data>
+  <data name="LaunchAppButton_OpenWith_Text" xml:space="preserve">
+    <value>Öffnen mit</value>
+    <comment>Text for button to launch the application picker.</comment>
+  </data>
+  <data name="LaunchAppButton_OpenWith_ToolTip" xml:space="preserve">
+    <value>Öffnen mit (Eingabetaste)</value>
+    <comment>Tooltip for button to launch the application picker.</comment>
+  </data>
+  <data name="LaunchAppButton_OpenWithApp_Text" xml:space="preserve">
+    <value>Mit {0} öffnen</value>
+    <comment>Text for button to launch default application. 0: name of the default application.</comment>
+  </data>
+  <data name="LaunchAppButton_OpenWithApp_ToolTip" xml:space="preserve">
+    <value>Öffnen mit {0} (Eingabetaste)</value>
+    <comment>Tooltip for button to launch default application. 0: name of the default application.</comment>
+  </data>
+  <data name="UnsupportedFile_FileType" xml:space="preserve">
+    <value>Dateityp: {0}</value>
+    <comment>File Type label for the unsupported files view. {0} is the type.</comment>
+  </data>
+  <data name="UnsupportedFile_FileSize" xml:space="preserve">
+    <value>Größe: {0}</value>
+    <comment>File Size label for the unsupported files view. {0} is the size.</comment>
+  </data>
+  <data name="UnsupportedFile_FolderContains" xml:space="preserve">
+    <value>Enthält: {0}</value>
+    <comment>Contains label for folder contents. {0} is the formatted folder contents description.</comment>
+  </data>
+  <data name="UnsupportedFile_FolderFileCount_Single" xml:space="preserve">
+    <value>1 Datei</value>
+    <comment>Single file count</comment>
+  </data>
+  <data name="UnsupportedFile_FolderFileCount_Plural" xml:space="preserve">
+    <value>{0:N0} Dateien</value>
+    <comment>{0:N0} is the plural file count.</comment>
+  </data>
+  <data name="UnsupportedFile_FolderDirectoryCount_Single" xml:space="preserve">
+    <value>1 Ordner</value>
+    <comment>Single directory/folder count</comment>
+  </data>
+  <data name="UnsupportedFile_FolderDirectoryCount_Plural" xml:space="preserve">
+    <value>{0:N0} Ordner</value>
+    <comment>{0:N0} is the plural directory/folder count.</comment>
+  </data>
+  <data name="UnsupportedFile_FolderContains_Scanning" xml:space="preserve">
+    <value>Wird gescannt …</value>
+    <comment>Status text shown while folder content enumeration is in progress.</comment>
+  </data>
+  <data name="UnsupportedFile_FolderContains_Incomplete" xml:space="preserve">
+    <value>unvollständig</value>
+    <comment>Short tag appended to folder contents when enumeration encounters an error.</comment>
+  </data>
+  <data name="UnsupportedFile_DateModified" xml:space="preserve">
+    <value>Änderungsdatum: {0}</value>
+    <comment>Date Modified label for the unsupported files view. {0} is the date.</comment>
+  </data>
+  <data name="ReadableString_ByteAbbreviationFormat" xml:space="preserve">
+    <value>Byte</value>
+    <comment>Abbreviation for the size unit byte.</comment>
+  </data>
+  <data name="ReadableString_KiloByteAbbreviationFormat" xml:space="preserve">
+    <value>KB</value>
+    <comment>Abbreviation for the size unit kilobyte.</comment>
+  </data>
+  <data name="ReadableString_MegaByteAbbreviationFormat" xml:space="preserve">
+    <value>MB</value>
+    <comment>Abbreviation for the size unit megabyte.</comment>
+  </data>
+  <data name="ReadableString_GigaByteAbbreviationFormat" xml:space="preserve">
+    <value>GB</value>
+    <comment>Abbreviation for the size unit gigabyte.</comment>
+  </data>
+  <data name="ReadableString_TeraByteAbbreviationFormat" xml:space="preserve">
+    <value>TB</value>
+    <comment>Abbreviation for the size unit terabyte.</comment>
+  </data>
+  <data name="ReadableString_PetaByteAbbreviationFormat" xml:space="preserve">
+    <value>PB</value>
+    <comment>Abbreviation for the size unit petabyte.</comment>
+  </data>
+  <data name="ReadableString_ExaByteAbbreviationFormat" xml:space="preserve">
+    <value>EB</value>
+    <comment>Abbreviation for the size unit exabyte.</comment>
+  </data>
+  <data name="PreviewTooltip_FileName" xml:space="preserve">
+    <value>Dateiname: {0}</value>
+    <comment>Filename for the tooltip of preview. {0} is the name.</comment>
+  </data>
+  <data name="PreviewTooltip_FileType" xml:space="preserve">
+    <value>Elementtyp: {0}</value>
+    <comment>Item Type for the tooltip of preview. {0} is the type.</comment>
+  </data>
+  <data name="PreviewTooltip_DateModified" xml:space="preserve">
+    <value>Änderungsdatum: {0}</value>
+    <comment>Date Modified label for the tooltip of preview. {0} is the date.</comment>
+  </data>
+  <data name="PreviewTooltip_Dimensions" xml:space="preserve">
+    <value>Abmessungen: {0} × {1}</value>
+    <comment>Dimensions label for the tooltip of preview. {0} is the width, {1} is the height.</comment>
+  </data>
+  <data name="PreviewTooltip_FileSize" xml:space="preserve">
+    <value>Größe: {0}</value>
+    <comment>File Size label for the tooltip of preview. {0} is the size.</comment>
+  </data>
+  <data name="PreviewTooltip_Blank" xml:space="preserve">
+    <value>Dateivorschau</value>
+    <comment>Tooltip of preview when there's no file info available.</comment>
+  </data>
+  <data name="PinButton_Tooltip" xml:space="preserve">
+    <value>Anheften des Fensters an die aktuelle Größe</value>
+    <comment>Tooltip for button to pin the Peek window.</comment>
+  </data>
+  <data name="UnpinButton_ToolTip" xml:space="preserve">
+    <value>Fenster lösen</value>
+    <comment>Tooltip for button to unpin the Peek window.</comment>
+  </data>
+  <data name="FailedFallbackReportBugHyperlinkButton.Content" xml:space="preserve">
+    <value>Fehler melden</value>
+    <comment>Failed fallback preview Report bug hyperlink button content.</comment>
+  </data>
+  <data name="FailedFallbackTextBlock.Text" xml:space="preserve">
+    <value>Fehler beim Anzeigen der Vorschau dieser Datei.</value>
+    <comment>Failed fallback preview text.</comment>
+  </data>
+  <data name="Archive_Directory_Count" xml:space="preserve">
+    <value>{0} Verzeichnisse</value>
+    <comment>{0} is the number of directories in the archive</comment>
+  </data>
+  <data name="Archive_File_Count" xml:space="preserve">
+    <value>{0} Dateien</value>
+    <comment>{0} is the number of files in the archive</comment>
+  </data>
+  <data name="Archive_Size" xml:space="preserve">
+    <value>{0} ({1} extrahiert)</value>
+    <comment>{0} is the size of the archive, {1} is the extracted size</comment>
+  </data>
+  <data name="ReadableString_BytesAbbreviationFormat" xml:space="preserve">
+    <value>Byte</value>
+    <comment>Abbreviation for the size bytes</comment>
+  </data>
+  <data name="OpenUriDialog.CloseButtonText" xml:space="preserve">
+    <value>Abbrechen</value>
+    <comment>Dialog showed when an URI is clicked. Button to close the dialog.</comment>
+  </data>
+  <data name="OpenUriDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Öffnen</value>
+    <comment>Dialog showed when an URI is clicked. Button to open the URI.</comment>
+  </data>
+  <data name="OpenUriDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Kopieren</value>
+    <comment>Dialog showed when an URI is clicked. Button to copy the URI.</comment>
+  </data>
+  <data name="OpenUriDialog.Title" xml:space="preserve">
+    <value>Möchten Sie, dass Peek diesen Link öffnet?</value>
+    <comment>Title of the dialog showed when an URI is clicked,"Peek" is the name of the utility. </comment>
+  </data>
+  <data name="OpenUriWarningBanner.Title" xml:space="preserve">
+    <value>Sicherheitswarnung</value>
+    <comment>Title of the warning banner in the open URI dialog.</comment>
+  </data>
+  <data name="OpenUriWarningBanner.Message" xml:space="preserve">
+    <value>Dieser Link wird extern geöffnet. Stellen Sie sicher, dass Sie der Quelle vertrauen, bevor Sie fortfahren.</value>
+    <comment>Warning message displayed in the banner when opening an external URI.</comment>
+  </data>
+  <data name="ReadableString_BytesString" xml:space="preserve">
+    <value> ({1:N0} Bytes)</value>
+    <comment>Displays total number of bytes. Don't localize the "{1:N0}" part.</comment>
+  </data>
+  <data name="ReadableString_ByteString" xml:space="preserve">
+    <value> ({1:N0} Byte)</value>
+    <comment>Displays unit byte. Don't localize the "{1:N0}" part.</comment>
+  </data>
+  <data name="WindowTitle" xml:space="preserve">
+    <value>{0} – Peek</value>
+    <comment>Title of the Peek window. {0} is the name of the currently previewed item."Peek" is the name of the utility.</comment>
+  </data>
+  <data name="Drive_FreeSpace" xml:space="preserve">
+    <value>{0} verfügbar</value>
+    <comment>{0} is the free space of the drive</comment>
+  </data>
+  <data name="Drive_UsedSpace" xml:space="preserve">
+    <value>{0} verwendet</value>
+    <comment>{0} is the used space of the drive</comment>
+  </data>
+  <data name="Drive_Capacity" xml:space="preserve">
+    <value>Kapazität: {0}</value>
+    <comment>{0} is the capacity of the drive</comment>
+  </data>
+  <data name="Drive_FileSystem" xml:space="preserve">
+    <value>Dateisystem: {0}</value>
+    <comment>{0} is the file system of the drive</comment>
+  </data>
+  <data name="Drive_Type" xml:space="preserve">
+    <value>Typ: {0}</value>
+    <comment>{0} is the type of the drive</comment>
+  </data>
+  <data name="Drive_Type_Fixed" xml:space="preserve">
+    <value>Fest</value>
+  </data>
+  <data name="Drive_Type_Network" xml:space="preserve">
+    <value>Netzwerk</value>
+  </data>
+  <data name="Drive_Type_Optical" xml:space="preserve">
+    <value>Optisch</value>
+    <comment>"Optical" indicates CD or DVD drives</comment>
+  </data>
+  <data name="Drive_Type_RAM_Disk" xml:space="preserve">
+    <value>RAM-Datenträger</value>
+  </data>
+  <data name="Drive_Type_Removable" xml:space="preserve">
+    <value>Entfernbar</value>
+    <comment>"Removal" indicates USB or external hard drives</comment>
+  </data>
+  <data name="Drive_Unknown" xml:space="preserve">
+    <value>Unbekannt</value>
+    <comment>Used for unknown drive type or file system</comment>
+  </data>
+  <data name="Audio_Album" xml:space="preserve">
+    <value>Album: {0}</value>
+    <comment>{0} is the title of the album read from file metadata</comment>
+  </data>
+  <data name="Audio_Artist" xml:space="preserve">
+    <value>Künstler: {0}</value>
+    <comment>{0} is the artist read from file metadata</comment>
+  </data>
+  <data name="Audio_Length" xml:space="preserve">
+    <value>Länge: {0}</value>
+    <comment>{0} is the duration of the audio read from file metadata</comment>
+  </data>
+  <data name="ContextMenu_Copy" xml:space="preserve">
+    <value>Kopieren</value>
+    <comment>Copy selected text to clipboard</comment>
+  </data>
+  <data name="ContextMenu_ToggleTextWrapping" xml:space="preserve">
+    <value>Textumbruch umschalten</value>
+    <comment>Toggle whether text in pane is word-wrapped</comment>
+  </data>
+  <data name="ContextMenu_ToggleMinimap" xml:space="preserve">
+    <value>Minimap umschalten</value>
+  </data>
+  <data name="NoMoreFiles" xml:space="preserve">
+    <value>Es sind keine weiteren Dateien zur Vorschau vorhanden.</value>
+    <comment>The message to show when there are no files remaining to preview.</comment>
+  </data>
+  <data name="NoFilesSelected" xml:space="preserve">
+    <value>Es wurden keine Dateien ausgewählt, oder dieser Ordner wird für die Vorschau nicht unterstützt.</value>
+    <comment>Displayed when Peek is activated in a virtual folder (like Home or Recent) where file selection cannot be retrieved.</comment>
+  </data>
+  <data name="DeleteFileError_NotFound" xml:space="preserve">
+    <value>Die Datei wurde nicht gefunden. Überprüfen Sie, ob die Datei verschoben, umbenannt oder gelöscht wurde.</value>
+    <comment>Displayed if the file or path was not found</comment>
+  </data>
+  <data name="DeleteFileError_AccessDenied" xml:space="preserve">
+    <value>Der Zugriff wurde verweigert. Stellen Sie sicher, dass Sie zum Löschen der Datei berechtigt sind.</value>
+    <comment>Displayed if access to the file was denied when trying to delete it</comment>
+  </data>
+  <data name="DeleteFileError_Generic" xml:space="preserve">
+    <value>Beim Löschen der Datei ist ein Fehler aufgetreten. Bitte versuchen Sie es später noch einmal.</value>
+    <comment>Displayed if the file could not be deleted and no other error code matched</comment>
+  </data>
+  <data name="DeleteFileError_FileInUse" xml:space="preserve">
+    <value>Die Datei wird zurzeit von einem anderen Programm verwendet. Schließen Sie alle Programme, die die Datei möglicherweise verwenden, und versuchen Sie es dann erneut.</value>
+    <comment>Displayed if the file could not be deleted because it is fully or partially locked by another process</comment>
+  </data>
+  <data name="DeleteFileError_WriteProtected" xml:space="preserve">
+    <value>Das Speichermedium ist schreibgeschützt. Entfernen Sie nach Möglichkeit den Schreibschutz, und wiederholen Sie dann den Vorgang.</value>
+    <comment>Displayed if the file could not be deleted because it exists on non-writable media</comment>
+  </data>
+  <data name="DeleteFileError_Prefix" xml:space="preserve">
+    <value>„{0}“ kann nicht gelöscht werden.</value>
+    <comment>The prefix added to all file delete failure messages. {0} is replaced with the name of the file</comment>
+  </data>
+  <data name="DeleteConfirmationDialog.Title" xml:space="preserve">
+    <value>Datei löschen?</value>
+  </data>
+  <data name="DeleteConfirmationDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="DeleteConfirmationDialog.CloseButtonText" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="DeleteConfirmationDialog_Message.Text" xml:space="preserve">
+    <value>Möchten Sie diese Datei löschen?</value>
+  </data>
+  <data name="DeleteConfirmationDialog_DontWarnCheckbox.Content" xml:space="preserve">
+    <value>Diese Warnung nicht mehr anzeigen</value>
+  </data>
+  <data name="VideoMissingCodec_WarningMessage" xml:space="preserve">
+    <value>Ihr Gerät unterstützt das {0}-Format nicht. Um diese Datei wiederzugeben, installieren Sie einen Codec, der dieses Format unterstützt.</value>
+  </data>
+  <data name="VideoCodecStoreLink.Text" xml:space="preserve">
+    <value>In Microsoft Store suchen</value>
+  </data>
+  <data name="Sqlite_Table_Count" xml:space="preserve">
+    <value>{0} Tabellen</value>
+    <comment>{0} is the number of tables in the Sqlite database</comment>
+  </data>
+  <data name="Sqlite_Row_Count" xml:space="preserve">
+    <value>Datensätze: {0}</value>
+    <comment>{0} is the number of rows in the selected Sqlite table</comment>
+  </data>
+  <data name="Sqlite_Row_Count_Truncated" xml:space="preserve">
+    <value>Datensätze: {0} von {1}</value>
+    <comment>{0} is the number of rows shown (limited), {1} is the total row count</comment>
+  </data>
+  <data name="Sqlite_NoTableSelected.Text" xml:space="preserve">
+    <value>Wählen Sie eine Tabelle aus, um ihre Daten anzuzeigen.</value>
+    <comment>Placeholder shown in the Sqlite previewer when no table is selected</comment>
+  </data>
+  <data name="Sqlite_Blob_Value" xml:space="preserve">
+    <value>[BLOB, {0} Byte]</value>
+    <comment>Placeholder shown in a Sqlite cell for binary (BLOB) data; {0} is the size in bytes</comment>
+  </data>
+</root>

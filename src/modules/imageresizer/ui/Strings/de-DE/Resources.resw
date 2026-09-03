@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ImageResizer" xml:space="preserve">
+    <value>Bildgrößenänderung</value>
+    <comment>Product name, do not loc</comment>
+  </data>
+  <data name="Cancel.Content" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="Height" xml:space="preserve">
+    <value>Größe</value>
+  </data>
+  <data name="Width" xml:space="preserve">
+    <value>Breite</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>Einheit</value>
+  </data>
+  <data name="Input_Auto" xml:space="preserve">
+    <value>(automatisch)</value>
+  </data>
+  <data name="Input_Content" xml:space="preserve">
+    <value>Größe auswählen</value>
+  </data>
+  <data name="Input_Custom" xml:space="preserve">
+    <value>Benutzerdefiniert</value>
+  </data>
+  <data name="Input_IgnoreOrientation.Text" xml:space="preserve">
+    <value>Bildausrichtung ignorieren</value>
+  </data>
+  <data name="Input_GifWarning.Message" xml:space="preserve">
+    <value>Die Größe der GIF-Dateien mit Animationen wurde möglicherweise nicht ordnungsgemäß geändert.</value>
+  </data>
+  <data name="Input_Replace.Text" xml:space="preserve">
+    <value>Dateien überschreiben</value>
+  </data>
+  <data name="Input_Resize.Text" xml:space="preserve">
+    <value>Größe ändern</value>
+  </data>
+  <data name="Input_ShrinkOnly.Text" xml:space="preserve">
+    <value>Bilder nur verkleinern, nicht vergrößern</value>
+  </data>
+  <data name="Input_RemoveMetadata.Text" xml:space="preserve">
+    <value>Metadaten entfernen, die sich nicht auf das Rendering auswirken</value>
+  </data>
+  <data name="Image_Sizes" xml:space="preserve">
+    <value>Bildgrößen</value>
+  </data>
+  <data name="Resize_Tooltip" xml:space="preserve">
+    <value>Größe von Bildern ändern</value>
+  </data>
+  <data name="Resize_Type" xml:space="preserve">
+    <value>Größe für Typ ändern</value>
+  </data>
+  <data name="Open_settings.Text" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="Open_settings_button.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="Input_AiSuperResolution" xml:space="preserve">
+    <value>Superauflösung</value>
+  </data>
+  <data name="Input_AiSuperResolutionDescription" xml:space="preserve">
+    <value>Bilder mit KI auf dem Gerät hochskalieren</value>
+  </data>
+  <data name="Input_AiUnknownSize" xml:space="preserve">
+    <value>Nicht verfügbar</value>
+  </data>
+  <data name="Input_AiScaleFormat" xml:space="preserve">
+    <value>{0}×</value>
+  </data>
+  <data name="Input_AiScaleLabel" xml:space="preserve">
+    <value>Skalieren</value>
+  </data>
+  <data name="Input_AiCurrentLabel.Text" xml:space="preserve">
+    <value>Aktuell:</value>
+  </data>
+  <data name="Input_AiNewLabel.Text" xml:space="preserve">
+    <value>Neu:</value>
+  </data>
+  <data name="Input_AiModelChecking" xml:space="preserve">
+    <value>Verfügbarkeit des KI-Modells wird geprüft...</value>
+  </data>
+  <data name="Input_AiModelNotAvailable" xml:space="preserve">
+    <value>KI-Modell nicht heruntergeladen. Klicken Sie auf Herunterladen, um zu starten.</value>
+  </data>
+  <data name="Input_AiModelDisabledByUser" xml:space="preserve">
+    <value>Die KI-Funktion ist durch die Systemeinstellungen deaktiviert.</value>
+  </data>
+  <data name="Input_AiModelNotSupported" xml:space="preserve">
+    <value>Das KI-Feature wird auf diesem System nicht unterstützt.</value>
+  </data>
+  <data name="Input_AiModelDownloading" xml:space="preserve">
+    <value>KI-Modell wird heruntergeladen...</value>
+  </data>
+  <data name="Input_AiModelDownloadFailed" xml:space="preserve">
+    <value>Fehler beim Herunterladen des KI-Modells. Versuchen Sie es noch mal.</value>
+  </data>
+  <data name="Input_AiModelDownloadButton.Text" xml:space="preserve">
+    <value>Herunterladen</value>
+  </data>
+  <data name="Error_AiProcessingFailed" xml:space="preserve">
+    <value>Fehler bei der Verarbeitung der KI-Superauflösung: {0}</value>
+  </data>
+  <data name="Error_AiConversionFailed" xml:space="preserve">
+    <value>Fehler bei der Konvertierung des Bildformats für die KI-Verarbeitung.</value>
+  </data>
+  <data name="Error_AiScalingFailed" xml:space="preserve">
+    <value>KI-Skalierungsvorgang fehlgeschlagen.</value>
+  </data>
+  <data name="Progress_MainInstruction.Text" xml:space="preserve">
+    <value>Die Größe Ihrer Bilder wird geändert...</value>
+  </data>
+  <data name="Progress_Stop.Text" xml:space="preserve">
+    <value>Beenden</value>
+  </data>
+  <data name="Progress_TimeRemaining" xml:space="preserve">
+    <value>Ungefähr {0} verbleibend.</value>
+    <comment>"About" = Approximately</comment>
+  </data>
+  <data name="Results_MainInstruction.Text" xml:space="preserve">
+    <value>Die Größe der folgenden Bilder kann nicht geändert werden:</value>
+  </data>
+  <data name="Results_Close.Text" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Small" xml:space="preserve">
+    <value>Klein</value>
+  </data>
+  <data name="Medium" xml:space="preserve">
+    <value>Mittel</value>
+  </data>
+  <data name="Large" xml:space="preserve">
+    <value>Groß</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Telefon</value>
+  </data>
+  <data name="ResizeFit_Fill" xml:space="preserve">
+    <value>Füllen</value>
+  </data>
+  <data name="ResizeFit_Fit" xml:space="preserve">
+    <value>Anpassen</value>
+  </data>
+  <data name="ResizeFit_Stretch" xml:space="preserve">
+    <value>Dehnen</value>
+  </data>
+  <data name="ResizeUnit_Centimeter" xml:space="preserve">
+    <value>Zentimeter</value>
+  </data>
+  <data name="ResizeUnit_Inch" xml:space="preserve">
+    <value>Zoll</value>
+  </data>
+  <data name="ResizeUnit_Percent" xml:space="preserve">
+    <value>Prozent</value>
+  </data>
+  <data name="ResizeUnit_Pixel" xml:space="preserve">
+    <value>Pixel</value>
+  </data>
+  <data name="PngInterlaceOption_Default" xml:space="preserve">
+    <value>(Standard)</value>
+  </data>
+  <data name="PngInterlaceOption_Off" xml:space="preserve">
+    <value>Aus</value>
+  </data>
+  <data name="PngInterlaceOption_On" xml:space="preserve">
+    <value>Ein</value>
+  </data>
+  <data name="CLI_ProcessingFiles" xml:space="preserve">
+    <value>{0} Datei(en) werden verarbeitet …</value>
+  </data>
+  <data name="CLI_ProgressFormat" xml:space="preserve">
+    <value>Status: {0}% ({1}/{2})</value>
+  </data>
+  <data name="CLI_CompletedWithErrors" xml:space="preserve">
+    <value>Abgeschlossen mit {0} Fehler(n):</value>
+  </data>
+  <data name="CLI_AllFilesProcessed" xml:space="preserve">
+    <value>Alle Dateien wurden erfolgreich verarbeitet.</value>
+  </data>
+  <data name="CLI_WarningInvalidSizeIndex" xml:space="preserve">
+    <value>Warnung: Ungültiger Größenindex {0}. Standard wird verwendet.</value>
+  </data>
+  <data name="CLI_NoInputFiles" xml:space="preserve">
+    <value>Es wurden keine Eingabedateien oder Pipe angegeben. Verwendung wird angezeigt.</value>
+  </data>
+  <data name="CLI_ErrorUnknownOption" xml:space="preserve">
+    <value>Unbekannte Option '{0}'. Verwenden Sie "--" vor einem Dateinamen, der mit "-" beginnt, oder stellen Sie ihm ".\" voran.</value>
+  </data>
+  <data name="CLI_ErrorInvalidDimension" xml:space="preserve">
+    <value>Breite und Höhe müssen endliche Zahlen größer oder gleich Null sein.</value>
+  </data>
+  <data name="CLI_ErrorZeroDimensions" xml:space="preserve">
+    <value>Breite und Höhe dürfen bei einer benutzerdefinierten Größe nicht beide null sein.</value>
+  </data>
+  <data name="CLI_ErrorPercentWidthRequired" xml:space="preserve">
+    <value>Für prozentbasierte Fit- und Fill-Größen ist eine positive Breite erforderlich.</value>
+  </data>
+  <data name="CLI_ErrorSizeIndexOutOfRange" xml:space="preserve">
+    <value>Der Größenindex {0} liegt außerhalb des gültigen Bereichs. Der maximal gültige Index ist {1}.</value>
+  </data>
+  <data name="Error_DimensionOutOfRange" xml:space="preserve">
+    <value>Die angeforderten Ausgabedimensionen liegen außerhalb des unterstützten Bereichs.</value>
+  </data>
+  <data name="CLI_ErrorFileNotFound" xml:space="preserve">
+    <value>Eingabedatei wurde nicht gefunden.</value>
+  </data>
+  <data name="CLI_ErrorUnsupportedFileType" xml:space="preserve">
+    <value>Nicht unterstützter Bilddateityp.</value>
+  </data>
+  <data name="CLI_ErrorInvalidInputPath" xml:space="preserve">
+    <value>Ungültiger Eingabepfad: {0}</value>
+  </data>
+  <data name="CLI_ErrorWildcardInDirectory" xml:space="preserve">
+    <value>Platzhalter werden nur im Dateinamenteil eines Pfads unterstützt.</value>
+  </data>
+  <data name="CLI_ErrorNoWildcardMatches" xml:space="preserve">
+    <value>Keine Dateien entsprachen dem Platzhaltermuster.</value>
+  </data>
+  <data name="CLI_ErrorProcessingFallback" xml:space="preserve">
+    <value>Fehler bei der Bildverarbeitung mit {0} (HRESULT 0x{1:X8}).</value>
+  </data>
+  <data name="CLI_WarningShrinkOnlyPercent" xml:space="preserve">
+    <value>Warnung: Nur Verkleinern wird bei prozentbasierten Größen ignoriert.</value>
+  </data>
+  <data name="CLI_ConfigTitle" xml:space="preserve">
+    <value>ImageResizer – Aktuelle Konfiguration</value>
+  </data>
+  <data name="CLI_ConfigGeneralSettings" xml:space="preserve">
+    <value>Allgemeine Einstellungen:</value>
+  </data>
+  <data name="CLI_ConfigShrinkOnly" xml:space="preserve">
+    <value>  Nur verkleinern: {0}</value>
+  </data>
+  <data name="CLI_ConfigReplaceOriginal" xml:space="preserve">
+    <value>  Original ersetzen: {0}</value>
+  </data>
+  <data name="CLI_ConfigIgnoreOrientation" xml:space="preserve">
+    <value>  Ausrichtung ignorieren: {0}</value>
+  </data>
+  <data name="CLI_ConfigRemoveMetadata" xml:space="preserve">
+    <value>  Metadaten entfernen: {0}</value>
+  </data>
+  <data name="CLI_ConfigKeepDateModified" xml:space="preserve">
+    <value>  Änderungsdatum beibehalten: {0}</value>
+  </data>
+  <data name="CLI_ConfigJpegQuality" xml:space="preserve">
+    <value>  JPEG-Qualität: {0}</value>
+  </data>
+  <data name="CLI_ConfigPngInterlace" xml:space="preserve">
+    <value>  PNG-Zeilensprung: {0}</value>
+  </data>
+  <data name="CLI_ConfigTiffCompress" xml:space="preserve">
+    <value>  TIFF-Komprimierung: {0}</value>
+  </data>
+  <data name="CLI_ConfigFilenameFormat" xml:space="preserve">
+    <value>  Format des Dateinamens: {0}</value>
+  </data>
+  <data name="CLI_ConfigCustomSize" xml:space="preserve">
+    <value>Benutzerdefinierte Größe:</value>
+  </data>
+  <data name="CLI_ConfigWidth" xml:space="preserve">
+    <value>  Breite: {0} {1}</value>
+  </data>
+  <data name="CLI_ConfigHeight" xml:space="preserve">
+    <value>  Höhe: {0} {1}</value>
+  </data>
+  <data name="CLI_ConfigFitMode" xml:space="preserve">
+    <value>  Anpassungsmodus: {0}</value>
+  </data>
+  <data name="CLI_ConfigPresetSizes" xml:space="preserve">
+    <value>Voreingestellte Größen: (* = aktuell ausgewählt)</value>
+  </data>
+  <data name="CLI_ConfigPresetSizeFormat" xml:space="preserve">
+    <value>  [{0}]{1} {2}: {3}x{4} {5} ({6})</value>
+  </data>
+  <data name="CLI_ConfigCustomSelected" xml:space="preserve">
+    <value>  [Benutzerdefiniert]* {0}x{1} {2} ({3})</value>
+  </data>
+  <data name="CLI_UsageTitle" xml:space="preserve">
+    <value>ImageResizer – PowerToys Bildgrößenänderung CLI</value>
+  </data>
+  <data name="CLI_UsageLine" xml:space="preserve">
+    <value>Syntax: PowerToys.ImageResizerCLI.exe [Optionen] [Dateien...]</value>
+  </data>
+  <data name="CLI_UsageOptions" xml:space="preserve">
+    <value>Optionen:</value>
+  </data>
+  <data name="CLI_UsageExamples" xml:space="preserve">
+    <value>Beispiele:</value>
+  </data>
+  <data name="CLI_UsageExampleHelp" xml:space="preserve">
+    <value>  PowerToys.ImageResizerCLI.exe --help</value>
+  </data>
+  <data name="CLI_UsageExampleDimensions" xml:space="preserve">
+    <value>  PowerToys.ImageResizerCLI.exe --width 800 --height 600 image.jpg</value>
+  </data>
+  <data name="CLI_UsageExamplePercent" xml:space="preserve">
+    <value>PowerToys.ImageResizerCLI.exe -w 50 -h 50 -u Prozent *.jpg</value>
+  </data>
+  <data name="CLI_UsageExamplePreset" xml:space="preserve">
+    <value>  PowerToys.ImageResizerCLI.exe --size 0 -d "C:\Output" photo.png</value>
+  </data>
+  <data name="CLI_Option_Destination" xml:space="preserve">
+    <value>Zielverzeichnis festlegen</value>
+  </data>
+  <data name="CLI_Option_FileName" xml:space="preserve">
+    <value>Format für Ausgabedateinamen festlegen (%1=Ursprünglicher Name, %2=Größenname)</value>
+  </data>
+  <data name="CLI_Option_Files" xml:space="preserve">
+    <value>Bilddateien, deren Größe geändert werden soll (Platzhalter werden in Dateinamen unterstützt)</value>
+  </data>
+  <data name="CLI_Option_Fit" xml:space="preserve">
+    <value>Anpassungsmodus festlegen (Ausfüllen, Anpassen, Strecken)</value>
+  </data>
+  <data name="CLI_Option_Height" xml:space="preserve">
+    <value>Höhe festlegen</value>
+  </data>
+  <data name="CLI_Option_Help" xml:space="preserve">
+    <value>Hilfeinformationen anzeigen</value>
+  </data>
+  <data name="CLI_Option_IgnoreOrientation" xml:space="preserve">
+    <value>Bildausrichtung ignorieren</value>
+  </data>
+  <data name="CLI_Option_KeepDateModified" xml:space="preserve">
+    <value>Ursprüngliches Änderungsdatum beibehalten</value>
+  </data>
+  <data name="CLI_Option_Quality" xml:space="preserve">
+    <value>JPEG-Qualitätsstufe festlegen (1-100)</value>
+  </data>
+  <data name="CLI_Option_Replace" xml:space="preserve">
+    <value>Originaldateien ersetzen</value>
+  </data>
+  <data name="CLI_Option_ShowConfig" xml:space="preserve">
+    <value>Aktuelle Konfiguration anzeigen</value>
+  </data>
+  <data name="CLI_Option_ShrinkOnly" xml:space="preserve">
+    <value>Bilder nur bei nicht prozentualen Größen verkleinern</value>
+  </data>
+  <data name="CLI_Option_RemoveMetadata" xml:space="preserve">
+    <value>Metadaten aus Bildern mit geänderter Größe entfernen</value>
+  </data>
+  <data name="CLI_Option_Size" xml:space="preserve">
+    <value>Vordefinierte Größe nach Index verwenden (0-basiert)</value>
+  </data>
+  <data name="CLI_Option_Unit" xml:space="preserve">
+    <value>Einheit festlegen (Pixel, Prozent, Zoll, Zentimeter)</value>
+  </data>
+  <data name="CLI_Option_Width" xml:space="preserve">
+    <value>Breite festlegen</value>
+  </data>
+  <data name="ValueMustBeBetween" xml:space="preserve">
+    <value>Der Wert muss zwischen {0} und {1} liegen.</value>
+  </data>
+  <data name="TitleBarTitle.Title" xml:space="preserve">
+    <value>Bildgrößenänderung</value>
+  </data>
+  <data name="Resize_button.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Größe ändern</value>
+  </data>
+</root>

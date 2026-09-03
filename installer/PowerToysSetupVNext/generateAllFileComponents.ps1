@@ -213,6 +213,14 @@ $winui3Path = "$PSScriptRoot..\..\..\$platform\Release\WinUI3Apps"
 $winui3WxsPath = "$PSScriptRoot\WinUI3Applications.wxs"
 $winui3Wxs = Get-Content $winui3WxsPath -Raw
 $manifestPath = Join-Path $winui3Path "hardlinks.txt"
+$neverDeduplicate = @(
+    # Root and WinUI3Apps can require different XAML generations (the failed release had
+    # WinUI 2.x in root and WinUI 3.x here). During an incremental build both paths can also
+    # briefly contain the same file. Persisting that transient equality in hardlinks.txt can
+    # later overwrite WinUI 3 with an incompatible root copy, making every WinUI app fail
+    # during activation (0x80040111).
+    'Microsoft.UI.Xaml.dll'
+)
 
 if ($winui3Wxs -match "\<\?define WinUI3ApplicationsFiles=([^?]*)\?\>") {
     $winui3FileList = $matches[1] -split ';' | Where-Object { $_ -ne '' }
@@ -229,6 +237,8 @@ if ($winui3Wxs -match "\<\?define WinUI3ApplicationsFiles=([^?]*)\?\>") {
     }
 
     foreach ($file in $winui3FileList) {
+        if ($neverDeduplicate -contains $file) { continue }
+
         # Skip files that were intentionally not deployed to root by the build
         if ($baseAppsFileList -notcontains $file) { continue }
 
@@ -242,6 +252,10 @@ if ($winui3Wxs -match "\<\?define WinUI3ApplicationsFiles=([^?]*)\?\>") {
             }
         }
     }
+
+    # A dependency can appear more than once in a generated list. Copy every target once and
+    # keep the manifest deterministic.
+    $hardlinkFiles = @($hardlinkFiles | Sort-Object -Unique)
 
     if ($hardlinkFiles.Count -gt 0) {
         # Remove deduplicated files from WinUI3Apps file list
@@ -265,6 +279,11 @@ if ($winui3Wxs -match "\<\?define WinUI3ApplicationsFiles=([^?]*)\?\>") {
 }
 
 Generate-FileComponents -fileListName "WinUI3ApplicationsFiles" -wxsFilePath $PSScriptRoot\WinUI3Applications.wxs
+
+#German localization satellites
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+Generate-FileList -fileDepsJson "" -fileListName GermanLocalizationFiles -wxsFilePath $PSScriptRoot\GermanLocalization.wxs -depsPath (Join-Path $repoRoot "$platform\Release\de-DE")
+Generate-FileComponents -fileListName "GermanLocalizationFiles" -wxsFilePath $PSScriptRoot\GermanLocalization.wxs
 
 #AdvancedPaste
 Generate-FileList -fileDepsJson "" -fileListName AdvancedPasteAssetsFiles -wxsFilePath $PSScriptRoot\AdvancedPaste.wxs -depsPath "$PSScriptRoot..\..\..\$platform\Release\WinUI3Apps\Assets\AdvancedPaste"

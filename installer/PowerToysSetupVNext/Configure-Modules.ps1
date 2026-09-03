@@ -69,8 +69,15 @@ function Set-GeneratedRegion([string]$Path, [string]$Indent, [string[]]$Lines) {
     $begin = [regex]::Escape('BEGIN_GENERATED_MODULES')
     $end = [regex]::Escape('END_GENERATED_MODULES')
     $pattern = "(?s)(.*?$begin[^\r\n]*\r?\n).*?(\s*[^\r\n]*$end)"
-    if ($content -notmatch $pattern) { throw "GENERATED-Marker nicht gefunden in $Path" }
+    $match = [regex]::Match($content, $pattern, [Text.RegularExpressions.RegexOptions]::Singleline)
+    if (-not $match.Success) { throw "GENERATED-Marker nicht gefunden in $Path" }
     $body = ($Lines | ForEach-Object { if ($_ -eq '') { '' } else { "$Indent$_" } }) -join $newLine
+    $existingBodyStart = $match.Groups[1].Index + $match.Groups[1].Length
+    $existingBody = $content.Substring($existingBodyStart, $match.Groups[2].Index - $existingBodyStart)
+    if (($existingBody -replace "`r`n", "`n") -ceq ($body -replace "`r`n", "`n")) {
+        Write-Host "  [OK] $([IO.Path]::GetFileName($Path)) unveraendert."
+        return
+    }
     $new = [regex]::Replace($content, $pattern, { param($mm) $mm.Groups[1].Value + $body + $newLine + $mm.Groups[2].Value.TrimStart("`r","`n") }, [Text.RegularExpressions.RegexOptions]::Singleline)
     $encoding = [Text.UTF8Encoding]::new($hasUtf8Bom)
     [IO.File]::WriteAllText($Path, $new, $encoding)

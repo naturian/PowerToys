@@ -9,7 +9,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-      <PRIResource Include="..\Peek.UI\Strings\en-US\Resources.resw" Link="Strings\en-US\Resources.resw">
+      <PRIResource Include="..\Peek.UI\Strings\**\Resources.resw" Link="Strings\%(RecursiveDir)Resources.resw">
           <SubType>Designer</SubType>
       </PRIResource>
   </ItemGroup>

@@ -38,35 +38,40 @@ $relax = '/p:NuGetAudit=false /p:TreatWarningsAsErrors=false /p:MSBuildTreatWarn
 $buildParallel = '/m:2 /p:CL_MPCount=2'
 
 # --- 0. Modulauswahl anwenden (selected-modules.txt -> main.cpp / DashboardViewModel.cs / Product.wxs) ---
-Write-Host '[0/5] Modulauswahl aus selected-modules.txt anwenden...'
+Write-Host '[0/6] Modulauswahl aus selected-modules.txt anwenden...'
 & "$repoRoot\installer\PowerToysSetupVNext\Configure-Modules.ps1" -RepoRoot $repoRoot
 
-# --- 1. Abhaengigkeiten wiederherstellen ---
-Write-Host '[1/5] NuGet- und vcpkg-Abhaengigkeiten wiederherstellen...'
+# --- 1. Deutsche Ressourcen pruefen ---
+Write-Host '[1/6] Deutsche UI-Ressourcen pruefen...'
+& powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$repoRoot\tools\build\test-minimal-release.ps1" -RepoRoot $repoRoot
+if ($LASTEXITCODE -ne 0) { throw 'Deutsche UI-Ressourcen sind unvollstaendig.' }
+
+# --- 2. Abhaengigkeiten wiederherstellen ---
+Write-Host '[2/6] NuGet- und vcpkg-Abhaengigkeiten wiederherstellen...'
 RestoreThenBuild 'PowerToys.slnx' $relax $Platform $Configuration $true
 
 if (-not $SkipSolutionBuild) {
-    # --- 2. Solution bauen ---
+    # --- 3. Solution bauen ---
     # Viele Projekte verwenden $(SolutionDir) fuer den gemeinsamen Ausgabeordner.
     # Ein isolierter Projekt-Build legt Artefakte sonst unter src\...\x64 ab und
     # laesst vom Installer benoetigte Begleitprogramme sowie Assets aus.
-    Write-Host '[2/5] Solution ohne Tests bauen...'
+    Write-Host '[3/6] Solution ohne Tests bauen...'
     RunMSBuild 'PowerToys.slnx' "$buildParallel /p:BuildTests=false $relax" $Platform $Configuration
 
-    # --- 3. Diagnose-Tools ---
-    Write-Host '[3/5] Diagnose-Tools bauen...'
+    # --- 4. Diagnose-Tools ---
+    Write-Host '[4/6] Diagnose-Tools bauen...'
     foreach ($sln in @('tools\BugReportTool\BugReportTool.sln','tools\StylesReportTool\StylesReportTool.sln')) {
         RunMSBuild $sln "/t:restore /p:RestorePackagesConfig=true $relax" $Platform $Configuration
         RunMSBuild $sln "$buildParallel $relax" $Platform $Configuration
     }
 }
 
-# --- 4. Filter ---
-Write-Host '[4/5] Build-Output filtern (nicht gewuenschte Module entfernen)...'
+# --- 5. Filter ---
+Write-Host '[5/6] Build-Output filtern (nicht gewuenschte Module entfernen)...'
 & "$repoRoot\installer\PowerToysSetupVNext\filter-minimal-modules.ps1" -Platform $Platform -Configuration $Configuration
 
-# --- 5. Installer ---
-Write-Host '[5/5] MSI bauen...'
+# --- 6. Installer ---
+Write-Host '[6/6] MSI bauen...'
 $env:IsPipeline = '1'   # publish.cmd (Vorschau-Handler) ueberspringen
 $installerSource = Join-Path $repoRoot 'installer\PowerToysSetupVNext'
 $wxsFiles = @(Get-ChildItem -LiteralPath $installerSource -Filter '*.wxs' -File)
@@ -86,6 +91,9 @@ try {
     }
 
     & powershell.exe -NonInteractive -ExecutionPolicy Unrestricted -File "$installerSource\generateAllFileComponents.ps1" -platform $Platform
+    if ($LASTEXITCODE -ne 0) { throw 'WiX-Dateigenerierung fehlgeschlagen.' }
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$repoRoot\tools\build\test-minimal-release.ps1" -RepoRoot $repoRoot -BuildRoot "$repoRoot\$Platform\$Configuration" -GeneratedWix
+    if ($LASTEXITCODE -ne 0) { throw 'Minimal-Release-Pruefung fehlgeschlagen.' }
     RunMSBuild 'installer\PowerToysSetup.slnx' "/t:restore /p:RestorePackagesConfig=true $relax" $Platform $Configuration
     RunMSBuild 'installer\PowerToysSetup.slnx' "$buildParallel /t:PowerToysInstallerVNext /p:PerUser=true $relax" $Platform $Configuration
 }

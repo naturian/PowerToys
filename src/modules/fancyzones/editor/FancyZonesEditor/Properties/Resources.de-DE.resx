@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Add_zone" xml:space="preserve">
+    <value>Neue Zone hinzufügen</value>
+  </data>
+  <data name="New_zone_added" xml:space="preserve">
+    <value>Neue Zone hinzugefügt</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Anwenden</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="Canvas_Layout_Editor" xml:space="preserve">
+    <value>Layout-Editor für Canvas</value>
+  </data>
+  <data name="Grid_Layout_Editor" xml:space="preserve">
+    <value>Rasterlayout-Editor</value>
+  </data>
+  <data name="Crash_Report_Message_Box_Text" xml:space="preserve">
+    <value>Melden Sie den Fehler bei </value>
+  </data>
+  <data name="Custom" xml:space="preserve">
+    <value>Benutzerdefiniert</value>
+  </data>
+  <data name="Custom_Layout_Creator" xml:space="preserve">
+    <value>Erstellung benutzerdefinierter Layouts</value>
+  </data>
+  <data name="Distance_adjacent_zones" xml:space="preserve">
+    <value>Hervorhebungsabstand</value>
+    <comment>The pixel distance at which an adjacent zone highlights (lights up) when a window is dragged near it. This is about detection/snapping range proximity, not about making something visually stand out.</comment>
+  </data>
+  <data name="Fancy_Zones_Editor_App_Title" xml:space="preserve">
+    <value>FancyZones-Editor</value>
+  </data>
+  <data name="Fancy_Zones_Main_Editor" xml:space="preserve">
+    <value>FancyZones-Haupteditor</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Save_Apply" xml:space="preserve">
+    <value>Speichern und anwenden</value>
+  </data>
+  <data name="Show_Space_Zones" xml:space="preserve">
+    <value>Leerraum um Zonen anzeigen</value>
+    <comment>Toggle to enable or disable displaying the padding/margin (empty space) around each zone</comment>
+  </data>
+  <data name="Space_Around_Zones" xml:space="preserve">
+    <value>Zonenabstand</value>
+    <comment>The size (in pixels) of the padding or margin (empty gap) surrounding each zone. This is about blank space/whitespace between zones, not an area or region.</comment>
+  </data>
+  <data name="Templates" xml:space="preserve">
+    <value>Vorlagen</value>
+  </data>
+  <data name="Zone_Count_Decrement" xml:space="preserve">
+    <value>Anzahl von Zonen verringern</value>
+  </data>
+  <data name="Zone_Count_Increment" xml:space="preserve">
+    <value>Anzahl von Zonen erhöhen</value>
+  </data>
+  <data name="Error_Invalid_Arguments" xml:space="preserve">
+    <value>Die FancyZones-Editor-Argumente sind ungültig.</value>
+  </data>
+  <data name="Error_Message_Box_Title" xml:space="preserve">
+    <value>Fehler bei FancyZones-Editor</value>
+  </data>
+  <data name="Error_Not_Standalone_App" xml:space="preserve">
+    <value>Der FancyZones-Editor sollte nicht als eigenständige Anwendung ausgeführt werden.</value>
+  </data>
+  <data name="Error_Parsing_Device_Info" xml:space="preserve">
+    <value>Fehler beim Analysieren der Geräteinformationen.</value>
+  </data>
+  <data name="Template_Layout_Columns" xml:space="preserve">
+    <value>Spalten</value>
+  </data>
+  <data name="Template_Layout_Focus" xml:space="preserve">
+    <value>Fokus</value>
+  </data>
+  <data name="Template_Layout_Grid" xml:space="preserve">
+    <value>Raster</value>
+  </data>
+  <data name="Template_Layout_Priority_Grid" xml:space="preserve">
+    <value>Prioritätsraster</value>
+  </data>
+  <data name="Template_Layout_Rows" xml:space="preserve">
+    <value>Zeilen</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Error_Applying_Layout" xml:space="preserve">
+    <value>Fehler beim Anwenden des Layouts.</value>
+  </data>
+  <data name="Error_Layout_Malformed_Data" xml:space="preserve">
+    <value>Das Layout "{0}" weist ungültige Daten auf.</value>
+  </data>
+  <data name="Error_Loading_Custom_Layouts" xml:space="preserve">
+    <value>Fehler beim Laden von benutzerdefinierten Layouts.</value>
+  </data>
+  <data name="Error_Persisting_Custom_Layout" xml:space="preserve">
+    <value>Fehler beim dauerhaften Speichern des benutzerdefinierten Layouts.</value>
+  </data>
+  <data name="Error_Serializing_Deleted_Layouts" xml:space="preserve">
+    <value>Fehler beim Serialisieren von gelöschten Layouts.</value>
+  </data>
+  <data name="Error_Exception_Message_Box_Title" xml:space="preserve">
+    <value>Ausnahmehandler für FancyZones-Editor</value>
+  </data>
+  <data name="Error_Report" xml:space="preserve">
+    <value>Melden Sie den Fehler bei </value>
+  </data>
+  <data name="Error_Monitor_Match_Not_Found" xml:space="preserve">
+    <value>Keine Übereinstimmung gefunden ({0})</value>
+  </data>
+  <data name="Reset_Layout" xml:space="preserve">
+    <value>Layout zurücksetzen</value>
+    <comment>as in Reset to a blank value</comment>
+  </data>
+  <data name="Choose_Layout" xml:space="preserve">
+    <value>Layout für diesen Desktop auswählen</value>
+  </data>
+  <data name="Choose_layout_type" xml:space="preserve">
+    <value>Layouttyp auswählen</value>
+    <comment>Dialog header that allows the user to select a specific layout type</comment>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Erstellen</value>
+    <comment>Button label that creates a new layout</comment>
+  </data>
+  <data name="Create_new_layout" xml:space="preserve">
+    <value>Neues Layout erstellen</value>
+    <comment>Button label that allows the user to create a new layout</comment>
+  </data>
+  <data name="Custom_Layout_Create_New" xml:space="preserve">
+    <value>Benutzerdefiniertes Layout</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
+    <comment>Context menu label that allows the user duplicate a layout</comment>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>Duplizieren</value>
+    <comment>Context menu label that allows the user duplicate a layout</comment>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
+    <comment>Context menu label that allows the user edit a layout</comment>
+  </data>
+  <data name="Layout_Canvas_Description" xml:space="preserve">
+    <value>Layouts mit überlappenden Zonen erstellen</value>
+  </data>
+  <data name="Layout_Canvas_Title" xml:space="preserve">
+    <value>Canvas</value>
+  </data>
+  <data name="Layout_Grid_Description" xml:space="preserve">
+    <value>Horizontal oder vertikal gestapelte Layouts erstellen</value>
+  </data>
+  <data name="Layout_Grid_Title" xml:space="preserve">
+    <value>Raster</value>
+  </data>
+  <data name="Merge_zones" xml:space="preserve">
+    <value>Zonen zusammenführen</value>
+    <comment>Button label that allows the user to merge 2 or more zones together</comment>
+  </data>
+  <data name="Monitor" xml:space="preserve">
+    <value>Monitor</value>
+  </data>
+  <data name="Monitor_Index" xml:space="preserve">
+    <value>Bildschirm {0}</value>
+  </data>
+  <data name="Dimensions" xml:space="preserve">
+    <value>Abmessungen</value>
+  </data>
+  <data name="Scaling" xml:space="preserve">
+    <value>Skalierung</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Vorlageneinstellungen</value>
+  </data>
+  <data name="Delete_Layout_Dialog_Announce" xml:space="preserve">
+    <value>Dialogfeld „Layout“ löschen.</value>
+  </data>
+  <data name="Zone_Name" xml:space="preserve">
+    <value>Zone</value>
+    <comment>The name of the zones.</comment>
+  </data>
+  <data name="Width_Name" xml:space="preserve">
+    <value>Breite</value>
+    <comment>The name of dimension called width.</comment>
+  </data>
+  <data name="Height_Name" xml:space="preserve">
+    <value>Höhe</value>
+    <comment>The name of dimension called height.</comment>
+  </data>
+  <data name="Resizer_Thumb_Announce" xml:space="preserve">
+    <value>Verwenden Sie die Pfeiltasten, um die Größe zu ändern, und löschen Sie die Taste, um sie zu entfernen.</value>
+    <comment>Keys and key means the keyboard keys.</comment>
+  </data>
+  <data name="Are_You_Sure" xml:space="preserve">
+    <value>Möchten Sie fortfahren?</value>
+  </data>
+  <data name="Are_You_Sure_Description" xml:space="preserve">
+    <value>Möchten Sie dieses Layout wirklich löschen?</value>
+  </data>
+  <data name="Edit_zones" xml:space="preserve">
+    <value>Zonen bearbeiten</value>
+  </data>
+  <data name="No_Custom_Layouts_Message" xml:space="preserve">
+    <value>Erstellen oder duplizieren Sie ein Layout für den Einstieg.</value>
+  </data>
+  <data name="Delete_Zone" xml:space="preserve">
+    <value>Zone löschen</value>
+    <comment>A tooltip on a button that allows the user to delete a zone</comment>
+  </data>
+  <data name="Error_Parsing_Data_Title" xml:space="preserve">
+    <value>Fehler beim Analysieren von Editor-Daten.</value>
+  </data>
+  <data name="Error_Parsing_Applied_Layouts_Message" xml:space="preserve">
+    <value>Beim Analysieren benutzerdefinierter Layouts ist ein Fehler aufgetreten.</value>
+  </data>
+  <data name="Apply_Layout" xml:space="preserve">
+    <value>Layout anwenden</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="NumberOfZones" xml:space="preserve">
+    <value>Anzahl von Zonen</value>
+  </data>
+  <data name="Template_Layout_Blank" xml:space="preserve">
+    <value>Kein Layout</value>
+  </data>
+  <data name="Create_Custom_From_Template" xml:space="preserve">
+    <value>Benutzerdefiniertes Layout erstellen</value>
+  </data>
+  <data name="Default_Custom_Layout_Name" xml:space="preserve">
+    <value>Benutzerdefiniertes Layout</value>
+  </data>
+  <data name="MergeDescription" xml:space="preserve">
+    <value>Klicken und ziehen Sie Elemente von einer Zone in eine andere.</value>
+    <comment>Click mouse, hold button down and drag across multiple zones in tool</comment>
+  </data>
+  <data name="MergeName" xml:space="preserve">
+    <value>Zusammenführen/Löschen:</value>
+    <comment>Title for concept behind Merging two zones together or removing a zone</comment>
+  </data>
+  <data name="KeyboardControlsName" xml:space="preserve">
+    <value>Tastaturnavigation:</value>
+  </data>
+  <data name="KeyboardControlsDescription" xml:space="preserve">
+    <value>
+     – [UMSCHALT]+S zum Teilen der Zone, auf der der Fokus liegt.
+     – STRG+TAB zum Platzieren des Fokus auf Zonen/Größenänderungen.
+     – TAB zum Durchlaufen von Zonen und Größenänderungen.
+     – ENTF zum Entfernen der Größenänderung, auf der der Fokus liegt.
+     – Pfeiltasten zum Verschieben der Größenänderung, auf der der Fokus liegt.</value>
+  </data>
+  <data name="KeyboardControlsDescriptionCanvas" xml:space="preserve">
+    <value>
+• STRG+TAB, um den Fokus zwischen Dialogfeld und Zonen zu wechseln.
+• Umschalt+ Pfeile, um die Größe der Fokussierten Zone um 10px (5px pro Rand) zu ändern.
+• STRG+UMSCHALT+PFEILE, um die Größe der Fokussierten Zone um 2 px (1px pro Kante) zu ändern.
+• Pfeile, um die Fokussierte Zone um 10px zu verschieben.
+• STRG+Pfeile, um die Fokussierte Zone um 1px zu verschieben.</value>
+  </data>
+  <data name="SplitterDescription" xml:space="preserve">
+    <value>Halten Sie für eine vertikale Teilung die Umschalttaste gedrückt.</value>
+    <comment>A segmenter visual for splitting one item into two.  This would be the vertical line. Shift key is referring to key on keyboard</comment>
+  </data>
+  <data name="SplitterName" xml:space="preserve">
+    <value>Teilungselement:</value>
+    <comment>Title for concept: A segmenter visual for splitting one item into two.  This would be the vertical line</comment>
+  </data>
+  <data name="QuickKey_Description" xml:space="preserve">
+    <value>Drücken Sie WIN + STRG + ALT + die ausgewählte Taste, um dieses Layout anzuwenden.</value>
+  </data>
+  <data name="Quick_Key_None" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="Number_of_zones" xml:space="preserve">
+    <value>Anzahl von Zonen</value>
+  </data>
+  <data name="Pixels" xml:space="preserve">
+    <value>px</value>
+    <comment>Abbreviation of pixels</comment>
+  </data>
+  <data name="QuickKey_Title" xml:space="preserve">
+    <value>Tastenkombination für Layout</value>
+  </data>
+  <data name="Edit_Template" xml:space="preserve">
+    <value>„{0}“ bearbeiten</value>
+  </data>
+  <data name="Edit_Layout_Open_Announce" xml:space="preserve">
+    <value>geöffnet</value>
+  </data>
+  <data name="Layout_Creation_Announce" xml:space="preserve">
+    <value>Das benutzerdefinierte Layout wurde erfolgreich erstellt.</value>
+  </data>
+  <data name="OpenSettings" xml:space="preserve">
+    <value>Einstellungen öffnen</value>
+  </data>
+  <data name="Error_Parsing_Layout_Hotkeys_Message" xml:space="preserve">
+    <value>Bei der Analyse der Layout-Hotkeys ist ein Fehler aufgetreten.</value>
+  </data>
+  <data name="Error_Parsing_Layout_Templates_Message" xml:space="preserve">
+    <value>Fehler beim Analysieren von Vorlagenlayouts.</value>
+  </data>
+  <data name="Error_Parsing_Custom_Layouts_Message" xml:space="preserve">
+    <value>Fehler beim Analysieren benutzerdefinierter Layouts.</value>
+  </data>
+  <data name="Custom_slider_announce" xml:space="preserve">
+    <value>{0} Schieberegler. Der mögliche Bereich liegt zwischen {1} und {2}. Der Wert ist {3}.</value>
+  </data>
+  <data name="Pixel_Value" xml:space="preserve">
+    <value>{0} Pixel</value>
+  </data>
+  <data name="Template_Zone_Count_Value" xml:space="preserve">
+    <value>{0} Zonen</value>
+  </data>
+  <data name="Zones" xml:space="preserve">
+    <value>Zonen</value>
+  </data>
+  <data name="Default_Layout_Horizontal" xml:space="preserve">
+    <value>Standardlayout für horizontale Monitorausrichtung</value>
+  </data>
+  <data name="Set_Layout_As_Horizontal_Default" xml:space="preserve">
+    <value>Layout als Standard für horizontale Monitorausrichtung festlegen</value>
+  </data>
+  <data name="Error_Parsing_Default_Layouts_Message" xml:space="preserve">
+    <value>Fehler beim Analysieren von Standardlayouts.</value>
+  </data>
+  <data name="Default_Layout_Vertical" xml:space="preserve">
+    <value>Standardlayout für vertikale Bildschirmausrichtung</value>
+  </data>
+  <data name="Set_Layout_As_Vertical_Default" xml:space="preserve">
+    <value>Layout als Standard für vertikale Monitorausrichtung festlegen</value>
+  </data>
+  <data name="Error_Parsing_Editor_Parameters_Message" xml:space="preserve">
+    <value>Beim Analysieren von Editorparametern ist ein Fehler aufgetreten.</value>
+  </data>
+</root>

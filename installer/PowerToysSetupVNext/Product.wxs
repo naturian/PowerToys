@@ -45,12 +45,14 @@
            Markern erzeugt Configure-Modules.ps1 aus selected-modules.txt - NICHT von Hand editieren.
            Module ohne eigene Gruppe (FancyZones, AlwaysOnTop, CropAndLock, TextExtractor, MouseUtils,
            QuickAccent, ScreenRuler, GrabAndMove, ZoomIt, WindowHopper) kommen aus dem Catch-all; ihre Binaries steuert der
-           Filter. ResourcesComponentGroup (Lokalisierung) ist entfernt (nur interne Loc-Pipeline). -->
+           Filter. Die vollstaendige interne Loc-Pipeline ist entfernt; die eingecheckten
+           de-DE-Ressourcen werden ueber GermanLocalizationComponentGroup paketiert. -->
       <!-- Infrastruktur (immer noetig) -->
       <ComponentGroupRef Id="CoreComponents" />
       <ComponentGroupRef Id="BaseApplicationsComponentGroup" />
       <ComponentGroupRef Id="WinUI3ApplicationsComponentGroup" />
       <ComponentGroupRef Id="SettingsComponentGroup" />
+      <ComponentGroupRef Id="GermanLocalizationComponentGroup" />
       <ComponentGroupRef Id="DscResourcesComponentGroup" />
       <ComponentGroupRef Id="WindowsAppSDKComponentGroup" />
       <ComponentGroupRef Id="ToolComponentGroup" />

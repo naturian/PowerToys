@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AIMistakeNote.Text" xml:space="preserve">
+    <value>KI kann Fehler machen.</value>
+  </data>
+  <data name="ClipboardEmptyWarning" xml:space="preserve">
+    <value>Die Zwischenablage enthält keine verwendbaren Formate</value>
+  </data>
+  <data name="OpenAINotConfigured" xml:space="preserve">
+    <value>Anpassen mit KI ist nicht aktiviert</value>
+  </data>
+  <data name="OpenAIApiKeyUnauthorized" xml:space="preserve">
+    <value>Ungültiger API-Schlüssel oder -Endpunkt</value>
+  </data>
+  <data name="OpenAIApiKeyTooManyRequests" xml:space="preserve">
+    <value>API-Schlüsselquote überschritten</value>
+  </data>
+  <data name="OpenAIApiKeyError" xml:space="preserve">
+    <value>Fehler bei der OpenAI-Anforderung. Statuscode: </value>
+  </data>
+  <data name="PasteActionCanceled" xml:space="preserve">
+    <value>Der Einfügevorgang wurde abgebrochen.</value>
+  </data>
+  <data name="PasteError" xml:space="preserve">
+    <value>Bei dem Einfügevorgang ist ein Fehler aufgetreten</value>
+  </data>
+  <data name="PasteActionModerated" xml:space="preserve">
+    <value>Der Einfügevorgang wurde aufgrund vertraulicher Inhalte moderiert. Versuchen Sie es mit einer anderen Abfrage.</value>
+  </data>
+  <data name="ClipboardHistoryButtonToolTip.Text" xml:space="preserve">
+    <value>Zwischenablageverlauf</value>
+  </data>
+  <data name="ClipboardHistoryButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Zwischenablageverlauf</value>
+  </data>
+  <data name="AIProviderButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>KI-Anbieterauswahl</value>
+  </data>
+  <data name="AIProviderButtonTooltipEmpty" xml:space="preserve">
+    <value>KI-Anbieter auswählen</value>
+  </data>
+  <data name="AIProviderButtonTooltipFormat" xml:space="preserve">
+    <value>Aktiver Anbieter: {0}</value>
+  </data>
+  <data name="AIProvidersFlyoutHeader.Text" xml:space="preserve">
+    <value>Konfigurierte Modelle</value>
+  </data>
+  <data name="AIProvidersEmptyText.Text" xml:space="preserve">
+    <value>Keine Modelle konfiguriert</value>
+  </data>
+  <data name="AIProvidersManageButtonContent.Content" xml:space="preserve">
+    <value>Konfigurieren von Modellen in den Einstellungen</value>
+  </data>
+  <data name="ClipboardHistoryImage" xml:space="preserve">
+    <value>Bilddaten</value>
+    <comment>Label used to represent an image in the clipboard history</comment>
+  </data>
+  <data name="ClipboardPreviewCategoryText" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="ClipboardPreviewCategoryImage" xml:space="preserve">
+    <value>Bild</value>
+  </data>
+  <data name="ClipboardPreviewCategoryAudio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="ClipboardPreviewCategoryVideo" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="ClipboardPreviewCategoryFile" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="ClipboardPreviewCategoryUnknown" xml:space="preserve">
+    <value>Zwischenablage</value>
+  </data>
+  <data name="ClipboardPreviewCopiedJustNow" xml:space="preserve">
+    <value>Gerade kopiert</value>
+  </data>
+  <data name="ClipboardPreviewCopiedSeconds" xml:space="preserve">
+    <value>Vor {0} sek kopiert</value>
+  </data>
+  <data name="ClipboardPreviewCopiedMinutes" xml:space="preserve">
+    <value>Vor {0} min kopiert</value>
+  </data>
+  <data name="ClipboardPreviewCopiedHours" xml:space="preserve">
+    <value>Vor {0} Std. kopiert</value>
+  </data>
+  <data name="ClipboardPreviewCopiedDays" xml:space="preserve">
+    <value>Vor {0} Tag kopiert</value>
+  </data>
+  <data name="ClipboardHistoryItemMoreOptionsButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Weitere Optionen</value>
+  </data>
+  <data name="ClipboardHistoryItemDeleteButton.Text" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="CustomFormatTextBox.PlaceholderText" xml:space="preserve">
+    <value>Beschreiben Sie das gewünschte Format.</value>
+  </data>
+  <data name="InputTxtBoxTooltip.Text" xml:space="preserve">
+    <value>Beschreiben Sie das gewünschte Format.</value>
+  </data>
+  <data name="LearnMoreLink.Text" xml:space="preserve">
+    <value>Datenschutz</value>
+  </data>
+  <data name="LoadingText.Text" xml:space="preserve">
+    <value>Ausgabe wird generiert...</value>
+  </data>
+  <data name="PasteAsJson" xml:space="preserve">
+    <value>Als JSON einfügen</value>
+  </data>
+  <data name="PasteAsMarkdown" xml:space="preserve">
+    <value>Als Markdown einfügen</value>
+  </data>
+  <data name="PasteAsPlainText" xml:space="preserve">
+    <value>Als nur-Text einfügen</value>
+  </data>
+  <data name="FixSpellingAndGrammar" xml:space="preserve">
+    <value>Rechtschreibung und Grammatik korrigieren</value>
+  </data>
+  <data name="CoachingExplanationTitle.Text" xml:space="preserve">
+    <value>Was wurde geändert und warum</value>
+  </data>
+  <data name="ImageToText" xml:space="preserve">
+    <value>Bild zu Text</value>
+  </data>
+  <data name="PasteAsTxtFile" xml:space="preserve">
+    <value>Als TXT-Datei einfügen</value>
+  </data>
+  <data name="PasteAsPngFile" xml:space="preserve">
+    <value>Als PNG-Datei einfügen</value>
+  </data>
+  <data name="PasteAsHtmlFile" xml:space="preserve">
+    <value>Als HTML-Datei einfügen</value>
+  </data>
+  <data name="TranscodeToMp3" xml:space="preserve">
+    <value>In .mp3 transcodieren</value>
+    <comment>Option to transcode audio files to MP3 format</comment>
+  </data>
+  <data name="TranscodeToMp4" xml:space="preserve">
+    <value>In .mp4 (H.264/AAC) transcodieren</value>
+    <comment>Option to transcode video files to MP4 format with H.264 video codec and AAC audio codec</comment>
+  </data>
+  <data name="TranscodeErrorGeneral" xml:space="preserve">
+    <value>Beim Transcodieren der Mediendatei ist ein Fehler aufgetreten.</value>
+    <comment>Error message displayed when media conversion fails for an unknown or general reason</comment>
+  </data>
+  <data name="TranscodeErrorUnsupportedCodec" xml:space="preserve">
+    <value>Die Mediendatei enthält einen nicht unterstützten Codec.</value>
+    <comment>Error message displayed when media conversion fails due to an unsupported codec in the source file</comment>
+  </data>
+  <data name="PasteButtonAutomation.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Einfügen</value>
+  </data>
+  <data name="PasteText.Text" xml:space="preserve">
+    <value>Einfügen</value>
+  </data>
+  <data name="ResultTitleTxt.Text" xml:space="preserve">
+    <value>Ergebnis</value>
+  </data>
+  <data name="RecallBtnToolTip.Text" xml:space="preserve">
+    <value>Zum letzten Prompt und den Daten in der Zwischenablage zurückkehren</value>
+  </data>
+  <data name="RecallButtonAutomation.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Zum letzten Prompt und den Daten in der Zwischenablage zurückkehren</value>
+  </data>
+  <data name="SendBtnToolTip.Text" xml:space="preserve">
+    <value>Generieren und Einfügen von Daten</value>
+  </data>
+  <data name="CancelBtnToolTip.Text" xml:space="preserve">
+    <value>Einfügevorgang abbrechen</value>
+  </data>
+  <data name="RegenerateBtnToolTip.Text" xml:space="preserve">
+    <value>Neu generieren</value>
+  </data>
+  <data name="RegenerateBtnAutomation.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Neu generieren</value>
+  </data>
+  <data name="SendButtonAutomation.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Generieren und Einfügen von Daten</value>
+  </data>
+  <data name="CancelBtnAutomation.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Einfügevorgang abbrechen</value>
+  </data>
+  <data name="SettingsBtn.Content" xml:space="preserve">
+    <value>Einstellungen öffnen</value>
+  </data>
+  <data name="SettingsBtn.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Einstellungen öffnen</value>
+  </data>
+  <data name="AIErrorMessage.Header" xml:space="preserve">
+    <value>Der KI-Assistent hat die folgende Meldung bereitgestellt:</value>
+  </data>
+  <data name="ThumbsDownFeedback.Text" xml:space="preserve">
+    <value>Feedback mit Daumen nach unten</value>
+  </data>
+  <data name="ThumbsUpFeedback.Text" xml:space="preserve">
+    <value>Feedback mit Daumen nach oben</value>
+  </data>
+  <data name="WindowTitle" xml:space="preserve">
+    <value>Erweitertes Einfügen</value>
+  </data>
+  <data name="PreviousResultBtnToolTip.Text" xml:space="preserve">
+    <value>Vorheriges Ergebnis</value>
+  </data>
+  <data name="PreviousResultBtnAutomation.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Vorheriges Ergebnis</value>
+  </data>
+  <data name="NextResultBtnToolTip.Text" xml:space="preserve">
+    <value>Nächstes Ergebnis</value>
+  </data>
+  <data name="NextResultBtnAutomation.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Nächstes Ergebnis</value>
+  </data>
+  <data name="PrivacyLink.Content" xml:space="preserve">
+    <value>Datenschutzrichtlinie</value>
+  </data>
+  <data name="TermsLink.Content" xml:space="preserve">
+    <value>Bedingungen</value>
+  </data>
+  <data name="OpenAIGpoDisabled" xml:space="preserve">
+    <value>Die Anpassung mit KI ist durch Ihre Organisation deaktiviert.</value>
+  </data>
+  <data name="CtrlKey" xml:space="preserve">
+    <value>STRG</value>
+  </data>
+  <data name="PasteAsFile_FilePrefix" xml:space="preserve">
+    <value>PowerToys_Paste_</value>
+  </data>
+  <data name="Relative_JustNow" xml:space="preserve">
+    <value>Gerade eben</value>
+  </data>
+  <data name="Relative_MinuteAgo" xml:space="preserve">
+    <value>Vor 1 Minute</value>
+  </data>
+  <data name="Relative_MinutesAgo_Format" xml:space="preserve">
+    <value>vor {0} Minuten</value>
+  </data>
+  <data name="Relative_Today_TimeFormat" xml:space="preserve">
+    <value>Heute, {0}</value>
+  </data>
+  <data name="Relative_Yesterday_TimeFormat" xml:space="preserve">
+    <value>Gestern, {0}</value>
+  </data>
+  <data name="Relative_Weekday_TimeFormat" xml:space="preserve">
+    <value>{0}, {1}</value>
+    <comment>(e.g., “Wednesday, 17:05”)</comment>
+  </data>
+  <data name="Relative_Date_TimeFormat" xml:space="preserve">
+    <value>{0}, {1}</value>
+    <comment>(e.g., "10/20/2025, 17:05" in the user's locale)</comment>
+  </data>
+  <data name="CustomEndpointWarning" xml:space="preserve">
+    <value>Sie verwenden einen benutzerdefinierten Endpunkt. Überprüfen Sie alle Antworten.</value>
+  </data>
+  <data name="LocalModelBadge.Text" xml:space="preserve">
+    <value>Lokal</value>
+    <comment>Badge label displayed next to local AI model providers (e.g., Ollama, Foundry Local) to indicate the model runs locally</comment>
+  </data>
+  <data name="FoundryLocal_UnableToLoadModel" xml:space="preserve">
+    <value>Foundry Local-Modell {0} kann nicht geladen werden</value>
+    <comment>{0} is the model identifier. Do not translate {0}.</comment>
+  </data>
+</root>
