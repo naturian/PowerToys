@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
 Konfiguriert den minimierten Installer aus selected-modules.txt: stempelt die GENERATED-Marker
-in main.cpp (Runner), DashboardViewModel.cs (Settings) und Product.wxs (WiX).
+in main.cpp (Runner), DashboardViewModel.cs (Settings), Product.wxs und dem WiX-Projekt.
 
 .DESCRIPTION
 Einzige Wahrheitsquelle ist selected-modules.txt + Modules-Database.ps1. Nach dem Ausfuehren
@@ -33,18 +33,29 @@ Write-Host "[CONFIG] Ausgewaehlte Module ($($selected.Count)): $($selected -join
 $runnerDlls = [System.Collections.Generic.List[string]]::new()
 $moduleTypes = [System.Collections.Generic.List[string]]::new()
 $wixGroups = [System.Collections.Generic.List[string]]::new()
+$wixSources = [System.Collections.Generic.List[string]]::new()
 $needMonaco = $false
 foreach ($k in $selected) {
     $m = $ModuleDatabase[$k]
     $m.RunnerDlls   | ForEach-Object { if ($runnerDlls -notcontains $_) { $runnerDlls.Add($_) } }
     $m.ModuleTypes  | ForEach-Object { if ($moduleTypes -notcontains $_) { $moduleTypes.Add($_) } }
     $m.WixGroups    | ForEach-Object { if ($wixGroups -notcontains $_) { $wixGroups.Add($_) } }
+    if ($m.WixGroups.Count -gt 0) {
+        $wixSource = "$k.wxs"
+        if (-not (Test-Path -LiteralPath (Join-Path $here $wixSource))) {
+            throw "WiX-Quelle fuer $k nicht gefunden: $wixSource"
+        }
+        if ($wixSources -notcontains $wixSource) { $wixSources.Add($wixSource) }
+    }
     if ($m.NeedsMonaco) { $needMonaco = $true }
 }
 if ($needMonaco) {
     # Monaco-Assets liegen in FileExplorerPreview.wxs + MonacoSRC.wxs
     foreach ($g in @('MonacoSRCHeatGenerated', 'FileExplorerPreviewComponentGroup')) {
         if ($wixGroups -notcontains $g) { $wixGroups.Insert(0, $g) }
+    }
+    foreach ($source in @('MonacoSRC.wxs', 'FileExplorerPreview.wxs')) {
+        if ($wixSources -notcontains $source) { $wixSources.Insert(0, $source) }
     }
 }
 
@@ -77,6 +88,10 @@ Set-GeneratedRegion (Join-Path $RepoRoot 'src\settings-ui\Settings.UI\ViewModels
 # 3) WiX (Product.wxs)
 $wixLines = $wixGroups | ForEach-Object { "<ComponentGroupRef Id=`"$_`" />" }
 Set-GeneratedRegion (Join-Path $RepoRoot 'installer\PowerToysSetupVNext\Product.wxs') '      ' $wixLines
+
+# 4) Nur die fuer die Auswahl benoetigten WiX-Quelldateien kompilieren.
+$wixSourceLines = $wixSources | ForEach-Object { "<Compile Include=`"$_`" />" }
+Set-GeneratedRegion (Join-Path $RepoRoot 'installer\PowerToysSetupVNext\PowerToysInstallerVNext.wixproj') '    ' $wixSourceLines
 
 # CmdPal ist in der Minimal-Pipeline nicht waehlbar. Upstream legt seine WinMD
 # trotzdem in BaseApplications ab; ohne Bereinigung wuerde sie mitpaketiert.

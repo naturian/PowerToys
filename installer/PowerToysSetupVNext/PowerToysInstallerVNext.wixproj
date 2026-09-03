@@ -124,24 +124,22 @@ call powershell.exe -NonInteractive -executionpolicy Unrestricted -File $(MSBuil
     <Compile Include="DscResources.wxs" />
     <Compile Include="CliShims.wxs" />
     <!-- Resources.wxs (Lokalisierung) und Run.wxs (PowerToys Run) entfernt - siehe Product.wxs. -->
-    <!-- Monaco-Editor-Assets (index.html + Verzeichnisse) - von Peek benoetigt -->
+    <!-- Auswahl + benoetigte Monaco-Quellen werden von Configure-Modules.ps1 erzeugt. -->
+    <!-- BEGIN_GENERATED_MODULES -->
     <Compile Include="FileExplorerPreview.wxs" />
     <Compile Include="MonacoSRC.wxs" />
-    <!-- === Gewuenschte Module === -->
-    <Compile Include="AdvancedPaste.wxs" />
-    <Compile Include="ColorPicker.wxs" />
-    <Compile Include="FileLocksmith.wxs" />
-    <Compile Include="ImageResizer.wxs" />
-    <Compile Include="Peek.wxs" />
-    <Compile Include="PowerDisplay.wxs" />
-    <Compile Include="PowerRename.wxs" />
-    <Compile Include="LightSwitch.wxs" />
     <Compile Include="Workspaces.wxs" />
-    <!-- Nicht gewuenschte Module aus dem Build entfernt: Awake, CmdPal,
-         EnvironmentVariables, Hosts, KeyboardManager,
-         MouseWithoutBorders, NewPlus, RegistryPreview, Run, ShortcutGuide.
-         (TextExtractor, AlwaysOnTop, CropAndLock, FancyZones haben keine eigene .wxs -
-         ihre Binaries kommen aus dem Catch-all BaseApplications/WinUI3Applications.) -->
+    <Compile Include="ImageResizer.wxs" />
+    <Compile Include="FileLocksmith.wxs" />
+    <Compile Include="PowerRename.wxs" />
+    <Compile Include="Peek.wxs" />
+    <Compile Include="ColorPicker.wxs" />
+    <Compile Include="PowerDisplay.wxs" />
+    <Compile Include="LightSwitch.wxs" />
+    <Compile Include="AdvancedPaste.wxs" />
+    <Compile Include="NewPlus.wxs" />
+    <Compile Include="ShortcutGuide.wxs" />
+    <!-- END_GENERATED_MODULES -->
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CustomDialogs" />

@@ -44,7 +44,7 @@
            Infrastruktur ist immer dabei. Die modulspezifischen Gruppen zwischen den GENERATED-
            Markern erzeugt Configure-Modules.ps1 aus selected-modules.txt - NICHT von Hand editieren.
            Module ohne eigene Gruppe (FancyZones, AlwaysOnTop, CropAndLock, TextExtractor, MouseUtils,
-           QuickAccent, ScreenRuler, GrabAndMove, WindowHopper) kommen aus dem Catch-all; ihre Binaries steuert der
+           QuickAccent, ScreenRuler, GrabAndMove, ZoomIt, WindowHopper) kommen aus dem Catch-all; ihre Binaries steuert der
            Filter. ResourcesComponentGroup (Lokalisierung) ist entfernt (nur interne Loc-Pipeline). -->
       <!-- Infrastruktur (immer noetig) -->
       <ComponentGroupRef Id="CoreComponents" />
@@ -68,6 +68,9 @@
       <ComponentGroupRef Id="PowerDisplayComponentGroup" />
       <ComponentGroupRef Id="LightSwitchComponentGroup" />
       <ComponentGroupRef Id="AdvancedPasteComponentGroup" />
+      <ComponentGroupRef Id="NewPlusComponentGroup" />
+      <ComponentGroupRef Id="NewPlusTemplatesComponentGroup" />
+      <ComponentGroupRef Id="ShortcutGuideComponentGroup" />
       <!-- END_GENERATED_MODULES -->
     </Feature>
 

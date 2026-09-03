@@ -9,7 +9,7 @@
 #   ShortcutGuide, MouseWithoutBorders, AdvancedPaste, NewPlus, PowerDisplay, LightSwitch,
 #   FileExplorerPreview
 #
-# Noch nicht von der Minimal-Pipeline unterstuetzt: CmdPal, CmdNotFound, ZoomIt, Run
+# Noch nicht von der Minimal-Pipeline unterstuetzt: CmdPal, CmdNotFound, Run
 
 FancyZones
 AlwaysOnTop
@@ -27,3 +27,7 @@ LightSwitch
 MouseUtils
 WindowHopper
 AdvancedPaste
+NewPlus
+ZoomIt
+GrabAndMove
+ShortcutGuide

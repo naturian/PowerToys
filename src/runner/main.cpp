@@ -278,6 +278,10 @@ int runner(bool isProcessElevated, bool openSettings, std::string settingsWindow
             L"PowerToys.MousePointerCrosshairs.dll",
             L"PowerToys.AltWindowCycle.dll",
             L"PowerToys.AdvancedPasteModuleInterface.dll",
+            L"WinUI3Apps/PowerToys.NewPlus.ShellExtension.dll",
+            L"PowerToys.ZoomItModuleInterface.dll",
+            L"PowerToys.GrabAndMoveModuleInterface.dll",
+            L"WinUI3Apps/PowerToys.ShortcutGuideModuleInterface.dll",
             // END_GENERATED_MODULES
         };
 

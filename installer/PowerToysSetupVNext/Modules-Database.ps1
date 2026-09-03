@@ -7,6 +7,7 @@ Pro Modul:
   RunnerDlls    : Eintraege fuer die knownModules-Liste des Runners (Pfad wie im Original).
   FilterPatterns: Datei-Globs, die AUSSCHLIESSLICH zu diesem Modul gehoeren (Release-/WinUI3Apps-Wurzel).
   WixGroups     : WiX-ComponentGroup-IDs, die bei Auswahl in Product.wxs referenziert werden.
+                  Bei nicht leerer Liste muss <Modulschluessel>.wxs existieren; das WiX-Projekt wird daraus erzeugt.
   NeedsMonaco   : $true, wenn das Modul die Monaco-Editor-Assets braucht (Peek, RegistryPreview, FEP).
   Buildable     : $false = laesst sich in dieser Umgebung nicht bauen (nicht waehlbar).
   Note          : Hinweis.
@@ -21,6 +22,7 @@ $ModuleDatabase = [ordered]@{
     'QuickAccent'         = @{ ModuleTypes=@('PowerAccent');      RunnerDlls=@('PowerToys.PowerAccentModuleInterface.dll'); FilterPatterns=@('PowerToys.PowerAccent*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true }
     'ScreenRuler'         = @{ ModuleTypes=@('MeasureTool');      RunnerDlls=@('WinUI3Apps/PowerToys.MeasureToolModuleInterface.dll'); FilterPatterns=@('PowerToys.MeasureTool*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true }
     'GrabAndMove'         = @{ ModuleTypes=@('GrabAndMove');      RunnerDlls=@('PowerToys.GrabAndMoveModuleInterface.dll'); FilterPatterns=@('PowerToys.GrabAndMove*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true }
+    'ZoomIt'              = @{ ModuleTypes=@('ZoomIt');           RunnerDlls=@('PowerToys.ZoomItModuleInterface.dll'); FilterPatterns=@('PowerToys.ZoomIt*','ZoomIt*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true; Note='ZoomIt.exe und das Modul-Interface kommen aus dem Catch-all. ZoomItSettingsInterop.dll bleibt immer als Settings-Abhaengigkeit erhalten.' }
     'MouseUtils'          = @{ ModuleTypes=@('CursorWrap','FindMyMouse','MouseHighlighter','MouseJump','MousePointerCrosshairs'); RunnerDlls=@('PowerToys.CursorWrap.dll','PowerToys.FindMyMouse.dll','PowerToys.MouseHighlighter.dll','WinUI3Apps/PowerToys.MouseJump.dll','PowerToys.MousePointerCrosshairs.dll'); FilterPatterns=@('PowerToys.CursorWrap*','PowerToys.FindMyMouse*','PowerToys.MouseHighlighter*','PowerToys.MouseJump*','PowerToys.MousePointerCrosshairs*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true; Note='Mausdienstprogramme (5 Werkzeuge in einer Gruppe). MouseJump.Common.dll bleibt immer (Settings-Abhaengigkeit).' }
     'WindowHopper'        = @{ ModuleTypes=@('AltWindowCycle');   RunnerDlls=@('PowerToys.AltWindowCycle.dll'); FilterPatterns=@('PowerToys.AltWindowCycle*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$true; Note='Window Hopper; interner Modulname AltWindowCycle.' }
 
@@ -47,7 +49,6 @@ $ModuleDatabase = [ordered]@{
     # ---- Noch nicht in die Minimal-Pipeline integriert ----
     'CmdPal'              = @{ ModuleTypes=@('CmdPal');           RunnerDlls=@('PowerToys.CmdPalModuleInterface.dll'); FilterPatterns=@('PowerToys.CmdPal*','Microsoft.CmdPal*','Microsoft.CommandPalette*','CmdPal*'); WixGroups=@('CmdPalComponentGroup'); NeedsMonaco=$false; Buildable=$false; Note='Command Palette: MSIX/AOT-Paketierung ist noch nicht in die Minimal-Pipeline integriert.' }
     'CmdNotFound'         = @{ ModuleTypes=@();                   RunnerDlls=@('PowerToys.CmdNotFoundModuleInterface.dll'); FilterPatterns=@('PowerToys.CmdNotFound*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$false; Note='Command Not Found: PowerShell-Modul und Installer-Custom-Actions sind noch nicht in die konfigurierbare Pipeline integriert.' }
-    'ZoomIt'              = @{ ModuleTypes=@('ZoomIt');           RunnerDlls=@('PowerToys.ZoomItModuleInterface.dll'); FilterPatterns=@('PowerToys.ZoomIt*','ZoomIt*'); WixGroups=@(); NeedsMonaco=$false; Buildable=$false; Note='ZoomIt: Build-/Paketierungspfad ist noch nicht in die Minimal-Pipeline integriert. ZoomItSettingsInterop.dll bleibt immer (Settings-Abhaengigkeit).' }
     'Run'                 = @{ ModuleTypes=@('PowerLauncher');    RunnerDlls=@('PowerToys.Launcher.dll'); FilterPatterns=@('PowerToys.PowerLauncher*','PowerToys.Launcher*','PowerLauncher*','Wox.*'); WixGroups=@('RunComponentGroup'); NeedsMonaco=$false; Buildable=$false; Note='PowerToys Run: tiefe Kopplung an Resources.wxs/RunPlugins; im minimierten Setup derzeit nicht unterstuetzt.' }
 }
 

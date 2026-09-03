@@ -4,7 +4,7 @@ Dieser Branch basiert direkt auf dem aktuellen `origin/main` von Microsoft Power
 Versionierung bleibt unverändert aus `src/Version.props`; die Minimal-Pipeline setzt keine
 künstliche Release-Version.
 
-Der erzeugte MSI enthält diese 16 Modulgruppen:
+Der erzeugte MSI enthält diese 20 Modulgruppen:
 
 | Modul | Interner Schlüssel |
 |---|---|
@@ -24,6 +24,10 @@ Der erzeugte MSI enthält diese 16 Modulgruppen:
 | Mausdienstprogramme | `MouseUtils` |
 | Window Hopper | `WindowHopper` / `AltWindowCycle` |
 | Erweitertes Einfügen | `AdvancedPaste` |
+| New+ | `NewPlus` |
+| ZoomIt | `ZoomIt` |
+| Grab and Move | `GrabAndMove` |
+| Shortcut Guide | `ShortcutGuide` |
 
 `MouseUtils` umfasst Cursor Wrap, Find My Mouse, Mouse Highlighter, Mouse Jump und Mouse
 Pointer Crosshairs. Nicht ausgewählte Module werden vor dem WiX-Harvest aus dem Build-Output
@@ -41,12 +45,13 @@ Die Auswahl steht in
 ```text
 selected-modules.txt ──▶ Configure-Modules.ps1 ──▶ Runner-Ladeliste
                                                ├─▶ Settings-Dashboard
-                                               └─▶ WiX-Komponentengruppen
+                                               ├─▶ WiX-Komponentengruppen
+                                               └─▶ WiX-Quelldateien
 Modules-Database.ps1 ──▶ filter-minimal-modules.ps1 ──▶ bereinigter Build-Output
 ```
 
-Nach einer Änderung an `selected-modules.txt` genügt ein neuer Build. `CmdPal`, `CmdNotFound`,
-`ZoomIt` und `Run` sind in der Datenbank bewusst als nicht baubar markiert, weil ihre
+Nach einer Änderung an `selected-modules.txt` genügt ein neuer Build. `CmdPal`, `CmdNotFound`
+und `Run` sind in der Datenbank bewusst als nicht baubar markiert, weil ihre
 Paketierung noch nicht in die Minimal-Pipeline integriert ist.
 
 ## Build
