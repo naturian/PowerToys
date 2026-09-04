@@ -1,8 +1,10 @@
 # PowerToys – minimierter Installer
 
-Dieser Branch basiert direkt auf dem aktuellen `origin/main` von Microsoft PowerToys. Die
-Versionierung bleibt unverändert aus `src/Version.props`; die Minimal-Pipeline setzt keine
-künstliche Release-Version.
+Dieser Branch basiert auf Microsoft-`main`-Commit
+`103d376c0a987cf350d4594bb3f8d71282fddfd6`. Dessen offizieller CI-Build
+`PowerToys CI_2609.02003` wird mit Microsofts eigenem Release-Train-Schema als
+`0.101.2453.0` paketiert. Es wird keine künstliche `0.102` gesetzt; der interne
+Updatekanal bleibt `private`.
 
 Der erzeugte MSI enthält diese 20 Modulgruppen:
 
@@ -62,9 +64,9 @@ Aus dem Repo-Wurzelverzeichnis:
 tools\build\build-minimal-installer.ps1
 ```
 
-Das Skript verwendet die Version des ausgecheckten Microsoft-`main`, stellt Abhängigkeiten
-wieder her, baut die Solution ohne Tests, baut die Diagnosewerkzeuge, filtert nicht ausgewählte
-Module und erzeugt einen englischen Per-User-MSI.
+Das Skript verwendet die zum oben genannten Microsoft-`main`-Build gehörende Version, stellt
+Abhängigkeiten wieder her, baut die Solution ohne Tests, baut die Diagnosewerkzeuge, filtert
+nicht ausgewählte Module und erzeugt einen deutsch lokalisierten Per-User-MSI.
 
 Nur Filter und Installer erneut ausführen:
 

@@ -198,9 +198,61 @@ else
     Add-Failure 'GermanLocalization.wxs fehlt.'
 }
 
+$versionPropsPath = Join-Path $RepoRoot 'src\Version.props'
+$expectedVersion = $null
+if (-not (Test-Path -LiteralPath $versionPropsPath))
+{
+    Add-Failure "Version.props fehlt: $versionPropsPath"
+}
+else
+{
+    $versionDocument = Read-XmlDocument $versionPropsPath
+    $expectedVersion = [string]$versionDocument.Project.PropertyGroup.Version
+    if ($expectedVersion -notmatch '^\d+\.\d+\.\d+(?:\.\d+)?$')
+    {
+        Add-Failure "Ungueltige PowerToys-Version in Version.props: $expectedVersion"
+    }
+
+    $contextMenuManifests = @(
+        'src\modules\FileLocksmith\FileLocksmithContextMenu\AppxManifest.xml',
+        'src\modules\NewPlus\NewShellExtensionContextMenu\AppxManifest.xml',
+        'src\modules\imageresizer\ImageResizerContextMenu\AppxManifest.xml',
+        'src\modules\powerrename\PowerRenameContextMenu\AppxManifest.xml'
+    )
+    foreach ($relativeManifestPath in $contextMenuManifests)
+    {
+        $manifestPath = Join-Path $RepoRoot $relativeManifestPath
+        $manifestDocument = Read-XmlDocument $manifestPath
+        $manifestVersion = [string]$manifestDocument.Package.Identity.Version
+        if ($manifestVersion -ne $expectedVersion)
+        {
+            Add-Failure "Kontextmenue-Version weicht von Version.props ab: $relativeManifestPath ($manifestVersion statt $expectedVersion)"
+        }
+    }
+}
+
 if ($BuildRoot)
 {
     $resolvedBuildRoot = (Resolve-Path -LiteralPath $BuildRoot).Path
+    if ($expectedVersion)
+    {
+        foreach ($relativeExecutablePath in @('PowerToys.exe', 'WinUI3Apps\PowerToys.Settings.exe'))
+        {
+            $executablePath = Join-Path $resolvedBuildRoot $relativeExecutablePath
+            if (-not (Test-Path -LiteralPath $executablePath))
+            {
+                Add-Failure "Versioniertes Kernprogramm fehlt: $executablePath"
+                continue
+            }
+
+            $actualVersion = (Get-Item -LiteralPath $executablePath).VersionInfo.FileVersion
+            if ($actualVersion -ne $expectedVersion)
+            {
+                Add-Failure "Binaerversion weicht von Version.props ab: $relativeExecutablePath ($actualVersion statt $expectedVersion)"
+            }
+        }
+    }
+
     $manifestPath = Join-Path $resolvedBuildRoot 'WinUI3Apps\hardlinks.txt'
     if (-not (Test-Path -LiteralPath $manifestPath))
     {

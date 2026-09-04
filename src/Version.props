@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Version>0.0.1</Version>
+    <Version>0.101.2453.0</Version>
     <VersionChannel>private</VersionChannel>
     <!-- Update once when main moves to the next stable release train. -->
     <ReleaseTrainVersion>0.101</ReleaseTrainVersion>
