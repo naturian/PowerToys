@@ -27,12 +27,16 @@ param(
     [switch]$SkipSolutionBuild
 )
 $ErrorActionPreference = 'Stop'
+# Quoted PATH entries break the Visual Studio developer shell's cmd bootstrap.
+# Normalize only this build process; do not change the user's persisted PATH.
+$env:Path = (($env:Path -split ';' | ForEach-Object { $_.Trim('"') }) -join ';')
 $repoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path
 $script:RepoRoot = $repoRoot
 . "$repoRoot\tools\build\build-common.ps1"
 if (-not (Ensure-VsDevEnvironment)) { throw 'Visual-Studio-Dev-Umgebung nicht gefunden.' }
 Set-Location $repoRoot
-$env:NUGET_PACKAGES = Join-Path $env:USERPROFILE '.nuget\packages'
+# Keep restore and build bound to a stable, project-local cache.
+$env:NUGET_PACKAGES = Join-Path $repoRoot '.build-cache\nuget'
 
 $relax = '/p:NuGetAudit=false /p:TreatWarningsAsErrors=false /p:MSBuildTreatWarningsAsErrors=false /p:RunAnalyzersDuringBuild=false /p:WarningLevel=0'
 $buildParallel = '/m:2 /p:CL_MPCount=2'
@@ -48,7 +52,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Deutsche UI-Ressourcen sind unvollstaendig.' }
 
 # --- 2. Abhaengigkeiten wiederherstellen ---
 Write-Host '[2/6] NuGet- und vcpkg-Abhaengigkeiten wiederherstellen...'
-RestoreThenBuild 'PowerToys.slnx' $relax $Platform $Configuration $true
+RestoreThenBuild 'PowerToys.slnx' "/p:RestoreForce=true /p:RestoreNoCache=true $relax" $Platform $Configuration $true
 
 if (-not $SkipSolutionBuild) {
     # --- 3. Solution bauen ---

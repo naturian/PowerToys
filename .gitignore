@@ -384,3 +384,4 @@ docs/superpowers/
 
 # Minimierter Installer: gebaute MSIs (zu gross fuer Git)
 dist/
+.build-cache/

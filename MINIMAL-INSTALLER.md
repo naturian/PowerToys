@@ -1,10 +1,9 @@
 # PowerToys – minimierter Installer
 
-Dieser Branch basiert auf Microsoft-`main`-Commit
-`103d376c0a987cf350d4594bb3f8d71282fddfd6`. Dessen offizieller CI-Build
-`PowerToys CI_2609.02003` wird mit Microsofts eigenem Release-Train-Schema als
-`0.101.2453.0` paketiert. Es wird keine künstliche `0.102` gesetzt; der interne
-Updatekanal bleibt `private`.
+Dieser Branch basiert auf Microsofts offiziellem Preview-Tag `v0.102.2883.0`
+(`6b8238253ace26851eaf3b5784dd7c6181cf0267`, veröffentlicht am 16. Oktober 2026).
+Die Produktversion `0.102.2883.0` wird unverändert aus diesem Release übernommen;
+der interne Updatekanal bleibt `private`. Der Microsoft-Tag ist weiterhin eine Preview.
 
 Der erzeugte MSI enthält diese 20 Modulgruppen:
 
@@ -37,6 +36,11 @@ entfernt und nicht installiert.
 
 In Erweitertes Einfügen ist „Paste with AI“ dauerhaft gesperrt.
 Auch bestehende oder manuell geänderte Einstellungen können die Funktion nicht aktivieren.
+Zusätzlich verweigert die gemeinsame Advanced-Paste-Engine alle KI-Anbieter, einschließlich
+lokaler Modelle. Die neue Advanced-Paste-CLI und die PATH-Shims werden nicht installiert.
+Die neu hinzugekommenen Mausmodule CursorHide und Mouse Button Lock sind nicht ausgewählt.
+ZoomIts neue Offline-Diktierfunktion bleibt gemäß Upstream standardmäßig ausgeschaltet;
+sie kann vom Benutzer aktiviert werden und verwendet dann das Mikrofon.
 
 ## Modulauswahl
 
@@ -64,7 +68,7 @@ Aus dem Repo-Wurzelverzeichnis:
 tools\build\build-minimal-installer.ps1
 ```
 
-Das Skript verwendet die zum oben genannten Microsoft-`main`-Build gehörende Version, stellt
+Das Skript verwendet die zum oben genannten Microsoft-Release gehörende Version, stellt
 Abhängigkeiten wieder her, baut die Solution ohne Tests, baut die Diagnosewerkzeuge, filtert
 nicht ausgewählte Module und erzeugt einen deutsch lokalisierten Per-User-MSI.
 
@@ -75,6 +79,9 @@ tools\build\build-minimal-installer.ps1 -SkipSolutionBuild
 ```
 
 Ergebnis: `installer/PowerToysSetupVNext/<Platform>/<Configuration>/UserSetup/*.msi`.
+
+Die Pipeline verwendet den ignorierten Paketcache `.build-cache/nuget` und erzwingt dessen
+Wiederherstellung, damit Restore und Kompilierung dieselben vorhandenen Pakete verwenden.
 
 Voraussetzungen entsprechen dem Upstream-Repository: Visual Studio 2022 17.4+ oder Visual
 Studio 2026 mit C++-Desktop-Workload, passende Windows- und .NET-SDKs sowie initialisierte
@@ -98,11 +105,12 @@ Monaco-/File-Explorer-Preview-Komponentengruppen.
 
 Der öffentliche Quellcode enthält standardmäßig nur englische PowerToys-Ressourcen. Für diesen
 Firmen-Build sind vollständige `de-DE`-RESW/RESX-Dateien eingecheckt. Sie wurden mit
-`import-german-localization.ps1` aus dem signierten Microsoft-Build `v0.101.2432.0` extrahiert und
-auf die Ressourcenschlüssel des aktuellen Main-Stands übertragen. Dabei werden ausdrücklich keine
+`import-german-localization.ps1` aus dem signierten Microsoft-Build `v0.102.2883.0` extrahiert und
+auf die Ressourcenschlüssel desselben Quellstands übertragen. Dabei werden ausdrücklich keine
 fremden PRI- oder Satelliten-Binärdateien kopiert; XAML und Assembly-Versionen bleiben konsistent.
 
-Beim Aktualisieren des Main-Stands müssen die deutschen Quellen mit einem möglichst passenden
+Farbauswahl und Textextraktor verwenden seit diesem Update WinUI-RESW/PRI statt WPF-Satelliten.
+Beim Aktualisieren der Microsoft-Basis müssen die deutschen Quellen mit einem möglichst passenden
 offiziellen Paket neu importiert und anschließend geprüft werden:
 
 ```powershell

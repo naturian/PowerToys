@@ -92,23 +92,25 @@ $resourcePairs = @(
     @('src\settings-ui\Settings.UI\Strings\en-us\Resources.resw', 'src\settings-ui\Settings.UI\Strings\de-DE\Resources.resw'),
     @('src\settings-ui\Settings.UI.Controls\Strings\en-us\Resources.resw', 'src\settings-ui\Settings.UI.Controls\Strings\de-DE\Resources.resw'),
     @('src\modules\AdvancedPaste\AdvancedPaste\Strings\en-us\Resources.resw', 'src\modules\AdvancedPaste\AdvancedPaste\Strings\de-DE\Resources.resw'),
+    @('src\modules\colorPicker\ColorPickerUI\Strings\en-us\Resources.resw', 'src\modules\colorPicker\ColorPickerUI\Strings\de-DE\Resources.resw'),
     @('src\modules\FileLocksmith\FileLocksmithUI\Strings\en-us\Resources.resw', 'src\modules\FileLocksmith\FileLocksmithUI\Strings\de-DE\Resources.resw'),
     @('src\modules\imageresizer\ui\Strings\en-us\Resources.resw', 'src\modules\imageresizer\ui\Strings\de-DE\Resources.resw'),
     @('src\modules\MeasureTool\MeasureToolUI\Strings\en-us\Resources.resw', 'src\modules\MeasureTool\MeasureToolUI\Strings\de-DE\Resources.resw'),
     @('src\modules\peek\Peek.UI\Strings\en-us\Resources.resw', 'src\modules\peek\Peek.UI\Strings\de-DE\Resources.resw'),
     @('src\modules\powerdisplay\PowerDisplay\Strings\en-us\Resources.resw', 'src\modules\powerdisplay\PowerDisplay\Strings\de-DE\Resources.resw'),
+    @('src\modules\PowerOCR\PowerOCR\Strings\en-us\Resources.resw', 'src\modules\PowerOCR\PowerOCR\Strings\de-DE\Resources.resw'),
     @('src\modules\powerrename\PowerRenameUILib\Strings\en-us\Resources.resw', 'src\modules\powerrename\PowerRenameUILib\Strings\de-DE\Resources.resw'),
     @('src\modules\ShortcutGuide\ShortcutGuide.Ui\Strings\en-us\Resources.resw', 'src\modules\ShortcutGuide\ShortcutGuide.Ui\Strings\de-DE\Resources.resw'),
-    @('src\modules\colorPicker\ColorPickerUI\Properties\Resources.resx', 'src\modules\colorPicker\ColorPickerUI\Properties\Resources.de-DE.resx'),
     @('src\modules\FancyZones\editor\FancyZonesEditor\Properties\Resources.resx', 'src\modules\FancyZones\editor\FancyZonesEditor\Properties\Resources.de-DE.resx'),
-    @('src\modules\PowerOCR\PowerOCR\Properties\Resources.resx', 'src\modules\PowerOCR\PowerOCR\Properties\Resources.de-DE.resx'),
-    @('src\modules\Workspaces\WorkspacesEditor\Properties\Resources.resx', 'src\modules\Workspaces\WorkspacesEditor\Properties\Resources.de-DE.resx')
+    @('src\modules\LightSwitch\LightSwitch.Cli\Properties\Resources.resx', 'src\modules\LightSwitch\LightSwitch.Cli\Properties\Resources.de-DE.resx'),
+    @('src\modules\Workspaces\WorkspacesEditor\Properties\Resources.resx', 'src\modules\Workspaces\WorkspacesEditor\Properties\Resources.de-DE.resx'),
+    @('src\modules\Workspaces\WorkspacesLauncherUI\Properties\Resources.resx', 'src\modules\Workspaces\WorkspacesLauncherUI\Properties\Resources.de-DE.resx')
 )
-$expectedWpfSatellites = @(
-    'PowerToys.ColorPickerUI.resources.dll',
+$expectedGermanSatellites = @(
     'PowerToys.FancyZonesEditor.resources.dll',
-    'PowerToys.PowerOCR.resources.dll',
-    'PowerToys.WorkspacesEditor.resources.dll')
+    'PowerToys.LightSwitch.Cli.resources.dll',
+    'PowerToys.WorkspacesEditor.resources.dll',
+    'PowerToys.WorkspacesLauncherUI.resources.dll')
 $expectedWinUiMuiFiles = @(
     'Microsoft.ui.xaml.dll.mui',
     'Microsoft.UI.Xaml.Phone.dll.mui')
@@ -182,7 +184,7 @@ if (Test-Path -LiteralPath $germanLocalizationWxsPath)
         }
         else
         {
-            foreach ($satellite in $expectedWpfSatellites)
+            foreach ($satellite in $expectedGermanSatellites)
             {
                 $file = $generatedComponent.SelectSingleNode("wix:File[substring(@Source, string-length(@Source) - string-length('$satellite') + 1) = '$satellite']", $wixNamespace)
                 if (-not $file)
@@ -234,6 +236,42 @@ else
 if ($BuildRoot)
 {
     $resolvedBuildRoot = (Resolve-Path -LiteralPath $BuildRoot).Path
+    . (Join-Path $RepoRoot 'installer\PowerToysSetupVNext\Modules-Database.ps1')
+    $selectedModules = @(Get-Content -LiteralPath (Join-Path $RepoRoot 'installer\PowerToysSetupVNext\selected-modules.txt') |
+        ForEach-Object { ($_ -replace '#.*$', '').Trim() } | Where-Object { $_ })
+    foreach ($moduleKey in $selectedModules)
+    {
+        foreach ($runnerDll in $ModuleDatabase[$moduleKey].RunnerDlls)
+        {
+            if (-not (Test-Path -LiteralPath (Join-Path $resolvedBuildRoot $runnerDll) -PathType Leaf))
+            {
+                Add-Failure "Ausgewaehltes Runner-Modul fehlt: $runnerDll"
+            }
+        }
+    }
+
+    $forbiddenPatterns = @($FilterAlwaysDenyPatterns)
+    foreach ($moduleKey in $ModuleDatabase.Keys)
+    {
+        if ($moduleKey -notin $selectedModules)
+        {
+            $forbiddenPatterns += $ModuleDatabase[$moduleKey].FilterPatterns
+        }
+    }
+    $keptNames = @($FilterKeepAlways | ForEach-Object { $_.ToLowerInvariant() })
+    foreach ($payloadFile in Get-ChildItem -LiteralPath $resolvedBuildRoot -File -Recurse)
+    {
+        if ($payloadFile.Name.ToLowerInvariant() -in $keptNames) { continue }
+        foreach ($pattern in $forbiddenPatterns)
+        {
+            if ($payloadFile.Name -like $pattern)
+            {
+                Add-Failure "Nicht freigegebene Datei im Paket: $($payloadFile.FullName)"
+                break
+            }
+        }
+    }
+
     if ($expectedVersion)
     {
         foreach ($relativeExecutablePath in @('PowerToys.exe', 'WinUI3Apps\PowerToys.Settings.exe'))
@@ -290,11 +328,11 @@ if ($BuildRoot)
         Add-Failure 'Microsoft.UI.Xaml.dll fehlt im Root oder in WinUI3Apps.'
     }
 
-    foreach ($satellite in $expectedWpfSatellites)
+    foreach ($satellite in $expectedGermanSatellites)
     {
         if (-not (Test-Path -LiteralPath (Join-Path $resolvedBuildRoot "de-DE\$satellite")))
         {
-            Add-Failure "Gebautes deutsches WPF-Satellit fehlt: $satellite"
+            Add-Failure "Gebautes deutsches Satellitenassembly fehlt: $satellite"
         }
     }
 
@@ -318,6 +356,7 @@ if ($BuildRoot)
             @{ Map = 'PowerToys.QuickAccess'; Pri = 'PowerToys.QuickAccess.pri'; German = 'src\settings-ui\Settings.UI\Strings\de-DE\Resources.resw' },
             @{ Map = 'PowerToys.Settings.UI.Controls'; Pri = 'PowerToys.Settings.UI.Controls.pri'; German = 'src\settings-ui\Settings.UI.Controls\Strings\de-DE\Resources.resw' },
             @{ Map = 'PowerToys.AdvancedPaste'; Pri = 'PowerToys.AdvancedPaste.pri'; German = 'src\modules\AdvancedPaste\AdvancedPaste\Strings\de-DE\Resources.resw' },
+            @{ Map = 'PowerToys.ColorPickerUI'; Pri = 'PowerToys.ColorPickerUI.pri'; German = 'src\modules\colorPicker\ColorPickerUI\Strings\de-DE\Resources.resw' },
             @{ Map = 'PowerToys.FileLocksmithUI'; Pri = 'PowerToys.FileLocksmithUI.pri'; German = 'src\modules\FileLocksmith\FileLocksmithUI\Strings\de-DE\Resources.resw' },
             @{ Map = 'PowerToys.ImageResizer'; Pri = 'PowerToys.ImageResizer.pri'; German = 'src\modules\imageresizer\ui\Strings\de-DE\Resources.resw' },
             @{ Map = 'PowerToys.ImageResizerCLI'; Pri = 'PowerToys.ImageResizerCLI.pri'; German = 'src\modules\imageresizer\ui\Strings\de-DE\Resources.resw' },
@@ -325,9 +364,10 @@ if ($BuildRoot)
             @{ Map = 'PowerToys.Peek.UI'; Pri = 'PowerToys.Peek.UI.pri'; German = 'src\modules\peek\Peek.UI\Strings\de-DE\Resources.resw' },
             @{ Map = 'Peek.FilePreviewer'; Pri = 'Peek.FilePreviewer.pri'; German = 'src\modules\peek\Peek.UI\Strings\de-DE\Resources.resw' },
             @{ Map = 'PowerToys.PowerDisplay'; Pri = 'PowerToys.PowerDisplay.pri'; German = 'src\modules\powerdisplay\PowerDisplay\Strings\de-DE\Resources.resw' },
+            @{ Map = 'PowerToys.PowerOCR'; Pri = 'PowerToys.PowerOCR.pri'; German = 'src\modules\PowerOCR\PowerOCR\Strings\de-DE\Resources.resw' },
             @{ Map = 'PowerToys.PowerRename'; Pri = 'PowerToys.PowerRename.pri'; German = 'src\modules\powerrename\PowerRenameUILib\Strings\de-DE\Resources.resw' },
-            @{ Map = 'PowerToys.ShortcutGuide'; Pri = 'PowerToys.ShortcutGuide.pri'; German = 'src\modules\ShortcutGuide\ShortcutGuide.Ui\Strings\de-DE\Resources.resw' },
-            @{ Map = 'PowerToys.ShortcutGuide.IndexYmlGenerator'; Pri = 'PowerToys.ShortcutGuide.IndexYmlGenerator.pri'; German = 'src\modules\ShortcutGuide\ShortcutGuide.Ui\Strings\de-DE\Resources.resw' }
+            # IndexYmlGenerator is a non-UI helper and does not produce a PRI.
+            @{ Map = 'PowerToys.ShortcutGuide'; Pri = 'PowerToys.ShortcutGuide.pri'; German = 'src\modules\ShortcutGuide\ShortcutGuide.Ui\Strings\de-DE\Resources.resw' }
         )
 
         $tempBase = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\') + '\'

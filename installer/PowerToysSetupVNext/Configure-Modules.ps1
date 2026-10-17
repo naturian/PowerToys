@@ -92,6 +92,9 @@ Set-GeneratedRegion (Join-Path $RepoRoot 'src\runner\main.cpp') '            ' $
 $dashLines = @($moduleTypes | Sort-Object | ForEach-Object { "ModuleType.$_," }) + ''
 Set-GeneratedRegion (Join-Path $RepoRoot 'src\settings-ui\Settings.UI\ViewModels\DashboardViewModel.cs') '            ' $dashLines
 
+# Tray quick access must honor the same package selection, including old user settings.
+Set-GeneratedRegion (Join-Path $RepoRoot 'src\settings-ui\Settings.UI.Controls\QuickAccess\QuickAccessViewModel.cs') '            ' $dashLines
+
 # 3) WiX (Product.wxs)
 $wixLines = $wixGroups | ForEach-Object { "<ComponentGroupRef Id=`"$_`" />" }
 Set-GeneratedRegion (Join-Path $RepoRoot 'installer\PowerToysSetupVNext\Product.wxs') '      ' $wixLines

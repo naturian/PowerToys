@@ -56,7 +56,6 @@
       <ComponentGroupRef Id="DscResourcesComponentGroup" />
       <ComponentGroupRef Id="WindowsAppSDKComponentGroup" />
       <ComponentGroupRef Id="ToolComponentGroup" />
-      <ComponentGroupRef Id="CliShimsComponentGroup" />
       <!-- Modulspezifische + Monaco-Gruppen (generiert): -->
       <!-- BEGIN_GENERATED_MODULES -->
       <ComponentGroupRef Id="FileExplorerPreviewComponentGroup" />
@@ -114,8 +113,6 @@
       <Custom Action="DetectPrevInstallPath" After="AppSearch" />
       <Custom Action="SetLaunchPowerToysParam" Before="LaunchPowerToys" />
       <Custom Action="SetInstallCmdPalPackageParam" Before="InstallCmdPalPackage" />
-      <Custom Action="SetUninstallCommandNotFoundParam" Before="UninstallCommandNotFound" />
-      <Custom Action="SetUpgradeCommandNotFoundParam" Before="UpgradeCommandNotFound" />
       <Custom Action="SetCreateWinAppSDKHardlinksParam" Before="CreateWinAppSDKHardlinks" />
       <Custom Action="SetDeleteWinAppSDKHardlinksParam" Before="DeleteWinAppSDKHardlinks" />
       <Custom Action="SetApplyModulesRegistryChangeSetsParam" Before="ApplyModulesRegistryChangeSets" />
@@ -153,8 +150,6 @@
       <Custom Action="CleanNewPlusRuntimeRegistry" Before="RemoveFiles" Condition="Installed AND (REMOVE=&quot;ALL&quot;)" />
       <Custom Action="UnsetAdvancedPasteAPIKey" Before="RemoveFiles" Condition="Installed AND (NOT UPGRADINGPRODUCTCODE) AND (REMOVE=&quot;ALL&quot;)" />
       <Custom Action="UnRegisterCmdPalPackage" Before="RemoveFiles" Condition="Installed AND (NOT UPGRADINGPRODUCTCODE) AND (REMOVE=&quot;ALL&quot;)" />
-      <Custom Action="UninstallCommandNotFound" Before="RemoveFiles" Condition="Installed AND (NOT UPGRADINGPRODUCTCODE) AND (REMOVE=&quot;ALL&quot;)" />
-      <Custom Action="UpgradeCommandNotFound" After="InstallFiles" Condition="WIX_UPGRADE_DETECTED" />
       <Custom Action="UninstallPackageIdentityMSIX" Before="RemoveFiles" Condition="Installed AND (REMOVE=&quot;ALL&quot;)" />
       <Custom Action="UninstallServicesTask" After="InstallFinalize" Condition="Installed AND (NOT UPGRADINGPRODUCTCODE) AND (REMOVE=&quot;ALL&quot;)" />
         <!-- TODO: Use to activate embedded MSIX -->
@@ -192,10 +187,6 @@
 
     <CustomAction Id="SetInstallDSCModuleParam" Property="InstallDSCModule" Value="[INSTALLFOLDER]" />
 
-    <CustomAction Id="SetUninstallCommandNotFoundParam" Property="UninstallCommandNotFound" Value="[INSTALLFOLDER]" />
-
-    <CustomAction Id="SetUpgradeCommandNotFoundParam" Property="UpgradeCommandNotFound" Value="[INSTALLFOLDER]" />
-
     <CustomAction Id="SetCreateWinAppSDKHardlinksParam" Property="CreateWinAppSDKHardlinks" Value="[INSTALLFOLDER]" />
     <CustomAction Id="CreateWinAppSDKHardlinks" Return="check" Impersonate="yes" Execute="deferred" DllEntry="CreateWinAppSDKHardlinksCA" BinaryRef="PTCustomActions" />
 
@@ -227,10 +218,6 @@
     <CustomAction Id="UninstallDSCModule" Return="ignore" Impersonate="yes" DllEntry="UninstallDSCModuleCA" BinaryRef="PTCustomActions" />
 
     <CustomAction Id="UninstallServicesTask" Return="ignore" Impersonate="yes" DllEntry="UninstallServicesCA" BinaryRef="PTCustomActions" />
-
-    <CustomAction Id="UninstallCommandNotFound" Return="ignore" Impersonate="yes" Execute="deferred" DllEntry="UninstallCommandNotFoundModuleCA" BinaryRef="PTCustomActions" />
-    
-    <CustomAction Id="UpgradeCommandNotFound" Return="ignore" Impersonate="yes" Execute="deferred" DllEntry="UpgradeCommandNotFoundModuleCA" BinaryRef="PTCustomActions" />
 
     <CustomAction Id="UnsetAdvancedPasteAPIKey" Return="ignore" Impersonate="yes" Execute="deferred" DllEntry="UnsetAdvancedPasteAPIKeyCA" BinaryRef="PTCustomActions" />
 
@@ -303,7 +290,6 @@
             </Directory>
           </Directory>
           <Directory Id="ToolsFolder" Name="Tools" />
-          <Directory Id="CliFolder" Name="bin" />
         </Directory>
       </StandardDirectory>
       <StandardDirectory Id="ProgramMenuFolder">

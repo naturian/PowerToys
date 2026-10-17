@@ -170,11 +170,11 @@
     <comment>{0:N0} is the plural directory/folder count.</comment>
   </data>
   <data name="UnsupportedFile_FolderContains_Scanning" xml:space="preserve">
-    <value>Wird gescannt …</value>
+    <value>Wird gescannt...</value>
     <comment>Status text shown while folder content enumeration is in progress.</comment>
   </data>
   <data name="UnsupportedFile_FolderContains_Incomplete" xml:space="preserve">
-    <value>unvollständig</value>
+    <value>unerledigt</value>
     <comment>Short tag appended to folder contents when enumeration encounters an error.</comment>
   </data>
   <data name="UnsupportedFile_DateModified" xml:space="preserve">
@@ -435,7 +435,7 @@
     <comment>Placeholder shown in the Sqlite previewer when no table is selected</comment>
   </data>
   <data name="Sqlite_Blob_Value" xml:space="preserve">
-    <value>[BLOB, {0} Byte]</value>
+    <value>[BLOB, {0} Bytes]</value>
     <comment>Placeholder shown in a Sqlite cell for binary (BLOB) data; {0} is the size in bytes</comment>
   </data>
 </root>

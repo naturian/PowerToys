@@ -248,7 +248,7 @@
     <value>Zusätzliche Maßeinheiten</value>
   </data>
   <data name="MeasureTool_UnitsOfMeasure.Description" xml:space="preserve">
-    <value>Geräteunabhängige Pixel berücksichtigen die Windows-Anzeigeskalierung.</value>
+    <value>Anzeigeunabhängige Pixel passen sich an die Windows-Anzeigeskalierung an.</value>
   </data>
   <data name="MeasureTool_UnitsOfMeasure_Pixels.Content" xml:space="preserve">
     <value>Nur Pixel anzeigen</value>
@@ -263,7 +263,7 @@
     <value>Millimeter</value>
   </data>
   <data name="MeasureTool_UnitsOfMeasure_DIP.Content" xml:space="preserve">
-    <value>Geräteunabhängige Pixel (DIP)</value>
+    <value>Anzeigeunabhängige Pixel (DIP)</value>
   </data>
   <data name="MeasureTool_PixelTolerance.Header" xml:space="preserve">
     <value>Pixeltoleranz für die Kantenerkennung</value>
@@ -945,11 +945,59 @@ opera.exe</value>
   <data name="FancyZones_MakeDraggedWindowTransparentCheckBoxControl.Content" xml:space="preserve">
     <value>Gezogenes Fenster transparent anzeigen</value>
   </data>
+  <data name="FancyZones_LayoutNameLabel_GroupSettings.Header" xml:space="preserve">
+    <value>Anzeige des Layoutnamens</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabel_GroupSettings.Description" xml:space="preserve">
+    <value>Aussehen des Layoutnamens beim Wechseln des Layouts während des Ziehens eines Fensters</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelPlacement.Header" xml:space="preserve">
+    <value>Position auf dem Bildschirm</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelPlacementTopLeft.Content" xml:space="preserve">
+    <value>Oben links</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelPlacementTopCenter.Content" xml:space="preserve">
+    <value>Oben Mitte</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelPlacementTopRight.Content" xml:space="preserve">
+    <value>Oben rechts</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelPlacementCenter.Content" xml:space="preserve">
+    <value>Zentriert</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelPlacementBottomLeft.Content" xml:space="preserve">
+    <value>Unten links</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelPlacementBottomCenter.Content" xml:space="preserve">
+    <value>Unten Mitte</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelPlacementBottomRight.Content" xml:space="preserve">
+    <value>Unten rechts</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelTextColor.Header" xml:space="preserve">
+    <value>Textfarbe</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelBackgroundColor.Header" xml:space="preserve">
+    <value>Hintergrundfarbe</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelFontSize.Header" xml:space="preserve">
+    <value>Textgröße</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelPadding.Header" xml:space="preserve">
+    <value>Auffüllung</value>
+  </data>
+  <data name="FancyZones_LayoutNameLabelDuration.Header" xml:space="preserve">
+    <value>Anzeigedauer (ms)</value>
+  </data>
   <data name="FancyZones_MouseDragCheckBoxControl_Header.Content" xml:space="preserve">
     <value>Nicht primäre Maustaste zum Umschalten der Zonenaktivierung verwenden</value>
   </data>
   <data name="FancyZones_MouseMiddleClickSpanningMultipleZonesCheckBoxControl_Header.Content" xml:space="preserve">
     <value>Verwenden sie die mittlere Maustaste, um zwischen verschiedenen Zonen umzuschalten.</value>
+  </data>
+  <data name="FancyZones_MouseWheelLayoutSwitchCheckBoxControl_Header.Content" xml:space="preserve">
+    <value>Verwenden Sie das Mausrad beim Ziehen, um zwischen Layouts zu wechseln</value>
   </data>
   <data name="FancyZones_MoveWindowsAcrossAllMonitorsCheckBoxControl.Content" xml:space="preserve">
     <value>Fenster zwischen Zonen aller Monitore verschieben</value>
@@ -2781,6 +2829,44 @@ Klicken Sie von dort aus einfach auf eine der unterstützten Dateien im Explorer
     <value>Verwenden Sie eine Tastenkombination, um Links- und Rechtsklicks hervorzuheben.</value>
     <comment>Mouse as in the hardware peripheral.</comment>
   </data>
+  <data name="MouseUtils_Enable_AutoHideCursor.Header" xml:space="preserve">
+    <value>CursorHide</value>
+    <comment>Product name. Do not localize.</comment>
+  </data>
+  <data name="MouseUtils_AutoHideCursor.Header" xml:space="preserve">
+    <value>CursorHide</value>
+    <comment>Product name. Do not localize.</comment>
+  </data>
+  <data name="MouseUtils_AutoHideCursor.Description" xml:space="preserve">
+    <value>Mauszeiger nach Tastatureingabe, Inaktivität oder beidem ausblenden</value>
+  </data>
+  <data name="MouseUtils_AutoHideCursor_Behavior.Header" xml:space="preserve">
+    <value>Aktivierung und Verhalten</value>
+  </data>
+  <data name="MouseUtils_AutoHideCursor_Behavior.Description" xml:space="preserve">
+    <value>Wählen Sie eine oder beide Methoden aus, um den Cursor auszublenden</value>
+  </data>
+  <data name="MouseUtils_AutoHideCursor_HideOnTyping.Header" xml:space="preserve">
+    <value>Nach Eingabe über die Tastatur ausblenden</value>
+  </data>
+  <data name="MouseUtils_AutoHideCursor_HideOnTyping.Description" xml:space="preserve">
+    <value>Modifikatortasten und softwaregenerierte Eingaben werden ignoriert</value>
+  </data>
+  <data name="MouseUtils_AutoHideCursor_HideOnIdle.Header" xml:space="preserve">
+    <value>Nach Inaktivität des Cursors ausblenden</value>
+  </data>
+  <data name="MouseUtils_AutoHideCursor_HideOnIdle.Description" xml:space="preserve">
+    <value>Der Mauszeiger wird nach einer absichtlichen Bewegung, dem Drücken einer Maustaste oder dem Betätigen des Mausrads wieder eingeblendet</value>
+  </data>
+  <data name="MouseUtils_AutoHideCursor_IdleDelay.Header" xml:space="preserve">
+    <value>Leerlaufverzögerung (Sekunden)</value>
+  </data>
+  <data name="MouseUtils_AutoHideCursor_IdleDelay.Description" xml:space="preserve">
+    <value>Wählen Sie eine Verzögerung zwischen 1 und 60 Sekunden aus.</value>
+  </data>
+  <data name="MouseUtils_AutoHideCursor_IdleDelayInput.AutomationProperties.Name" xml:space="preserve">
+    <value>Leerlaufverzögerung in Sekunden</value>
+  </data>
   <data name="MouseUtils_Enable_CursorWrap.Header" xml:space="preserve">
     <value>CursorUmbruch</value>
   </data>
@@ -2789,6 +2875,61 @@ Klicken Sie von dort aus einfach auf eine der unterstützten Dateien im Explorer
   </data>
   <data name="MouseUtils_CursorWrap.Description" xml:space="preserve">
     <value>Cursor zwischen Monitorrändern umschalten</value>
+  </data>
+  <data name="MouseUtils_MouseButtonLock.Header" xml:space="preserve">
+    <value>Maustastensperre</value>
+    <comment>Mouse as in the hardware peripheral.</comment>
+  </data>
+  <data name="MouseUtils_MouseButtonLock.Description" xml:space="preserve">
+    <value>Halten Sie eine Maustaste gedrückt, um sie zu sperren, und drücken Sie anschließend eine beliebige Taste, um die Sperre aufzuheben</value>
+    <comment>Mouse as in the hardware peripheral.</comment>
+  </data>
+  <data name="MouseUtils_Enable_MouseButtonLock.Header" xml:space="preserve">
+    <value>Maustastensperre</value>
+    <comment>Mouse as in the hardware peripheral.</comment>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_Options.Header" xml:space="preserve">
+    <value>Tasten und Verhalten</value>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_Options.Description" xml:space="preserve">
+    <value>Wählen Sie aus, welche Schaltflächen gesperrt werden können</value>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_LmbLock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Linke Schaltfläche</value>
+    <comment>Left (primary) mouse button.</comment>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_LmbLock_Header.Text" xml:space="preserve">
+    <value>Linke Schaltfläche</value>
+    <comment>Left (primary) mouse button.</comment>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_LmbLock_Description.Text" xml:space="preserve">
+    <value>Windows verfügt für diese Schaltfläche über die integrierte Funktion „ClickLock“.</value>
+    <comment>ClickLock is a Windows feature name. Followed by a link that opens the Windows mouse settings.</comment>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_LmbLock_Link.Text" xml:space="preserve">
+    <value>Mauseinstellungen öffnen</value>
+    <comment>Link that opens the Windows Settings accessibility mouse page, where ClickLock can be turned on.</comment>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_RmbLock.Content" xml:space="preserve">
+    <value>Rechte Schaltfläche</value>
+    <comment>Right mouse button.</comment>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_MmbLock.Content" xml:space="preserve">
+    <value>Mittlere Maustaste</value>
+    <comment>Middle mouse button.</comment>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_HoldDuration.Header" xml:space="preserve">
+    <value>Aufbewahrungsdauer (ms)</value>
+    <comment>ms is the abbreviation for milliseconds.</comment>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_HoldDuration.Description" xml:space="preserve">
+    <value>Wie lange muss eine Taste gedrückt werden, bevor sie gesperrt wird</value>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_MoveCancelPixels.Header" xml:space="preserve">
+    <value>Schwellenwert für Ziehen (Pixel)</value>
+  </data>
+  <data name="MouseUtils_MouseButtonLock_MoveCancelPixels.Description" xml:space="preserve">
+    <value>Wenn Sie die Maus bei gedrücktem Halten weiter bewegen, wird die Sperre abgebrochen</value>
   </data>
   <data name="MouseUtils_CursorWrap_ActivationShortcut.Header" xml:space="preserve">
     <value>Aktivierung und Verhalten</value>
@@ -2845,6 +2986,30 @@ Klicken Sie von dort aus einfach auf eine der unterstützten Dateien im Explorer
   </data>
   <data name="Oobe_MouseUtils_MouseJump_Description.Text" xml:space="preserve">
     <value>Springen Sie mit dem Mauszeiger schnell zu einer beliebigen Stelle auf dem Desktop.</value>
+    <comment>Mouse as in the hardware peripheral.</comment>
+  </data>
+  <data name="Oobe_MouseUtils_MouseButtonLock.Text" xml:space="preserve">
+    <value>Maustastensperre</value>
+    <comment>Mouse as in the hardware peripheral.</comment>
+  </data>
+  <data name="Oobe_MouseUtils_MouseButtonLock_Description.Text" xml:space="preserve">
+    <value>Halten Sie eine Maustaste gedrückt, um sie für das Ziehen ohne gedrückte Maustaste zu sperren.</value>
+    <comment>Mouse as in the hardware peripheral.</comment>
+  </data>
+  <data name="Oobe_MouseUtils_CursorHide.Text" xml:space="preserve">
+    <value>CursorHide</value>
+    <comment>Product name. Do not localize.</comment>
+  </data>
+  <data name="Oobe_MouseUtils_CursorHide_Description.Text" xml:space="preserve">
+    <value>Blenden Sie den Mauszeiger beim Tippen oder nach längerer Inaktivität aus.</value>
+    <comment>Mouse as in the hardware peripheral.</comment>
+  </data>
+  <data name="Oobe_MouseUtils_CursorWrap.Text" xml:space="preserve">
+    <value>CursorWrap</value>
+    <comment>Product name. Do not localize.</comment>
+  </data>
+  <data name="Oobe_MouseUtils_CursorWrap_Description.Text" xml:space="preserve">
+    <value>Bewegen Sie den Mauszeiger über einen Bildschirmrand hinaus, damit er auf der gegenüberliegenden Seite wieder erscheint.</value>
     <comment>Mouse as in the hardware peripheral.</comment>
   </data>
   <data name="Launch_Run.Content" xml:space="preserve">
@@ -3869,19 +4034,82 @@ Aktivieren Sie dies, indem Sie die Taste für das Zeichen gedrückt halten, dem 
     <value>Cartoons/Animationen</value>
   </data>
   <data name="QuickAccent_SelectedLanguage.Header" xml:space="preserve">
-    <value>Zeichensätze auswählen</value>
+    <value>Zeichensätze</value>
+  </data>
+  <data name="QuickAccent_SelectedLanguage_Summary_None" xml:space="preserve">
+    <value>Keine Zeichensätze ausgewählt</value>
+  </data>
+  <data name="QuickAccent_SelectedLanguage_Summary_All" xml:space="preserve">
+    <value>Alle</value>
+    <comment>Shown when every character set is selected</comment>
   </data>
   <data name="QuickAccent_SelectedLanguage.Description" xml:space="preserve">
-    <value>Nur Akzentzeichen anzeigen, die in den ausgewählten Sätzen üblich sind</value>
+    <value>Wählen Sie, für welche Sprachen und Zeichensätze Quick Accent Zeichen anzeigt</value>
   </data>
-  <data name="QuickAccent_SelectedLanguage_All.Content" xml:space="preserve">
-    <value>Alle verfügbaren</value>
+  <data name="QuickAccent_EditCharacterSets_Button.Content" xml:space="preserve">
+    <value>Verwalten</value>
+  </data>
+  <data name="QuickAccent_EditCharacterSets_Button.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Zeichensätze verwalten</value>
+  </data>
+  <data name="QuickAccent_CharacterSetsDialog.Title" xml:space="preserve">
+    <value>Zeichensätze auswählen</value>
+  </data>
+  <data name="QuickAccent_CharacterSetsDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="QuickAccent_CharacterSetsDialog.CloseButtonText" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="QuickAccent_CharacterSetsDialog_Search.PlaceholderText" xml:space="preserve">
+    <value>Nach Zeichensätzen suchen</value>
+  </data>
+  <data name="QuickAccent_CharacterSetsDialog_Search.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Nach Zeichensätzen suchen</value>
+  </data>
+  <data name="QuickAccent_CharacterSetsDialog_SelectAll.Content" xml:space="preserve">
+    <value>Alles auswählen</value>
+  </data>
+  <data name="QuickAccent_CharacterSetsDialog_SelectedCount" xml:space="preserve">
+    <value>{0} von {1} ausgewählt</value>
+    <comment>{0} is the number of selected character sets, {1} is the total number of character sets</comment>
+  </data>
+  <data name="QuickAccent_CharacterSetsDialog_NoResults.Text" xml:space="preserve">
+    <value>Keine Zeichensätze gefunden</value>
+  </data>
+  <data name="QuickAccent_NoCharacterSets.Title" xml:space="preserve">
+    <value>Keine Zeichensätze hinzugefügt</value>
+  </data>
+  <data name="QuickAccent_NoCharacterSets.Message" xml:space="preserve">
+    <value>Quick Accent zeigt erst Akzentzeichen an, wenn Sie mindestens einen Zeichensatz hinzugefügt haben.</value>
   </data>
   <data name="QuickAccent_Group_Special" xml:space="preserve">
     <value>Sondersätze</value>
   </data>
   <data name="QuickAccent_Group_Language" xml:space="preserve">
     <value>Sprachsätze</value>
+  </data>
+  <data name="QuickAccent_ReferenceGuide_Card.Header" xml:space="preserve">
+    <value>Referenzhandbuch für Zeichen</value>
+  </data>
+  <data name="QuickAccent_ReferenceGuide_Card.Description" xml:space="preserve">
+    <value>Zeichen nach Sprache anzeigen</value>
+  </data>
+  <data name="QuickAccent_ReferenceGuide_WindowTitle" xml:space="preserve">
+    <value>Referenzhandbuch für Zeichen</value>
+  </data>
+  <data name="QuickAccent_ReferenceGuide_CharacterButton.CopiedMessage" xml:space="preserve">
+    <value>In Zwischenablage kopiert</value>
+    <comment>Screen reader announcement after a character is copied</comment>
+  </data>
+  <data name="QuickAccent_ReferenceGuide_Search.PlaceholderText" xml:space="preserve">
+    <value>Nach einem Zeichen suchen…</value>
+  </data>
+  <data name="QuickAccent_ReferenceGuide_NoResults.Text" xml:space="preserve">
+    <value>Keine Zeichen gefunden, die Ihrer Suche entsprechen.</value>
+  </data>
+  <data name="QuickAccent_ReferenceGuide_SelectedSets" xml:space="preserve">
+    <value>Ausgewählte Sätze</value>
   </data>
   <data name="QuickAccent_SelectedLanguage_Special" xml:space="preserve">
     <value>Sonderzeichen</value>
@@ -4658,6 +4886,14 @@ Aktivieren Sie dies, indem Sie die Taste für das Zeichen gedrückt halten, dem 
   <data name="Peek_SourceCode_Minimap.Content" xml:space="preserve">
     <value>Minimap anzeigen</value>
   </data>
+  <data name="Peek_SourceCode_MaxFileSize.Header" xml:space="preserve">
+    <value>Maximale Dateigröße für die Vorschau</value>
+    <comment>Size refers to the disk space used by a file</comment>
+  </data>
+  <data name="Peek_SourceCode_MaxFileSize.Description" xml:space="preserve">
+    <value>Die maximale Größe der anzuzeigenden Dateien in Kilobytes. Dies ist ein Sicherheitsmechanismus, um das Laden großer Dateien in den RAM zu verhindern. Bei größeren Dateien werden stattdessen die Dateidetails angezeigt.</value>
+    <comment>"RAM" refers to random access memory; "size" refers to disk space</comment>
+  </data>
   <data name="ShowPluginsOverview_All.Content" xml:space="preserve">
     <value>Alle</value>
   </data>
@@ -4961,7 +5197,7 @@ Drücken Sie **UMSCHALT+eine Farbtaste** für einen durchsichtigen Textmarker, *
 Drücken Sie **UMSCHALT** für eine Linie, **STRG** für ein Rechteck, **TAB** für eine Ellipse oder **UMSCHALT +STRG** für einen Pfeil.
 
 **Bildschirm**
-Drücken Sie **K** oder **W** für ein schwarzes oder weißes Skizzenpad.
+Drücken Sie **STRG + K** oder **STRG + W**, um eine schwarze bzw. weiße Zeichenfläche zu öffnen.
 Drücken Sie **STRG+C**, um zu kopieren, oder **STRG+S** zum Speichern, und **STRG+UMSCHALT**, um zuzuschneiden.
     </value>
   </data>
@@ -5174,7 +5410,7 @@ Die Schriftart des Pausentimers entspricht der Textschriftart.</value>
     <value>Systemaudio erfassen</value>
   </data>
   <data name="ZoomIt_Record_CaptureAudio.Content" xml:space="preserve">
-    <value>Audioeingabe erfassen</value>
+    <value>Mikrofon in die Aufzeichnung einbeziehen</value>
   </data>
   <data name="ZoomIt_Record_NoiseCancellation.Content" xml:space="preserve">
     <value>Geräuschunterdrückung</value>
@@ -5183,7 +5419,7 @@ Die Schriftart des Pausentimers entspricht der Textschriftart.</value>
     <value>Mono</value>
   </data>
   <data name="ZoomIt_Record_Microphone.Header" xml:space="preserve">
-    <value>Mikrofon</value>
+    <value>Mikrofon für Aufzeichnung und Diktat</value>
   </data>
   <data name="ZoomIt_Record_Microphones_Default_Name" xml:space="preserve">
     <value>Standard</value>
@@ -5310,6 +5546,12 @@ Die Schriftart des Pausentimers entspricht der Textschriftart.</value>
   </data>
   <data name="ZoomIt_Panorama_Shortcut.Description" xml:space="preserve">
     <value>Wählen Sie einen Bereich aus, scrollen Sie langsam durch den Inhalt, ohne zurückzuspulen, und drücken Sie den Hotkey erneut, um den Screenshot in die Zwischenablage zu kopieren.</value>
+  </data>
+  <data name="ZoomIt_SnipDictate.Header" xml:space="preserve">
+    <value>Mit Diktat ausschneiden</value>
+  </data>
+  <data name="ZoomIt_SnipDictate.Description" xml:space="preserve">
+    <value>Drücken Sie beim Aufziehen des Ausschnitts die Leertaste, um mit dem Diktieren zu beginnen. Sowohl die Transkription als auch das Bild werden in die Zwischenablage kopiert, sodass Sie den Screenshot zusammen mit Ihrer Anmerkung mit einem einzigen Einfügevorgang einfügen können. Für das Diktat wird das unter „Aufnehmen“ ausgewählte Mikrofon verwendet.</value>
   </data>
   <data name="Oobe_ZoomIt.Description" xml:space="preserve">
     <value>ZoomIt ist ein Bildschirmzoom-, Anmerkungs- und Aufzeichnungstool für technische Präsentationen und Demos. Sie können ZoomIt auch verwenden, um Screenshots in die Zwischenablage oder in eine Datei zu kopieren.</value>
@@ -5668,15 +5910,6 @@ Die Schriftart des Pausentimers entspricht der Textschriftart.</value>
   <data name="LightSwitch_PowerDisplayDisabledWarningBar.Message" xml:space="preserve">
     <value></value>
   </data>
-  <data name="PowerDisplay_Monitor_Diagnostics.Header" xml:space="preserve">
-    <value>Überwachungsdiagnose</value>
-  </data>
-  <data name="PowerDisplay_Monitor_Diagnostics.Description" xml:space="preserve">
-    <value>Kopieren Sie Monitordetails, erkannte Funktionen und VCP-Codes zur Problembehandlung in die Zwischenablage.</value>
-  </data>
-  <data name="PowerDisplay_Monitor_Diagnostics_CopyText.Text" xml:space="preserve">
-    <value>Diagnose kopieren</value>
-  </data>
   <data name="LightSwitch_ApplyMonitorSettingsExpander.Header" xml:space="preserve">
     <value>Anwenden von Monitoreinstellungen auf</value>
   </data>
@@ -5953,6 +6186,27 @@ Die Schriftart des Pausentimers entspricht der Textschriftart.</value>
     <value>Klicken Sie im Power Display-Flyout auf die Profil-Schaltfläche, um gespeicherte Monitoreinstellungen schnell anzuwenden</value>
     <comment>{Locked="Power Display"}</comment>
   </data>
+  <data name="PowerDisplay_ProfileList.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="PowerDisplay_ProfileList.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.HelpText" xml:space="preserve">
+    <value>Ziehen Sie die Profile, um ihre Reihenfolge zu ändern, oder verwenden Sie "Nach oben" und "Nach unten" im Menü "Mehr".</value>
+  </data>
+  <data name="PowerDisplay_Profile_DragHandle.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zum Neuordnen ziehen</value>
+  </data>
+  <data name="PowerDisplay_Profile_DragDisabledByElevation.Title" xml:space="preserve">
+    <value>Das Ziehen zum Neuordnen ist für Administratoren nicht verfügbar</value>
+  </data>
+  <data name="PowerDisplay_Profile_DragDisabledByElevation.Message" xml:space="preserve">
+    <value>Nutzen Sie im Mehrmenü jedes Profils „Nach oben verschieben“ oder „Nach unten verschieben“, um die Reihenfolge zu ändern.</value>
+  </data>
+  <data name="PowerDisplay_Profile_ReorderError.Title" xml:space="preserve">
+    <value>Die Profilliste konnte nicht aktualisiert werden</value>
+  </data>
+  <data name="PowerDisplay_Profile_ReorderError.Message" xml:space="preserve">
+    <value>Versuchen Sie es erneut.</value>
+  </data>
   <data name="PowerDisplay_AddProfile_Text.Text" xml:space="preserve">
     <value>Profil hinzufügen</value>
   </data>
@@ -6103,6 +6357,9 @@ Die Schriftart des Pausentimers entspricht der Textschriftart.</value>
   </data>
   <data name="PowerDisplay_ProfileEditor_Description.Text" xml:space="preserve">
     <value>Wählen Sie aus, welche Monitore und Einstellungen für dieses Profil eingeschlossen werden sollen.</value>
+  </data>
+  <data name="PowerDisplay_ProfileEditor_PreservedSettings.Message" xml:space="preserve">
+    <value>Gespeicherte Einstellungen für nicht verfügbare Monitore oder Features bleiben erhalten. Deaktivieren Sie eine Einstellung, um sie zu entfernen. Beim Anwenden des Profils werden die vom Monitor unterstützten Funktionen weiterhin berücksichtigt.</value>
   </data>
   <data name="PowerDisplay_ProfileEditor_Brightness.Text" xml:space="preserve">
     <value>Helligkeit</value>
@@ -6645,5 +6902,15 @@ Text verwendet die aktuelle Zeichnungsfarbe.</value>
   <data name="GrabAndMove_ExcludeApps_TextBoxControl.PlaceholderText" xml:space="preserve">
     <value>Beispiel: outlook</value>
     <comment>{Locked="outlook"}</comment>
+  </data>
+  <data name="GrabAndMove_ExcludeAppsForModifier.Header" xml:space="preserve">
+    <value>Ausgeschlossene Apps (für Modifizierer)</value>
+  </data>
+  <data name="GrabAndMove_ExcludeAppsForModifier.Description" xml:space="preserve">
+    <value>Verhindert, dass Grab And Move die Modifizierertaste verarbeitet, wenn eine ausgeschlossene App im Vordergrund ist – pro Zeile einen Anwendungsnamen hinzufügen</value>
+  </data>
+  <data name="GrabAndMove_ExcludeAppsForModifier_TextBoxControl.PlaceholderText" xml:space="preserve">
+    <value>Beispiel: game.exe</value>
+    <comment>{Locked="game.exe"}</comment>
   </data>
 </root>

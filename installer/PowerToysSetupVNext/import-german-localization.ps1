@@ -160,20 +160,22 @@ $reswSets = @(
     @{ Map = 'PowerToys.Settings'; Pri = 'PowerToys.Settings.pri'; Source = 'src\settings-ui\Settings.UI\Strings\en-us\Resources.resw'; Destination = 'src\settings-ui\Settings.UI\Strings\de-DE\Resources.resw' },
     @{ Map = 'PowerToys.Settings.UI.Controls'; Pri = 'PowerToys.Settings.UI.Controls.pri'; Source = 'src\settings-ui\Settings.UI.Controls\Strings\en-us\Resources.resw'; Destination = 'src\settings-ui\Settings.UI.Controls\Strings\de-DE\Resources.resw' },
     @{ Map = 'PowerToys.AdvancedPaste'; Pri = 'PowerToys.AdvancedPaste.pri'; Source = 'src\modules\AdvancedPaste\AdvancedPaste\Strings\en-us\Resources.resw'; Destination = 'src\modules\AdvancedPaste\AdvancedPaste\Strings\de-DE\Resources.resw' },
+    @{ Map = 'PowerToys.ColorPickerUI'; Pri = 'PowerToys.ColorPickerUI.pri'; Source = 'src\modules\colorPicker\ColorPickerUI\Strings\en-us\Resources.resw'; Destination = 'src\modules\colorPicker\ColorPickerUI\Strings\de-DE\Resources.resw' },
     @{ Map = 'PowerToys.FileLocksmithUI'; Pri = 'PowerToys.FileLocksmithUI.pri'; Source = 'src\modules\FileLocksmith\FileLocksmithUI\Strings\en-us\Resources.resw'; Destination = 'src\modules\FileLocksmith\FileLocksmithUI\Strings\de-DE\Resources.resw' },
     @{ Map = 'PowerToys.ImageResizer'; Pri = 'PowerToys.ImageResizer.pri'; Source = 'src\modules\imageresizer\ui\Strings\en-us\Resources.resw'; Destination = 'src\modules\imageresizer\ui\Strings\de-DE\Resources.resw' },
     @{ Map = 'PowerToys.MeasureToolUI'; Pri = 'PowerToys.MeasureToolUI.pri'; Source = 'src\modules\MeasureTool\MeasureToolUI\Strings\en-us\Resources.resw'; Destination = 'src\modules\MeasureTool\MeasureToolUI\Strings\de-DE\Resources.resw' },
     @{ Map = 'PowerToys.Peek.UI'; Pri = 'PowerToys.Peek.UI.pri'; Source = 'src\modules\peek\Peek.UI\Strings\en-us\Resources.resw'; Destination = 'src\modules\peek\Peek.UI\Strings\de-DE\Resources.resw' },
     @{ Map = 'PowerToys.PowerDisplay'; Pri = 'PowerToys.PowerDisplay.pri'; Source = 'src\modules\powerdisplay\PowerDisplay\Strings\en-us\Resources.resw'; Destination = 'src\modules\powerdisplay\PowerDisplay\Strings\de-DE\Resources.resw' },
+    @{ Map = 'PowerToys.PowerOCR'; Pri = 'PowerToys.PowerOCR.pri'; Source = 'src\modules\PowerOCR\PowerOCR\Strings\en-us\Resources.resw'; Destination = 'src\modules\PowerOCR\PowerOCR\Strings\de-DE\Resources.resw' },
     @{ Map = 'PowerToys.PowerRename'; Pri = 'PowerToys.PowerRename.pri'; Source = 'src\modules\powerrename\PowerRenameUILib\Strings\en-us\Resources.resw'; Destination = 'src\modules\powerrename\PowerRenameUILib\Strings\de-DE\Resources.resw' },
     @{ Map = 'PowerToys.ShortcutGuide'; Pri = 'PowerToys.ShortcutGuide.pri'; Source = 'src\modules\ShortcutGuide\ShortcutGuide.Ui\Strings\en-us\Resources.resw'; Destination = 'src\modules\ShortcutGuide\ShortcutGuide.Ui\Strings\de-DE\Resources.resw' }
 )
 
 $resxSets = @(
-    @{ Satellite = 'PowerToys.ColorPickerUI.resources.dll'; Source = 'src\modules\colorPicker\ColorPickerUI\Properties\Resources.resx'; Destination = 'src\modules\colorPicker\ColorPickerUI\Properties\Resources.de-DE.resx' },
     @{ Satellite = 'PowerToys.FancyZonesEditor.resources.dll'; Source = 'src\modules\FancyZones\editor\FancyZonesEditor\Properties\Resources.resx'; Destination = 'src\modules\FancyZones\editor\FancyZonesEditor\Properties\Resources.de-DE.resx' },
-    @{ Satellite = 'PowerToys.PowerOCR.resources.dll'; Source = 'src\modules\PowerOCR\PowerOCR\Properties\Resources.resx'; Destination = 'src\modules\PowerOCR\PowerOCR\Properties\Resources.de-DE.resx' },
-    @{ Satellite = 'PowerToys.WorkspacesEditor.resources.dll'; Source = 'src\modules\Workspaces\WorkspacesEditor\Properties\Resources.resx'; Destination = 'src\modules\Workspaces\WorkspacesEditor\Properties\Resources.de-DE.resx' }
+    @{ Satellite = 'PowerToys.LightSwitch.Cli.resources.dll'; Source = 'src\modules\LightSwitch\LightSwitch.Cli\Properties\Resources.resx'; Destination = 'src\modules\LightSwitch\LightSwitch.Cli\Properties\Resources.de-DE.resx' },
+    @{ Satellite = 'PowerToys.WorkspacesEditor.resources.dll'; Source = 'src\modules\Workspaces\WorkspacesEditor\Properties\Resources.resx'; Destination = 'src\modules\Workspaces\WorkspacesEditor\Properties\Resources.de-DE.resx' },
+    @{ Satellite = 'PowerToys.WorkspacesLauncherUI.resources.dll'; Source = 'src\modules\Workspaces\WorkspacesLauncherUI\Properties\Resources.resx'; Destination = 'src\modules\Workspaces\WorkspacesLauncherUI\Properties\Resources.de-DE.resx' }
 )
 
 $resolvedMakePri = Resolve-MakePriPath

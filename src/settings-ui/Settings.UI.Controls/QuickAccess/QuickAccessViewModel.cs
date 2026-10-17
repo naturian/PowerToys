@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ManagedCommon;
 using Microsoft.PowerToys.Settings.UI.Library;
@@ -14,8 +15,39 @@ using Microsoft.Windows.ApplicationModel.Resources;
 
 namespace Microsoft.PowerToys.Settings.UI.Controls
 {
-    public partial class QuickAccessViewModel : Observable
+    public partial class QuickAccessViewModel : Observable, IDisposable
     {
+        private static readonly HashSet<ModuleType> PackagedModules = new()
+        {
+            // BEGIN_GENERATED_MODULES
+            ModuleType.AdvancedPaste,
+            ModuleType.AltWindowCycle,
+            ModuleType.AlwaysOnTop,
+            ModuleType.ColorPicker,
+            ModuleType.CropAndLock,
+            ModuleType.CursorWrap,
+            ModuleType.FancyZones,
+            ModuleType.FileLocksmith,
+            ModuleType.FindMyMouse,
+            ModuleType.GrabAndMove,
+            ModuleType.ImageResizer,
+            ModuleType.LightSwitch,
+            ModuleType.MeasureTool,
+            ModuleType.MouseHighlighter,
+            ModuleType.MouseJump,
+            ModuleType.MousePointerCrosshairs,
+            ModuleType.NewPlus,
+            ModuleType.Peek,
+            ModuleType.PowerDisplay,
+            ModuleType.PowerOCR,
+            ModuleType.PowerRename,
+            ModuleType.ShortcutGuide,
+            ModuleType.Workspaces,
+            ModuleType.ZoomIt,
+
+            // END_GENERATED_MODULES
+        };
+
         private readonly ISettingsRepository<GeneralSettings> _settingsRepository;
 
         // Pulling in KBMSettingsRepository separately as we need to listen to changes in the
@@ -27,6 +59,7 @@ namespace Microsoft.PowerToys.Settings.UI.Controls
         private readonly ResourceLoader _resourceLoader;
         private readonly DispatcherQueue _dispatcherQueue;
         private GeneralSettings _generalSettings;
+        private bool _disposed;
 
         public ObservableCollection<QuickAccessItem> Items { get; } = new();
 
@@ -54,12 +87,30 @@ namespace Microsoft.PowerToys.Settings.UI.Controls
             InitializeItems();
         }
 
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            _settingsRepository.SettingsChanged -= OnSettingsChanged;
+            _kbmSettingsRepository.SettingsChanged -= OnKbmSettingsChanged;
+            GC.SuppressFinalize(this);
+        }
+
         private void OnSettingsChanged(GeneralSettings newSettings)
         {
             if (_dispatcherQueue != null)
             {
                 _dispatcherQueue.TryEnqueue(() =>
                 {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+
                     _generalSettings = newSettings;
                     _generalSettings.AddEnabledModuleChangeNotification(ModuleEnabledChanged);
                     RefreshItemsVisibility();
@@ -89,7 +140,7 @@ namespace Microsoft.PowerToys.Settings.UI.Controls
 
         private void AddFlyoutMenuItem(ModuleType moduleType)
         {
-            if (_isModuleGpoDisabled(moduleType))
+            if (!PackagedModules.Contains(moduleType) || _isModuleGpoDisabled(moduleType))
             {
                 return;
             }
@@ -111,6 +162,11 @@ namespace Microsoft.PowerToys.Settings.UI.Controls
             {
                 _dispatcherQueue.TryEnqueue(() =>
                 {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+
                     _generalSettings = _settingsRepository.SettingsConfig;
                     _generalSettings.AddEnabledModuleChangeNotification(ModuleEnabledChanged);
                     RefreshItemsVisibility();
