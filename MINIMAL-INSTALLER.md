@@ -1,9 +1,10 @@
 # PowerToys – minimierter Installer
 
-Dieser Branch basiert auf Microsofts offiziellem Preview-Tag `v0.102.2883.0`
-(`6b8238253ace26851eaf3b5784dd7c6181cf0267`, veröffentlicht am 16. Oktober 2026).
-Die Produktversion `0.102.2883.0` wird unverändert aus diesem Release übernommen;
-der interne Updatekanal bleibt `private`. Der Microsoft-Tag ist weiterhin eine Preview.
+Dieser Branch basiert auf Microsofts offiziellem stabilen Tag `v0.102.3001`
+(`a00b2bce7403f0a48efe5cbb6671074e01f27824`, veröffentlicht am 27. Oktober 2026).
+Die Produktversion `0.102.3001.0` wird unverändert aus diesem Release übernommen;
+der interne Updatekanal bleibt `private`. Dies ist ein eigener, unsignierter Minimal-Build,
+nicht das von Microsoft signierte Installationspaket.
 
 Der erzeugte MSI enthält diese 20 Modulgruppen:
 
@@ -105,11 +106,11 @@ Monaco-/File-Explorer-Preview-Komponentengruppen.
 
 Der öffentliche Quellcode enthält standardmäßig nur englische PowerToys-Ressourcen. Für diesen
 Firmen-Build sind vollständige `de-DE`-RESW/RESX-Dateien eingecheckt. Sie wurden mit
-`import-german-localization.ps1` aus dem signierten Microsoft-Build `v0.102.2883.0` extrahiert und
+`import-german-localization.ps1` aus dem signierten Microsoft-Build `v0.102.3001` extrahiert und
 auf die Ressourcenschlüssel desselben Quellstands übertragen. Dabei werden ausdrücklich keine
 fremden PRI- oder Satelliten-Binärdateien kopiert; XAML und Assembly-Versionen bleiben konsistent.
 
-Farbauswahl und Textextraktor verwenden seit diesem Update WinUI-RESW/PRI statt WPF-Satelliten.
+Farbauswahl und Textextraktor verwenden WinUI-RESW/PRI statt WPF-Satelliten.
 Beim Aktualisieren der Microsoft-Basis müssen die deutschen Quellen mit einem möglichst passenden
 offiziellen Paket neu importiert und anschließend geprüft werden:
 

@@ -308,6 +308,9 @@
   <data name="CLI_ErrorInvalidDimension" xml:space="preserve">
     <value>Breite und Höhe müssen endliche Zahlen größer oder gleich Null sein.</value>
   </data>
+  <data name="CLI_ErrorInvalidEnumValue" xml:space="preserve">
+    <value>Ungültiger Wert „{0}“ für die Option „{1}“.</value>
+  </data>
   <data name="CLI_ErrorZeroDimensions" xml:space="preserve">
     <value>Breite und Höhe dürfen bei einer benutzerdefinierten Größe nicht beide null sein.</value>
   </data>
