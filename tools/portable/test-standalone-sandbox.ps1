@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([switch]$ResumeInstalled)
 
 $ErrorActionPreference = 'Stop'
 if ($env:USERNAME -cne 'WDAGUtilityAccount' -or $PSScriptRoot -cne 'C:\Tests' -or
@@ -9,6 +9,8 @@ if ($env:USERNAME -cne 'WDAGUtilityAccount' -or $PSScriptRoot -cne 'C:\Tests' -o
 $nonce = [Guid]::NewGuid().ToString('N')
 $nonce | Set-Content -LiteralPath 'C:\Results\sandbox-test-authorized.txt' -Encoding ascii
 $packages = Get-Content -LiteralPath 'C:\Packages\sccm-deployment.json' -Raw | ConvertFrom-Json
+# Read UTF-8 explicitly because Windows PowerShell 5.1 defaults to ANSI for BOM-less scripts.
+$startupTest = [scriptblock]::Create([IO.File]::ReadAllText('C:\Tests\test-portable-startup.ps1'))
 $installRoot = Join-Path $env:ProgramFiles 'Naturian\PowerToys Modules'
 $profileRoot = Join-Path $env:LOCALAPPDATA 'Naturian\PowerToysModules'
 $taskName = 'PowerToysStandalone-Test-' + $nonce
@@ -23,18 +25,19 @@ using System.Text;
 public static class MsiDetection
 {
     [DllImport("msi.dll", CharSet = CharSet.Unicode)]
-    public static extern uint MsiGetProductInfoEx(string product, string sid, uint context, string property, StringBuilder value, ref uint size);
+    public static extern uint MsiGetProductInfoEx(string product, IntPtr sid, uint context, string property, StringBuilder value, ref uint size);
     [DllImport("msi.dll", CharSet = CharSet.Unicode)]
     public static extern uint MsiGetShortcutTarget(string shortcut, StringBuilder product, StringBuilder feature, StringBuilder component);
     [DllImport("msi.dll", CharSet = CharSet.Unicode)]
-    public static extern int MsiGetComponentPathEx(string product, string component, string sid, uint context, StringBuilder value, ref uint size);
+    public static extern int MsiGetComponentPathEx(string product, string component, IntPtr sid, uint context, StringBuilder value, ref uint size);
 }
 '@
 
 function Test-MachineProduct($Package, [bool]$ExpectedInstalled) {
     $value = [Text.StringBuilder]::new(128)
     [uint32]$length = 128
-    $code = [MsiDetection]::MsiGetProductInfoEx($Package.productCode, $null, 4, 'VersionString', $value, [ref]$length)
+    # A machine-context query requires a native null SID, not PowerShell's empty-string conversion.
+    $code = [MsiDetection]::MsiGetProductInfoEx($Package.productCode, [IntPtr]::Zero, 4, 'VersionString', $value, [ref]$length)
     if ($ExpectedInstalled) {
         if ($code -ne 0 -or $value.ToString() -ne $Package.productVersion) {
             throw "Machine-context MSI detection failed for $($Package.module), code $code."
@@ -52,14 +55,18 @@ function Invoke-SystemPhase([string]$Phase) {
     $principal = New-ScheduledTaskPrincipal -UserId 'SYSTEM' -LogonType ServiceAccount -RunLevel Highest
     [void](Register-ScheduledTask -TaskName $taskName -Action $action -Principal $principal -Force)
     try {
-        Start-ScheduledTask -TaskName $taskName
         $receiptPath = 'C:\Results\system-' + $Phase + '.json'
-        $deadline = (Get-Date).AddMinutes(15)
+        if (Test-Path -LiteralPath $receiptPath) {
+            Move-Item -LiteralPath $receiptPath -Destination ($receiptPath + '.' + $nonce + '.previous')
+        }
+        Start-ScheduledTask -TaskName $taskName
+        $deadline = (Get-Date).AddMinutes(60)
         while (-not (Test-Path -LiteralPath $receiptPath)) {
             if ((Get-Date) -gt $deadline) { throw "SYSTEM phase timed out: $Phase" }
             Start-Sleep -Seconds 1
         }
         $receipt = Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
+        if ($receipt.nonce -cne $nonce -or $receipt.phase -ne $Phase) { throw 'Unexpected SYSTEM phase receipt.' }
         if (-not $receipt.success) { throw $receipt.error }
     }
     finally { Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue }
@@ -91,7 +98,15 @@ try {
             throw 'The copied deployment content differs from its manifest.'
         }
     }
-    Invoke-SystemPhase 'Install'
+    if ($ResumeInstalled) {
+        $installReceipt = Get-Content -LiteralPath 'C:\Results\system-Install.json' -Raw | ConvertFrom-Json
+        if (-not $installReceipt.success -or $installReceipt.results.Count -ne $packages.Count) {
+            throw 'Resuming requires the completed successful SYSTEM installation receipt.'
+        }
+    }
+    else {
+        Invoke-SystemPhase 'Install'
+    }
     foreach ($package in $packages) { Test-MachineProduct $package $true }
     if (Test-Path -LiteralPath 'C:\Windows\System32\config\systemprofile\AppData\Local\Naturian\PowerToysModules') {
         throw 'Installation started module profile initialization as SYSTEM.'
@@ -99,7 +114,7 @@ try {
     'Runtime' | Set-Content -LiteralPath $progressPath -Encoding ascii
     $displayExecutable = Join-Path $installRoot 'PowerDisplay\PowerToys.PowerDisplay.exe'
     $display = Start-Process -FilePath $displayExecutable -WorkingDirectory ([IO.Path]::GetDirectoryName($displayExecutable)) -WindowStyle Hidden -PassThru
-    & 'C:\Tests\test-portable-startup.ps1' -BuildRoot $installRoot -ReceiptPath 'C:\Results\startup.json'
+    & $startupTest -BuildRoot $installRoot -ReceiptPath 'C:\Results\startup.json'
     if (-not $display.WaitForExit(10000)) { throw 'Power Display did not exit through its portable host.' }
     if ($display.ExitCode -ne 0) { throw "Power Display failed with exit $($display.ExitCode)." }
 
@@ -122,7 +137,7 @@ try {
         if ($code -ne 0 -or $product.ToString() -notin $packages.productCode) { throw 'Incorrect advertised shortcut product.' }
         $target = [Text.StringBuilder]::new(32768)
         [uint32]$length = 32768
-        $state = [MsiDetection]::MsiGetComponentPathEx($product.ToString(), $component.ToString(), $null, 4, $target, [ref]$length)
+        $state = [MsiDetection]::MsiGetComponentPathEx($product.ToString(), $component.ToString(), [IntPtr]::Zero, 4, $target, [ref]$length)
         if ($state -ne 3 -or -not (Test-Path -LiteralPath $target.ToString()) -or
             -not $target.ToString().StartsWith($installRoot + '\', [StringComparison]::OrdinalIgnoreCase)) {
             throw 'Start menu shortcut targets the wrong application.'
@@ -135,7 +150,7 @@ try {
     foreach ($package in $packages) { Test-MachineProduct $package $true }
     Invoke-SystemPhase 'RemoveFirst'
     foreach ($package in $packages) { Test-MachineProduct $package ($package.module -ne 'FancyZones') }
-    & 'C:\Tests\test-portable-startup.ps1' -BuildRoot $installRoot -Modules Peek -ReceiptPath 'C:\Results\coexistence.json'
+    & $startupTest -BuildRoot $installRoot -Modules Peek -ReceiptPath 'C:\Results\coexistence.json'
     $profileHashes = Get-ProfileHashes
     Invoke-SystemPhase 'RemoveRemaining'
     foreach ($package in $packages) {

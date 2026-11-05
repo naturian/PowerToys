@@ -15,11 +15,13 @@ $results = [Collections.Generic.List[object]]::new()
 $receiptPath = 'C:\Results\system-' + $Phase + '.json'
 
 function Write-Receipt($Receipt) {
+    $Receipt | Add-Member -NotePropertyName nonce -NotePropertyValue $Nonce
     $Receipt | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath ($receiptPath + '.tmp') -Encoding utf8
     Move-Item -LiteralPath ($receiptPath + '.tmp') -Destination $receiptPath
 }
 
 try {
+    [void][IO.Directory]::CreateDirectory('C:\SccmLogs')
     foreach ($package in $packages) {
         if ($package.productCode -notmatch '^\{[0-9A-Fa-f-]{36}\}$' -or
             $package.file -notmatch '^PowerToys-[A-Za-z]+-Standalone-[0-9.]+-x64\.msi$') {
@@ -29,14 +31,16 @@ try {
             ($Phase -eq 'RemoveRemaining' -and $package.module -eq 'FancyZones')) {
             continue
         }
-        $log = 'C:\Results\' + $package.module + '-' + $Phase + '.log'
+        $logName = $package.module + '-' + $Phase + '.log'
+        $log = Join-Path 'C:\SccmLogs' $logName
         $arguments = switch ($Phase) {
             'Install' { @('/i', ('"C:\SccmContent\' + $package.file + '"')) }
             'Repair' { @('/famus', $package.productCode) }
             default { @('/x', $package.productCode) }
         }
-        $arguments += @('/qn', '/norestart', '/L*v', ('"' + $log + '"'))
+        $arguments += @('/qn', '/norestart', 'MSIFASTINSTALL=7', '/L*v', ('"' + $log + '"'))
         $process = Start-Process -FilePath "$env:SystemRoot\System32\msiexec.exe" -ArgumentList $arguments -Wait -PassThru -WindowStyle Hidden
+        Copy-Item -LiteralPath $log -Destination (Join-Path 'C:\Results' $logName)
         if ($process.ExitCode -notin @(0, 3010)) {
             throw "Windows Installer failed for $($package.module) during $Phase, exit $($process.ExitCode)."
         }
