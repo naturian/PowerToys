@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using AdvancedPaste.Settings;
+using ManagedCommon;
 using Microsoft.PowerToys.Settings.UI.Library;
 using Windows.Security.Credentials;
 
@@ -43,6 +44,11 @@ public sealed class EnhancedVaultCredentialsProvider : IAICredentialsProvider
 
     public string GetKey()
     {
+        if (PortableMode.IsEnabled)
+        {
+            return string.Empty;
+        }
+
         using (_syncRoot.EnterScope())
         {
             UpdateSlot(forceRefresh: false);
@@ -57,6 +63,11 @@ public sealed class EnhancedVaultCredentialsProvider : IAICredentialsProvider
 
     public string GetKey(AIServiceType serviceType, string providerId)
     {
+        if (PortableMode.IsEnabled)
+        {
+            return string.Empty;
+        }
+
         var normalizedType = NormalizeServiceType(serviceType);
         var entry = BuildCredentialEntry(normalizedType, providerId ?? string.Empty);
         return LoadKey(entry);
@@ -64,6 +75,11 @@ public sealed class EnhancedVaultCredentialsProvider : IAICredentialsProvider
 
     public bool Refresh()
     {
+        if (PortableMode.IsEnabled)
+        {
+            return false;
+        }
+
         using (_syncRoot.EnterScope())
         {
             return UpdateSlot(forceRefresh: true);
@@ -120,7 +136,7 @@ public sealed class EnhancedVaultCredentialsProvider : IAICredentialsProvider
 
     private static string LoadKey((string Resource, string Username)? entry)
     {
-        if (entry is null)
+        if (PortableMode.IsEnabled || entry is null)
         {
             return string.Empty;
         }

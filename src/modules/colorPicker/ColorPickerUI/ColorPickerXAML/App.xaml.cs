@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 
 using ManagedCommon;
@@ -16,6 +18,7 @@ namespace ColorPicker
     {
         private readonly string[] _args;
         private Mutex _instanceMutex;
+        private EventWaitHandle _portableActivationEvent;
         private int _powerToysRunnerPid;
         private bool _disposed;
 
@@ -48,25 +51,38 @@ namespace ColorPicker
 
         public bool IsRunningDetachedFromPowerToys() => _powerToysRunnerPid == -1;
 
+        private static string InstanceMutexName => PortableMode.IsEnabled
+            ? @"Local\PowerToys_ColorPicker_Portable_" + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(PortableMode.DataRoot.ToUpperInvariant())))
+            : @"Local\PowerToys_ColorPicker_InstanceMutex";
+
+        internal static string PortableActivationEventName => InstanceMutexName + "_Activate";
+
         public static T GetService<T>()
             where T : class
             => _serviceProvider.GetService(typeof(T)) as T;
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
+            if (PortableMode.IsEnabled)
+            {
+                // Keep the event alive before the mutex is claimed, so an early second launch is not lost.
+                _portableActivationEvent = new EventWaitHandle(false, EventResetMode.AutoReset, PortableActivationEventName);
+            }
+
             // Allow only one instance of Color Picker.
             // Single-instance guard. The mutex is intentionally released by OS process
             // exit (this is an unpackaged single-process app); no explicit ReleaseMutex.
-            _instanceMutex = new Mutex(true, @"Local\PowerToys_ColorPicker_InstanceMutex", out bool createdNew);
+            _instanceMutex = new Mutex(true, InstanceMutexName, out bool createdNew);
             if (!createdNew)
             {
+                _portableActivationEvent?.Set();
                 Logger.LogWarning("There is a ColorPicker instance running. Exiting Color Picker");
                 _instanceMutex = null;
                 Environment.Exit(0);
                 return;
             }
 
-            if (_args.Length > 0 && int.TryParse(_args[0], out _powerToysRunnerPid))
+            if (!PortableMode.IsEnabled && _args.Length > 0 && int.TryParse(_args[0], out _powerToysRunnerPid))
             {
                 Logger.LogInfo($"Color Picker started from the PowerToys Runner. Runner pid={_powerToysRunnerPid}");
                 RunnerHelper.WaitForPowerToysRunner(_powerToysRunnerPid, () =>
@@ -96,6 +112,11 @@ namespace ColorPicker
             // Make the overlay size to the tooltip and follow the cursor while shown (the
             // IMouseInfoProvider singleton is the same one the MainViewModel reads).
             overlay.InitializeCursorFollow(GetService<ColorPicker.Mouse.IMouseInfoProvider>());
+
+            if (PortableMode.IsEnabled && Array.IndexOf(_args, "--background") < 0)
+            {
+                overlay.DispatcherQueue.TryEnqueue(() => GetService<ColorPicker.Helpers.AppStateHandler>().StartEditorSession());
+            }
         }
 
         private static void InitializeLanguage()
@@ -142,6 +163,8 @@ namespace ColorPicker
                 EtwTrace.Dispose();
                 _instanceMutex?.Dispose();
                 _instanceMutex = null;
+                _portableActivationEvent?.Dispose();
+                _portableActivationEvent = null;
             }
 
             _disposed = true;

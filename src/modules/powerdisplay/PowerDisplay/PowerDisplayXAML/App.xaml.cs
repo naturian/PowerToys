@@ -4,6 +4,7 @@
 
 using System;
 using System.Globalization;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using ManagedCommon;
@@ -37,6 +38,12 @@ namespace PowerDisplay
             _powerToysRunnerPid = runnerPid;
             _pipeName = pipeName;
 
+            string appLanguage = LanguageHelper.LoadLanguage();
+            if (!string.IsNullOrEmpty(appLanguage))
+            {
+                Microsoft.Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = appLanguage;
+            }
+
             Logger.LogTrace("App constructor: Calling InitializeComponent");
             this.InitializeComponent();
 
@@ -58,7 +65,7 @@ namespace PowerDisplay
             }
 
             // Initialize language settings
-            string appLanguage = LanguageHelper.LoadLanguage();
+            appLanguage = LanguageHelper.LoadLanguage();
             if (!string.IsNullOrEmpty(appLanguage))
             {
                 Microsoft.Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = appLanguage;
@@ -170,6 +177,35 @@ namespace PowerDisplay
                 Logger.LogInfo("OnLaunched: Creating MainWindow");
                 var mainWindow = new MainWindow();
                 _mainWindow = mainWindow;
+                if (PortableMode.IsEnabled)
+                {
+                    NativeEventWaiter.WaitForEventLoop(PortableMode.EventName("StopModule"), Shutdown, CancellationToken.None);
+                    NativeEventWaiter.WaitForEventLoop(PortableMode.EventName("SettingsChanged"), () =>
+                    {
+                        mainWindow.ViewModel.ApplySettingsFromUI();
+                        RefreshTrayIcon();
+                    }, CancellationToken.None);
+                    NativeEventWaiter.WaitForEventLoop(PortableMode.EventName("ApplyProfile"), async () =>
+                    {
+                        var request = Path.Combine(PortableMode.DataRoot, "PowerDisplay", "portable-profile.txt");
+                        try
+                        {
+                            if (File.Exists(request))
+                            {
+                                string value = File.ReadAllText(request);
+                                File.Delete(request);
+                                if (int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out int profileId) && profileId > 0)
+                                {
+                                    await mainWindow.ViewModel.ApplyProfileByIdAsync(profileId);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.LogError("Portable profile request failed", ex);
+                        }
+                    }, CancellationToken.None);
+                }
                 Logger.LogInfo("OnLaunched: MainWindow created");
 
                 // Initialize tray icon service
@@ -217,6 +253,11 @@ namespace PowerDisplay
         /// </summary>
         private void RegisterEvent(string eventName, Action action, string logName)
         {
+            if (PortableMode.IsEnabled)
+            {
+                eventName = PortableMode.EventName(eventName);
+            }
+
             Logger.LogTrace($"RegisterEvent: Setting up event listener for '{logName}' on event '{eventName}'");
             NativeEventWaiter.WaitForEventLoop(
                 eventName,
@@ -242,6 +283,11 @@ namespace PowerDisplay
         /// </summary>
         private void RegisterWindowEvent(string eventName, Action<MainWindow> action, string logName)
         {
+            if (PortableMode.IsEnabled)
+            {
+                eventName = PortableMode.EventName(eventName);
+            }
+
             Logger.LogTrace($"RegisterWindowEvent: Setting up window event listener for '{logName}' on event '{eventName}'");
             NativeEventWaiter.WaitForEventLoop(
                 eventName,
@@ -275,6 +321,11 @@ namespace PowerDisplay
         /// </summary>
         private void RegisterViewModelEvent(string eventName, Action<ViewModels.MainViewModel> action, string logName)
         {
+            if (PortableMode.IsEnabled)
+            {
+                eventName = PortableMode.EventName(eventName);
+            }
+
             NativeEventWaiter.WaitForEventLoop(
                 eventName,
                 () =>

@@ -11,6 +11,7 @@
 
 #include <wil\stl.h>
 #include <wil\win32_helpers.h>
+#include "../../utils/portable_mode.h"
 
 namespace fs = std::filesystem;
 
@@ -22,6 +23,10 @@ namespace
 
     inline std::wstring get_root_save_folder_location()
     {
+        if (PowerToysPortable::IsEnabled())
+        {
+            return PowerToysPortable::DataRoot();
+        }
         PWSTR local_app_path;
         winrt::check_hresult(SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &local_app_path));
         std::wstring result{ local_app_path };
@@ -38,6 +43,10 @@ namespace
 
     bool IsDataDiagnosticsEnabled()
     {
+        if (PowerToysPortable::IsEnabled())
+        {
+            return false;
+        }
         HKEY key{};
         if (RegOpenKeyExW(HKEY_CURRENT_USER,
                           DataDiagnosticsRegKey,
@@ -70,6 +79,10 @@ namespace
 
     bool isViewDataDiagnosticEnabled()
     {
+        if (PowerToysPortable::IsEnabled())
+        {
+            return false;
+        }
         HKEY key{};
         if (RegOpenKeyExW(HKEY_CURRENT_USER,
                           DataDiagnosticsRegKey,

@@ -15,6 +15,7 @@ using Microsoft.PowerToys.Settings.UI.Library;
 using Microsoft.PowerToys.Settings.UI.Library.Telemetry.Events;
 using Microsoft.PowerToys.Settings.UI.OOBE.Enums;
 using Microsoft.PowerToys.Settings.UI.OOBE.ViewModel;
+using Microsoft.PowerToys.Settings.UI.Portable;
 using Microsoft.PowerToys.Settings.UI.SerializationContext;
 using Microsoft.PowerToys.Settings.UI.Services;
 using Microsoft.PowerToys.Settings.UI.SettingsXAML.Controls.Dashboard;
@@ -85,6 +86,11 @@ namespace Microsoft.PowerToys.Settings.UI
         /// </summary>
         public App()
         {
+            if (PortableMode.IsEnabled)
+            {
+                Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+            }
+
             Logger.InitializeLogger(@"\Settings\Logs");
 
             string appLanguage = LanguageHelper.LoadLanguage();
@@ -97,12 +103,15 @@ namespace Microsoft.PowerToys.Settings.UI
 
             UnhandledException += App_UnhandledException;
 
-            NativeEventWaiter.WaitForEventLoop(
+            if (!PortableMode.IsEnabled)
+            {
+                NativeEventWaiter.WaitForEventLoop(
                 Constants.PowerToysRunnerTerminateSettingsEvent(), () =>
             {
                 EtwTrace?.Dispose();
                 Environment.Exit(0);
             });
+            }
         }
 
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -112,6 +121,12 @@ namespace Microsoft.PowerToys.Settings.UI
 
         public static void OpenSettingsWindow(Type type = null, bool ensurePageIsSelected = false)
         {
+            if (PortableHost != null)
+            {
+                PortableHost.ShowSettings();
+                return;
+            }
+
             bool isNewWindowSession = settingsWindow == null ||
                                       !NativeMethods.IsWindowVisible(settingsWindow.GetWindowHandle());
 
@@ -277,6 +292,32 @@ namespace Microsoft.PowerToys.Settings.UI
         {
             var cmdArgs = Environment.GetCommandLineArgs();
 
+            if (PortableMode.IsEnabled)
+            {
+                try
+                {
+                    PortableHost = new PortableSession();
+                    if (!PortableHost.TryAcquire(cmdArgs))
+                    {
+                        PortableHost.Dispose();
+                        Exit();
+                        return;
+                    }
+
+                    settingsWindow = new MainWindow(PortableHost);
+                    PortableHost.Attach(settingsWindow);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("Portable settings startup failed", ex);
+                    PortableHost?.Dispose();
+                    PortableSession.MessageBox(IntPtr.Zero, ex.Message, "PowerToys Portable", 0x10);
+                    Exit();
+                }
+
+                return;
+            }
+
             if (cmdArgs?.Length >= RequiredArgumentsLaunchedFromRunnerQty)
             {
                 OnLaunchedFromRunner(cmdArgs);
@@ -338,6 +379,8 @@ namespace Microsoft.PowerToys.Settings.UI
         public static ThemeService ThemeService => themeService;
 
         private static MainWindow settingsWindow;
+
+        internal static PortableSession PortableHost { get; private set; }
 
         public static void ClearSettingsWindow()
         {

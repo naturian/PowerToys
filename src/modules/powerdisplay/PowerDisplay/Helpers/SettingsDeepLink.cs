@@ -11,6 +11,12 @@ namespace PowerDisplay.Helpers
     {
         public static void OpenSettings(bool mainExecutableIsOnTheParentFolder)
         {
+            if (ManagedCommon.PortableMode.IsEnabled)
+            {
+                ManagedCommon.PortableMode.OpenSettings();
+                return;
+            }
+
             try
             {
                 var directoryPath = System.AppContext.BaseDirectory;

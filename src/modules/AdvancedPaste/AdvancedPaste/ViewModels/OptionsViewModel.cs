@@ -687,6 +687,13 @@ namespace AdvancedPaste.ViewModels
         {
             try
             {
+                if (ManagedCommon.PortableMode.IsEnabled)
+                {
+                    ManagedCommon.PortableMode.OpenSettings();
+                    GetMainWindow()?.Close();
+                    return;
+                }
+
                 var exePath = System.IO.Path.Combine(
                     ManagedCommon.PowerToysPathResolver.GetPowerToysInstallPath(),
                     "PowerToys.exe");

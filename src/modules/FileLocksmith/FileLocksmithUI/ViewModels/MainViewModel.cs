@@ -79,13 +79,20 @@ namespace PowerToys.FileLocksmithUI.ViewModels
 
         public MainViewModel()
         {
-            paths = NativeMethods.ReadPathsFromFile();
+            paths = ManagedCommon.PortableMode.IsEnabled && global::FileLocksmithUI.App.PortableInputPaths is not null
+                ? global::FileLocksmithUI.App.PortableInputPaths
+                : NativeMethods.ReadPathsFromFile();
             Logger.LogInfo($"Starting FileLocksmith with {paths.Length} files selected.");
             LoadProcessesCommand = new AsyncRelayCommand(LoadProcessesAsync);
         }
 
         private async Task LoadProcessesAsync()
         {
+            if (paths.Length == 0)
+            {
+                return;
+            }
+
             IsLoading = true;
             Processes.Clear();
 

@@ -197,7 +197,8 @@ namespace AdvancedPaste.Settings
 
         private static bool TryMigrateLegacyAIEnablement(AdvancedPasteSettings settings)
         {
-            if (settings?.Properties is null)
+            // Portable packages must not read, migrate, or remove installed credentials.
+            if (PortableMode.IsEnabled || settings?.Properties is null)
             {
                 return false;
             }

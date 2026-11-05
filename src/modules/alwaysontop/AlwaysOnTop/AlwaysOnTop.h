@@ -62,10 +62,10 @@ private:
     };
     std::map<HWND, WindowLayeredState> m_windowOriginalLayeredState{};
     
-    HANDLE m_hPinEvent;
-    HANDLE m_hTerminateEvent;
-    HANDLE m_hIncreaseOpacityEvent;
-    HANDLE m_hDecreaseOpacityEvent;
+    HANDLE m_hPinEvent = nullptr;
+    HANDLE m_hTerminateEvent = nullptr;
+    HANDLE m_hIncreaseOpacityEvent = nullptr;
+    HANDLE m_hDecreaseOpacityEvent = nullptr;
     DWORD m_mainThreadId;
     std::thread m_thread;
     const bool m_useCentralizedLLKH;

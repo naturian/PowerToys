@@ -3,6 +3,7 @@
 #include "Constants.g.cpp"
 #include "shared_constants.h"
 #include <ShlObj.h>
+#include "../utils/portable_mode.h"
 
 namespace winrt::PowerToys::Interop::implementation
 {
@@ -12,6 +13,10 @@ namespace winrt::PowerToys::Interop::implementation
     }
     hstring Constants::AppDataPath()
     {
+        if (PowerToysPortable::IsEnabled())
+        {
+            return hstring{ PowerToysPortable::DataRoot() };
+        }
         PWSTR local_app_path;
         winrt::check_hresult(SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &local_app_path));
         winrt::hstring result{ local_app_path };

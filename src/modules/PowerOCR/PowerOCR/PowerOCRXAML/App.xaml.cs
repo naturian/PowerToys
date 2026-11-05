@@ -93,17 +93,25 @@ public partial class App : Application, IDisposable
 
         _serviceProvider = services.BuildServiceProvider();
 
-        // Register native events for show/terminate
+        // Portable instances listen only to their own activation event.
         var eventListener = _serviceProvider.GetRequiredService<INativeEventListener>();
         var activationService = _serviceProvider.GetRequiredService<IActivationService>();
 
-        eventListener.Register(
-            PowerToys.Interop.Constants.ShowPowerOCRSharedEvent(),
-            () => activationService.RequestActivation());
+        if (PortableMode.IsEnabled)
+        {
+            eventListener.Register(Program.PortableActivationEventName, () => activationService.RequestActivation());
+            eventListener.Register(PortableMode.EventName("StopModule"), Terminate);
+        }
+        else
+        {
+            eventListener.Register(
+                PowerToys.Interop.Constants.ShowPowerOCRSharedEvent(),
+                () => activationService.RequestActivation());
 
-        eventListener.Register(
-            PowerToys.Interop.Constants.TerminatePowerOCRSharedEvent(),
-            Terminate);
+            eventListener.Register(
+                PowerToys.Interop.Constants.TerminatePowerOCRSharedEvent(),
+                Terminate);
+        }
 
         // Resolve overlay manager so its activation subscription is live
         _serviceProvider.GetRequiredService<IOverlayManager>();
@@ -122,6 +130,11 @@ public partial class App : Application, IDisposable
             Logger.LogInfo("TextExtractor started detached from PowerToys Runner.");
             var keyboardMonitor = _serviceProvider.GetRequiredService<KeyboardMonitor>();
             keyboardMonitor.Start();
+        }
+
+        if (PortableMode.IsEnabled && Array.IndexOf(Environment.GetCommandLineArgs(), "--background") < 0)
+        {
+            DispatcherQueueForApp?.TryEnqueue(() => activationService.RequestActivation());
         }
     }
 

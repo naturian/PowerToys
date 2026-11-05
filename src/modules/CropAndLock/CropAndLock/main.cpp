@@ -9,12 +9,23 @@
 #include "trace.h"
 
 #include <common/interop/shared_constants.h>
+#include <common/SettingsAPI/settings_helpers.h>
+#include <common/SettingsAPI/settings_objects.h>
 
 #include <common/utils/gpo.h>
 #include <common/utils/logger_helper.h>
 #include <common/utils/ProcessWaiter.h>
 #include <common/utils/UnhandledExceptionHandler.h>
 #include <common/utils/winapi_error.h>
+#include <common/utils/portable_mode.h>
+
+#include <array>
+#include <atomic>
+#include <filesystem>
+#include <stdexcept>
+#include <string_view>
+#include <system_error>
+#include <thread>
 
 #include <common/Telemetry/EtwTrace/EtwTrace.h>
 
@@ -37,7 +48,7 @@ namespace util
 }
 
 const std::wstring instanceMutexName = L"Local\\PowerToys_CropAndLock_InstanceMutex";
-bool m_running = true;
+std::atomic_bool m_running{ true };
 
 // Theming
 ThemeListener theme_listener{};
@@ -58,6 +69,59 @@ void handleTheme()
 
 int WINAPI wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PWSTR lpCmdLine, _In_ int)
 {
+    bool portable = false;
+    std::array<std::wstring, 4> eventNames;
+    try
+    {
+        portable = PowerToysPortable::IsEnabled();
+        eventNames = {
+            PowerToysPortable::ScopedName(CommonSharedConstants::CROP_AND_LOCK_REPARENT_EVENT),
+            PowerToysPortable::ScopedName(CommonSharedConstants::CROP_AND_LOCK_THUMBNAIL_EVENT),
+            PowerToysPortable::ScopedName(CommonSharedConstants::CROP_AND_LOCK_SCREENSHOT_EVENT),
+            PowerToysPortable::ScopedName(CommonSharedConstants::CROP_AND_LOCK_EXIT_EVENT)
+        };
+        if (portable)
+        {
+            const auto executableDirectory = std::filesystem::path(PowerToysPortable::DataRoot()).parent_path().parent_path().parent_path();
+            if (!SetCurrentDirectoryW(executableDirectory.c_str()))
+            {
+                throw std::runtime_error("Cannot select the portable executable directory.");
+            }
+            const std::wstring_view command(lpCmdLine);
+            int eventIndex = -1;
+            if (command == L"--reparent")
+            {
+                eventIndex = 0;
+            }
+            else if (command == L"--thumbnail")
+            {
+                eventIndex = 1;
+            }
+            else if (command == L"--screenshot")
+            {
+                eventIndex = 2;
+            }
+            else if (command == L"--stop")
+            {
+                eventIndex = 3;
+            }
+            if (eventIndex >= 0)
+            {
+                wil::unique_handle event(OpenEventW(EVENT_MODIFY_STATE, FALSE, eventNames[eventIndex].c_str()));
+                if (!event)
+                {
+                    return eventIndex == 3 && GetLastError() == ERROR_FILE_NOT_FOUND ? 0 : 1;
+                }
+                return SetEvent(event.get()) ? 0 : 1;
+            }
+        }
+    }
+    catch (const std::exception&)
+    {
+        MessageBoxW(nullptr, L"Der portable Programmordner oder Datenordner ist nicht zugänglich oder nicht beschreibbar.", L"Crop And Lock Portable", MB_OK | MB_ICONERROR);
+        return 1;
+    }
+
     // Initialize COM
     winrt::init_apartment(winrt::apartment_type::single_threaded);
 
@@ -81,20 +145,22 @@ int WINAPI wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PWSTR lpCmdLine, _I
     // Before we do anything, check to see if we're already running. If we are,
     // the hotkey won't register and we'll fail. Instead, we should tell the user
     // to kill the other instance and exit this one.
-    auto mutex = CreateMutex(nullptr, true, instanceMutexName.c_str());
-    if (mutex == nullptr)
+    wil::unique_handle mutex(CreateMutex(nullptr, true, PowerToysPortable::ScopedName(instanceMutexName).c_str()));
+    const DWORD mutexError = GetLastError();
+    if (!mutex)
     {
-        Logger::error(L"Failed to create mutex. {}", get_last_error_or_default(GetLastError()));
-    }
-
-    if (GetLastError() == ERROR_ALREADY_EXISTS)
-    {
-        // CropAndLock is already open.
+        Logger::error(L"Failed to create mutex. {}", get_last_error_or_default(mutexError));
         return 1;
     }
 
-    std::wstring pid = std::wstring(lpCmdLine);
-    if (pid.empty())
+    if (mutexError == ERROR_ALREADY_EXISTS)
+    {
+        // CropAndLock is already open.
+        return portable ? 0 : 1;
+    }
+
+    std::wstring pid = portable ? L"" : std::wstring(lpCmdLine);
+    if (!portable && pid.empty())
     {
         Logger::warn(L"Tried to run Crop And Lock as a standalone.");
         MessageBoxW(nullptr, L"CropAndLock can't run as a standalone. Start it from PowerToys.", L"CropAndLock", MB_ICONERROR);
@@ -102,19 +168,22 @@ int WINAPI wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PWSTR lpCmdLine, _I
     }
 
     auto mainThreadId = GetCurrentThreadId();
-    ProcessWaiter::OnProcessTerminate(pid, [mainThreadId](int err) {
-        if (err != ERROR_SUCCESS)
-        {
-            Logger::error(L"Failed to wait for parent process exit. {}", get_last_error_or_default(err));
-        }
-        else
-        {
-            Logger::trace(L"PowerToys runner exited.");
-        }
+    if (!portable)
+    {
+        ProcessWaiter::OnProcessTerminate(pid, [mainThreadId](int err) {
+            if (err != ERROR_SUCCESS)
+            {
+                Logger::error(L"Failed to wait for parent process exit. {}", get_last_error_or_default(err));
+            }
+            else
+            {
+                Logger::trace(L"PowerToys runner exited.");
+            }
 
-        Logger::trace(L"Exiting CropAndLock");
-        PostThreadMessage(mainThreadId, WM_QUIT, 0, 0);
-    });
+            Logger::trace(L"Exiting CropAndLock");
+            PostThreadMessage(mainThreadId, WM_QUIT, 0, 0);
+        });
+    }
 
     // NOTE: reparenting a window with a different DPI context has consequences.
     //       See https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setparent#remarks
@@ -132,10 +201,10 @@ int WINAPI wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PWSTR lpCmdLine, _I
 
 
     // Handles and thread for the events sent from runner
-    HANDLE m_reparent_event_handle;
-    HANDLE m_thumbnail_event_handle;
-    HANDLE m_screenshot_event_handle;
-    HANDLE m_exit_event_handle;
+    wil::unique_handle reparentEvent;
+    wil::unique_handle thumbnailEvent;
+    wil::unique_handle screenshotEvent;
+    wil::unique_handle exitEvent;
     std::thread m_event_triggers_thread;
 
     std::function<void(HWND)> removeWindowCallback = [&](HWND windowHandle) {
@@ -153,6 +222,10 @@ int WINAPI wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PWSTR lpCmdLine, _I
     };
 
     std::function<void(CropAndLockType)> ProcessCommand = [&](CropAndLockType mode) {
+        if (!m_running)
+        {
+            return;
+        }
         std::function<void(HWND, RECT)> windowCroppedCallback = [&, mode](HWND targetWindow, RECT cropRect) {
             auto targetInfo = util::WindowInfo(targetWindow);
             // TODO: Fix WindowInfo.h to not contain the null char at the end.
@@ -167,7 +240,7 @@ int WINAPI wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PWSTR lpCmdLine, _I
             } while (nullCharIndex != std::wstring::npos);
 
             std::wstringstream titleStream;
-            titleStream << targetInfo.Title << L" (Cropped)";
+            titleStream << targetInfo.Title << (portable ? L" (Zugeschnitten)" : L" (Cropped)");
             auto title = titleStream.str();
 
             std::shared_ptr<CropAndLockWindow> croppedWindow;
@@ -219,17 +292,125 @@ int WINAPI wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PWSTR lpCmdLine, _I
         }
     };
 
+    const std::array<const wchar_t*, 3> hotkeyNames{ L"reparent-hotkey", L"thumbnail-hotkey", L"screenshot-hotkey" };
+    std::array<bool, 3> registeredHotkeys{};
+    std::filesystem::path portableSettingsPath;
+    std::filesystem::file_time_type portableSettingsTimestamp{};
+    std::error_code portableSettingsError;
+    bool portableSettingsLoaded = false;
+    UINT_PTR settingsTimer = 0;
+    auto reloadPortableHotkeys = [&]() {
+        std::error_code error;
+        const auto timestamp = std::filesystem::last_write_time(portableSettingsPath, error);
+        if (portableSettingsLoaded && error == portableSettingsError && (error || timestamp == portableSettingsTimestamp))
+        {
+            return;
+        }
+        const bool hadSettings = portableSettingsLoaded;
+        portableSettingsLoaded = true;
+        portableSettingsTimestamp = timestamp;
+        portableSettingsError = error;
+        std::array<PowerToysSettings::HotkeyObject, 3> hotkeys{
+            PowerToysSettings::HotkeyObject::from_settings(true, true, false, true, 'R'),
+            PowerToysSettings::HotkeyObject::from_settings(true, true, false, true, 'T'),
+            PowerToysSettings::HotkeyObject::from_settings(true, true, false, true, 'S')
+        };
+        try
+        {
+            if (!error)
+            {
+                const auto values = PowerToysSettings::PowerToyValues::load_from_settings_file(NonLocalizable::ModuleKey);
+                for (size_t index = 0; index < hotkeys.size(); ++index)
+                {
+                    if (const auto value = values.get_json(hotkeyNames[index]))
+                    {
+                        const double code = value->GetNamedNumber(L"code");
+                        if (!(code >= 0 && code <= 255) || code != static_cast<UINT>(code))
+                        {
+                            throw std::runtime_error("Invalid portable hotkey code.");
+                        }
+                        hotkeys[index] = PowerToysSettings::HotkeyObject::from_settings(
+                            value->GetNamedBoolean(L"win"), value->GetNamedBoolean(L"ctrl"),
+                            value->GetNamedBoolean(L"alt"), value->GetNamedBoolean(L"shift"), static_cast<UINT>(code));
+                    }
+                }
+            }
+        }
+        catch (...)
+        {
+            Logger::error(L"Failed to read portable Crop And Lock shortcuts; keeping existing shortcuts.");
+            if (hadSettings)
+            {
+                return;
+            }
+        }
+        for (size_t index = 0; index < hotkeys.size(); ++index)
+        {
+            const int hotkeyId = static_cast<int>(index) + 1;
+            if (registeredHotkeys[index])
+            {
+                UnregisterHotKey(nullptr, hotkeyId);
+                registeredHotkeys[index] = false;
+            }
+        }
+        for (size_t index = 0; index < hotkeys.size(); ++index)
+        {
+            if (hotkeys[index].get_code() == 0)
+            {
+                continue;
+            }
+            const int hotkeyId = static_cast<int>(index) + 1;
+            registeredHotkeys[index] = RegisterHotKey(nullptr, hotkeyId, hotkeys[index].get_modifiers(), hotkeys[index].get_code()) != FALSE;
+            if (!registeredHotkeys[index])
+            {
+                Logger::error(L"Failed to register portable shortcut {}. {}", hotkeyNames[index], get_last_error_or_default(GetLastError()));
+            }
+        }
+    };
+    auto unregisterPortableHotkeys = [&]() {
+        if (settingsTimer)
+        {
+            KillTimer(nullptr, settingsTimer);
+        }
+        for (size_t index = 0; index < registeredHotkeys.size(); ++index)
+        {
+            if (registeredHotkeys[index])
+            {
+                UnregisterHotKey(nullptr, static_cast<int>(index) + 1);
+            }
+        }
+    };
+    if (portable)
+    {
+        portableSettingsPath = PTSettingsHelper::get_module_save_file_location(NonLocalizable::ModuleKey);
+        reloadPortableHotkeys();
+        settingsTimer = SetTimer(nullptr, 0, 1000, nullptr);
+        if (!settingsTimer)
+        {
+            Logger::error(L"Failed to start portable settings reload timer. {}", get_last_error_or_default(GetLastError()));
+            unregisterPortableHotkeys();
+            return 1;
+        }
+    }
+
     // Start a thread to listen on the events.
-    m_reparent_event_handle = CreateEventW(nullptr, false, false, CommonSharedConstants::CROP_AND_LOCK_REPARENT_EVENT);
-    m_thumbnail_event_handle = CreateEventW(nullptr, false, false, CommonSharedConstants::CROP_AND_LOCK_THUMBNAIL_EVENT);
-    m_screenshot_event_handle = CreateEventW(nullptr, false, false, CommonSharedConstants::CROP_AND_LOCK_SCREENSHOT_EVENT);
-    m_exit_event_handle = CreateEventW(nullptr, false, false, CommonSharedConstants::CROP_AND_LOCK_EXIT_EVENT);
+    reparentEvent.reset(CreateEventW(nullptr, false, false, eventNames[0].c_str()));
+    thumbnailEvent.reset(CreateEventW(nullptr, false, false, eventNames[1].c_str()));
+    screenshotEvent.reset(CreateEventW(nullptr, false, false, eventNames[2].c_str()));
+    exitEvent.reset(CreateEventW(nullptr, false, false, eventNames[3].c_str()));
+    const HANDLE m_reparent_event_handle = reparentEvent.get();
+    const HANDLE m_thumbnail_event_handle = thumbnailEvent.get();
+    const HANDLE m_screenshot_event_handle = screenshotEvent.get();
+    const HANDLE m_exit_event_handle = exitEvent.get();
     if (!m_reparent_event_handle || !m_thumbnail_event_handle || !m_screenshot_event_handle || !m_exit_event_handle)
     {
         Logger::warn(L"Failed to create events. {}", get_last_error_or_default(GetLastError()));
+        unregisterPortableHotkeys();
         return 1;
     }
 
+    MSG initialMessage;
+    PeekMessageW(&initialMessage, nullptr, 0, 0, PM_NOREMOVE);
     m_event_triggers_thread = std::thread([&]() {
         MSG msg;
         HANDLE event_handles[4] = { m_reparent_event_handle, m_thumbnail_event_handle, m_screenshot_event_handle, m_exit_event_handle };
@@ -300,24 +481,49 @@ int WINAPI wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PWSTR lpCmdLine, _I
 
     // Message pump
     MSG msg = {};
-    while (GetMessageW(&msg, nullptr, 0, 0))
+    BOOL messageResult;
+    while ((messageResult = GetMessageW(&msg, nullptr, 0, 0)) > 0)
     {
+        if (portable && msg.hwnd == nullptr && msg.message == WM_HOTKEY)
+        {
+            switch (msg.wParam)
+            {
+            case 1:
+                ProcessCommand(CropAndLockType::Reparent);
+                break;
+            case 2:
+                ProcessCommand(CropAndLockType::Thumbnail);
+                break;
+            case 3:
+                ProcessCommand(CropAndLockType::Screenshot);
+                break;
+            }
+            continue;
+        }
+        if (portable && msg.hwnd == nullptr && msg.message == WM_TIMER && msg.wParam == settingsTimer)
+        {
+            reloadPortableHotkeys();
+            continue;
+        }
         TranslateMessage(&msg);
         DispatchMessageW(&msg);
     }
 
-    trace.Flush();
-
-    Trace::CropAndLock::UnregisterProvider();
-
     m_running = false;
+    unregisterPortableHotkeys();
     // Needed to unblock MsgWaitForMultipleObjects one last time
     SetEvent(m_reparent_event_handle);
-    CloseHandle(m_reparent_event_handle);
-    CloseHandle(m_thumbnail_event_handle);
-    CloseHandle(m_screenshot_event_handle);
-    CloseHandle(m_exit_event_handle);
     m_event_triggers_thread.join();
+    reparentEvent.reset();
+    thumbnailEvent.reset();
+    screenshotEvent.reset();
+    exitEvent.reset();
 
-    return util::ShutdownDispatcherQueueControllerAndWait(controller, static_cast<int>(msg.wParam));
+    overlayWindow.reset();
+    croppedWindows.clear();
+
+    trace.Flush();
+    Trace::CropAndLock::UnregisterProvider();
+
+    return util::ShutdownDispatcherQueueControllerAndWait(controller, messageResult == -1 ? 1 : static_cast<int>(msg.wParam));
 }

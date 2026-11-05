@@ -18,7 +18,7 @@ jobs:
       WINGET_CREATE_GITHUB_TOKEN: ${{ secrets.PT_WINGET }}
 
     # Only submit stable releases
-    if: ${{ !github.event.release.prerelease }}
+    if: ${{ github.repository == 'microsoft/PowerToys' && !github.event.release.prerelease }}
     steps:
       - name: Submit Microsoft.PowerToys package to Windows Package Manager Community Repository
         run: |

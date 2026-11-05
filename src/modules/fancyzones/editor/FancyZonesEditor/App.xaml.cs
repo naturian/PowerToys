@@ -36,6 +36,7 @@ namespace FancyZonesEditor
         public static int PowerToysPID { get; set; }
 
         private ThemeManager _themeManager;
+        private Process _portableEngine;
 
         public static bool DebugMode
         {
@@ -58,6 +59,12 @@ namespace FancyZonesEditor
 
         public App()
         {
+            if (PortableMode.IsEnabled)
+            {
+                _ = PortableMode.DataRoot;
+                Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+            }
+
             PowerToysTelemetry.Log.WriteEvent(new FancyZonesEditorStartEvent() { TimeStamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() });
 
             var languageTag = LanguageHelper.LoadLanguage();
@@ -98,12 +105,15 @@ namespace FancyZonesEditor
 
             _themeManager = new ThemeManager(this);
 
-            RunnerHelper.WaitForPowerToysRunner(PowerToysPID, () =>
+            if (!PortableMode.IsEnabled)
             {
-                Logger.LogInfo("Runner exited");
-                NativeThreadCTS.Cancel();
-                Application.Current.Dispatcher.Invoke(Application.Current.Shutdown);
-            });
+                RunnerHelper.WaitForPowerToysRunner(PowerToysPID, () =>
+                {
+                    Logger.LogInfo("Runner exited");
+                    NativeThreadCTS.Cancel();
+                    Application.Current.Dispatcher.Invoke(Application.Current.Shutdown);
+                });
+            }
 
             var parseResult = FancyZonesEditorIO.ParseParams();
 
@@ -111,6 +121,45 @@ namespace FancyZonesEditor
             {
                 Logger.LogError(ParsingErrorReportTag + ": " + parseResult.Message + "; " + ParsingErrorDataTag + ": " + parseResult.MalformedData);
                 MessageBox.Show(parseResult.Message, FancyZonesEditor.Properties.Resources.Error_Parsing_Data_Title, MessageBoxButton.OK);
+            }
+
+            if (PortableMode.IsEnabled)
+            {
+                try
+                {
+                    if (!parseResult.Result || PowerToysPID <= 0)
+                    {
+                        Shutdown();
+                        return;
+                    }
+
+                    _portableEngine = Process.GetProcessById(PowerToysPID);
+                    var expectedEngine = Path.Combine(AppContext.BaseDirectory, "PowerToys.FancyZones.exe");
+                    if (_portableEngine.HasExited || !string.Equals(_portableEngine.MainModule?.FileName, expectedEngine, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Shutdown();
+                        return;
+                    }
+
+                    // Keep the verified process handle: reopening by PID races with engine exit.
+                    _portableEngine.Exited += (_, _) => Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        NativeThreadCTS.Cancel();
+                        Current.Shutdown();
+                    }));
+                    _portableEngine.EnableRaisingEvents = true;
+                    if (_portableEngine.HasExited)
+                    {
+                        Shutdown();
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogWarning("Unable to monitor the portable FancyZones engine: " + ex.Message);
+                    Shutdown();
+                    return;
+                }
             }
 
             parseResult = FancyZonesEditorIO.ParseLayoutTemplates();
@@ -164,6 +213,11 @@ namespace FancyZonesEditor
 
         private void App_WaitExit()
         {
+            if (PortableMode.IsEnabled)
+            {
+                return;
+            }
+
             NativeEventWaiter.WaitForEventLoop(
             PowerToys.Interop.Constants.FZEExitEvent(),
             () =>
@@ -228,6 +282,7 @@ namespace FancyZonesEditor
                 if (disposing)
                 {
                     _themeManager?.Dispose();
+                    _portableEngine?.Dispose();
                 }
 
                 _isDisposed = true;

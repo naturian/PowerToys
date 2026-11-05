@@ -6,6 +6,7 @@
 #include <common/logger/call_tracer.h>
 #include <common/utils/EventWaiter.h>
 #include <common/utils/winapi_error.h>
+#include <common/utils/portable_mode.h>
 #include <common/SettingsAPI/FileWatcher.h>
 #include <common/notifications/NotificationUtil.h>
 
@@ -371,6 +372,7 @@ private:
     const HINSTANCE m_hinstance{};
 
     HWND m_window{};
+    bool m_portableEditorShown = false;
     std::unique_ptr<WindowMouseSnap> m_windowMouseSnapper{};
     WindowKeyboardSnap m_windowKeyboardSnapper{};
     WorkAreaConfiguration m_workAreaConfiguration;
@@ -413,16 +415,17 @@ std::function<void()> FancyZones::disableModuleCallback = {};
 IFACEMETHODIMP_(void)
 FancyZones::Run() noexcept
 {
+    const auto toolWindowClassName = PowerToysPortable::ScopedName(NonLocalizable::ToolWindowClassName);
     WNDCLASSEXW wcex{};
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.lpfnWndProc = s_WndProc;
     wcex.hInstance = m_hinstance;
-    wcex.lpszClassName = NonLocalizable::ToolWindowClassName;
+    wcex.lpszClassName = toolWindowClassName.c_str();
     RegisterClassExW(&wcex);
 
     BufferedPaintInit();
 
-    m_window = CreateWindowExW(WS_EX_TOOLWINDOW, NonLocalizable::ToolWindowClassName, L"", WS_POPUP, 0, 0, 0, 0, nullptr, nullptr, m_hinstance, this);
+    m_window = CreateWindowExW(WS_EX_TOOLWINDOW, toolWindowClassName.c_str(), L"", WS_POPUP, 0, 0, 0, 0, nullptr, nullptr, m_hinstance, this);
     if (!m_window)
     {
         Logger::critical(L"Failed to create FancyZones window");
@@ -461,7 +464,7 @@ FancyZones::Run() noexcept
                       } })
         .wait();
 
-    m_toggleEditorEventWaiter.start(CommonSharedConstants::FANCY_ZONES_EDITOR_TOGGLE_EVENT, [&](DWORD err) {
+    m_toggleEditorEventWaiter.start(PowerToysPortable::ScopedName(CommonSharedConstants::FANCY_ZONES_EDITOR_TOGGLE_EVENT), [&](DWORD err) {
         if (err == ERROR_SUCCESS)
         {
             Logger::trace(L"{} event was signaled", CommonSharedConstants::FANCY_ZONES_EDITOR_TOGGLE_EVENT);
@@ -844,16 +847,25 @@ void FancyZones::ToggleEditor() noexcept
 
     if (!EditorParameters::Save(m_workAreaConfiguration, m_dpiUnawareThread))
     {
+        m_terminateEditorEvent.reset();
         Logger::error(L"Failed to save editor startup parameters");
         return;
     }
 
     SHELLEXECUTEINFO sei{ sizeof(sei) };
+    const auto editorPath = PowerToysPortable::IsEnabled()
+        ? std::filesystem::path(PowerToysPortable::DataRoot()).parent_path().parent_path().parent_path() / NonLocalizable::FZEditorExecutablePath
+        : std::filesystem::path(NonLocalizable::FZEditorExecutablePath);
     sei.fMask = { SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_NO_UI };
-    sei.lpFile = NonLocalizable::FZEditorExecutablePath;
+    sei.lpFile = editorPath.c_str();
     sei.lpParameters = L"";
     sei.nShow = SW_SHOWDEFAULT;
-    ShellExecuteEx(&sei);
+    if (!ShellExecuteEx(&sei) || !sei.hProcess)
+    {
+        m_terminateEditorEvent.reset();
+        Logger::error(L"Failed to start FancyZones Editor");
+        return;
+    }
     Trace::FancyZones::EditorLaunched(1);
 
     // Launch the editor on a background thread
@@ -980,6 +992,25 @@ LRESULT FancyZones::WndProc(HWND window, UINT message, WPARAM wparam, LPARAM lpa
         else if (message == WM_PRIV_INIT)
         {
             OnDisplayChange(DisplayChangeType::Initialization);
+            if (PowerToysPortable::IsEnabled() && !m_portableEditorShown)
+            {
+                m_portableEditorShown = true;
+                int argumentCount = 0;
+                auto arguments = CommandLineToArgvW(GetCommandLineW(), &argumentCount);
+                bool background = false;
+                if (arguments)
+                {
+                    for (int i = 1; i < argumentCount; ++i)
+                    {
+                        background |= std::wstring_view(arguments[i]) == L"--background";
+                    }
+                    LocalFree(arguments);
+                }
+                if (!background)
+                {
+                    PostMessage(m_window, WM_HOTKEY, 1, 0);
+                }
+            }
         }
         else if (message == WM_PRIV_VD_SWITCH)
         {

@@ -4,6 +4,7 @@
 
 using System;
 using Microsoft.Win32;
+using PowerToys.Common;
 
 namespace Microsoft.PowerToys.Telemetry
 {
@@ -16,6 +17,11 @@ namespace Microsoft.PowerToys.Telemetry
 
         public static bool GetEnabledValue()
         {
+            if (PortableData.IsEnabled)
+            {
+                return false;
+            }
+
             object registryValue = null;
             try
             {
@@ -35,6 +41,11 @@ namespace Microsoft.PowerToys.Telemetry
 
         public static void SetEnabledValue(bool value)
         {
+            if (PortableData.IsEnabled)
+            {
+                return;
+            }
+
             try
             {
                 Registry.SetValue(DataDiagnosticsRegistryKey, DataDiagnosticsRegistryValueName, value ? 1 : 0);
@@ -46,6 +57,11 @@ namespace Microsoft.PowerToys.Telemetry
 
         public static bool GetUserActionValue()
         {
+            if (PortableData.IsEnabled)
+            {
+                return false;
+            }
+
             object registryValue = null;
             try
             {
@@ -65,6 +81,11 @@ namespace Microsoft.PowerToys.Telemetry
 
         public static void SetUserActionValue(bool value)
         {
+            if (PortableData.IsEnabled)
+            {
+                return;
+            }
+
             try
             {
                 Registry.SetValue(DataDiagnosticsRegistryKey, DataDiagnosticsDataDiagnosticsUserActionRegistryValueName, value ? 1 : 0);
@@ -76,6 +97,11 @@ namespace Microsoft.PowerToys.Telemetry
 
         public static bool GetViewEnabledValue()
         {
+            if (PortableData.IsEnabled)
+            {
+                return false;
+            }
+
             object registryValue = null;
             try
             {
@@ -95,6 +121,11 @@ namespace Microsoft.PowerToys.Telemetry
 
         public static void SetViewEnabledValue(bool value)
         {
+            if (PortableData.IsEnabled)
+            {
+                return;
+            }
+
             try
             {
                 Registry.SetValue(DataDiagnosticsRegistryKey, DataDiagnosticsDataDiagnosticsViewDataRegistryValueName, value ? 1 : 0);

@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -14,22 +16,35 @@ namespace AdvancedPaste
 {
     public static class Program
     {
+        internal static IReadOnlyDictionary<string, EventWaitHandle> PortableEvents { get; private set; } = new Dictionary<string, EventWaitHandle>();
+
         [STAThread]
         public static int Main(string[] args)
         {
+            if (PortableMode.IsEnabled)
+            {
+                // Validate storage before any logger, settings, or WinUI initialization.
+                _ = PortableMode.DataRoot;
+                Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+                if (args.Contains("--stop", StringComparer.OrdinalIgnoreCase))
+                {
+                    using var stop = new EventWaitHandle(false, EventResetMode.AutoReset, PortableMode.EventName("StopModule"));
+                    stop.Set();
+                    return 0;
+                }
+            }
+
             Logger.InitializeLogger("\\AdvancedPaste\\Logs");
 
+            // This build prohibits every AI provider, including model preparation helpers.
+            if (args.Contains("--check-phi-silica", StringComparer.OrdinalIgnoreCase)
+                || args.Contains("--prepare-phi-silica", StringComparer.OrdinalIgnoreCase))
+            {
+                Console.Out.WriteLine("NotSupported");
+                return 2;
+            }
+
             WinRT.ComWrappersSupport.InitializeComWrappers();
-
-            if (args.Contains("--check-phi-silica", StringComparer.OrdinalIgnoreCase))
-            {
-                return CheckPhiSilicaAvailability();
-            }
-
-            if (args.Contains("--prepare-phi-silica", StringComparer.OrdinalIgnoreCase))
-            {
-                return PreparePhiSilica();
-            }
 
             if (PowerToys.GPOWrapper.GPOWrapper.GetConfiguredAdvancedPasteEnabledValue() == PowerToys.GPOWrapper.GpoRuleConfigured.Disabled)
             {
@@ -37,16 +52,15 @@ namespace AdvancedPaste
                 return 1;
             }
 
-            var instanceKey = AppInstance.FindOrRegisterForKey("PowerToys_AdvancedPaste_Instance");
+            if (PortableMode.IsEnabled)
+            {
+                return RunPortable(args);
+            }
 
+            var instanceKey = AppInstance.FindOrRegisterForKey("PowerToys_AdvancedPaste_Instance");
             if (instanceKey.IsCurrent)
             {
-                Microsoft.UI.Xaml.Application.Start((p) =>
-                {
-                    var context = new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread());
-                    SynchronizationContext.SetSynchronizationContext(context);
-                    _ = new App();
-                });
+                RunApplication();
             }
             else
             {
@@ -56,108 +70,64 @@ namespace AdvancedPaste
             return 0;
         }
 
-        /// <summary>
-        /// Checks Phi Silica availability without starting the WinUI app.
-        /// Used by Settings UI to probe API status via subprocess.
-        /// Exit codes: 0 = available, 1 = not ready (model needs download), 2 = not supported or error.
-        /// </summary>
-        private static int CheckPhiSilicaAvailability()
+        private static int RunPortable(string[] args)
         {
+            // Hold events before claiming the instance, retaining requests during WinUI startup.
+            var events = new Dictionary<string, EventWaitHandle>();
+            using var instanceMutex = new Mutex(false, PortableMode.EventName("AdvancedPaste.Instance"));
+            bool ownsMutex = false;
             try
             {
-                if (!PhiSilicaLafHelper.TryUnlock())
+                foreach (string command in new[] { "Show", "StopModule", "SettingsChanged", "PlainText", "Markdown", "Json" })
                 {
-                    Console.Error.WriteLine($"[phi-silica] LAF unlock status: {PhiSilicaLafHelper.LastUnlockStatus}");
-                    Console.Out.WriteLine("NotSupported");
-                    return 2;
+                    events.Add(command, new EventWaitHandle(false, EventResetMode.AutoReset, PortableMode.EventName(command)));
                 }
 
-                var readyState = Microsoft.Windows.AI.Text.LanguageModel.GetReadyState();
-
-                Console.Error.WriteLine($"[phi-silica] LAF unlock status: {PhiSilicaLafHelper.LastUnlockStatus}; ReadyState: {readyState}");
-
-                switch (readyState)
+                try
                 {
-                    case Microsoft.Windows.AI.AIFeatureReadyState.Ready:
-                        Console.Out.WriteLine("Available");
-                        return 0;
-                    case Microsoft.Windows.AI.AIFeatureReadyState.NotReady:
-                        Console.Out.WriteLine("NotReady");
-                        return 1;
-                    default:
-                        // NotSupportedOnCurrentSystem, DisabledByUser, CapabilityMissing,
-                        // NotCompatibleWithSystemHardware, OSUpdateNeeded, or any future state:
-                        // the model isn't usable and "Download model" (EnsureReadyAsync) won't fix it.
-                        // CapabilityMissing in particular means the systemAIModels capability isn't
-                        // authorized for the app, so EnsureReadyAsync throws E_ACCESSDENIED (0x80070005).
-                        Console.Out.WriteLine("NotSupported");
-                        return 2;
+                    ownsMutex = instanceMutex.WaitOne(0);
                 }
+                catch (AbandonedMutexException)
+                {
+                    ownsMutex = true;
+                }
+
+                if (!args.Contains("--background", StringComparer.OrdinalIgnoreCase))
+                {
+                    events["Show"].Set();
+                }
+
+                if (ownsMutex)
+                {
+                    PortableEvents = events;
+                    RunApplication();
+                }
+
+                return 0;
             }
-            catch (Exception ex)
+            finally
             {
-                Console.Error.WriteLine(ex.Message);
-                Console.Out.WriteLine("NotSupported");
-                return 2;
+                foreach (var handle in events.Values)
+                {
+                    handle.Dispose();
+                }
+
+                if (ownsMutex)
+                {
+                    PortableEvents = new Dictionary<string, EventWaitHandle>();
+                    instanceMutex.ReleaseMutex();
+                }
             }
         }
 
-        /// <summary>
-        /// Triggers Phi Silica model preparation (download) without starting the WinUI app.
-        /// Moves the model from NotReady to Ready by calling EnsureReadyAsync.
-        /// Exit codes: 0 = ready, 1 = preparation failed, 2 = not supported or error.
-        /// </summary>
-        private static int PreparePhiSilica()
+        private static void RunApplication()
         {
-            try
+            Microsoft.UI.Xaml.Application.Start((p) =>
             {
-                if (!PhiSilicaLafHelper.TryUnlock())
-                {
-                    Console.Error.WriteLine($"[phi-silica] LAF unlock status: {PhiSilicaLafHelper.LastUnlockStatus}");
-                    Console.Out.WriteLine("NotSupported");
-                    return 2;
-                }
-
-                var readyState = Microsoft.Windows.AI.Text.LanguageModel.GetReadyState();
-
-                Console.Error.WriteLine($"[phi-silica] LAF unlock status: {PhiSilicaLafHelper.LastUnlockStatus}; ReadyState: {readyState}");
-
-                if (readyState is Microsoft.Windows.AI.AIFeatureReadyState.NotSupportedOnCurrentSystem
-                    or Microsoft.Windows.AI.AIFeatureReadyState.DisabledByUser)
-                {
-                    Console.Out.WriteLine("NotSupported");
-                    return 2;
-                }
-
-                if (readyState == Microsoft.Windows.AI.AIFeatureReadyState.Ready)
-                {
-                    Console.Out.WriteLine("Ready");
-                    return 0;
-                }
-
-                // Run on a thread-pool (MTA) thread: the WinRT async operation does not
-                // marshal correctly when blocked on from the [STAThread] entry point.
-                var result = System.Threading.Tasks.Task.Run(
-                    () => Microsoft.Windows.AI.Text.LanguageModel.EnsureReadyAsync().AsTask()).GetAwaiter().GetResult();
-
-                if (result.Status != Microsoft.Windows.AI.AIFeatureReadyResultState.Success)
-                {
-                    int hresult = result.ExtendedError?.HResult ?? 0;
-                    Console.Error.WriteLine($"[phi-silica] EnsureReadyAsync Status: {result.Status}; HRESULT: 0x{hresult:X8}; Message: {result.ExtendedError?.Message}");
-                    Console.Error.WriteLine(result.ExtendedError?.Message ?? result.Status.ToString());
-                    Console.Out.WriteLine("Failed");
-                    return 1;
-                }
-
-                Console.Out.WriteLine("Ready");
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine(ex.Message);
-                Console.Out.WriteLine("NotSupported");
-                return 2;
-            }
+                var context = new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread());
+                SynchronizationContext.SetSynchronizationContext(context);
+                _ = new App();
+            });
         }
     }
 }

@@ -1,6 +1,8 @@
 # Machbarkeit einzelner portabler PowerToys-Module
 
-Stand: 4. November 2026. Diese Untersuchung beschreibt die Machbarkeit; sie implementiert keinen Portable-Modus und erzeugt keine Binärpakete.
+Stand: 5. November 2026. Im separaten Branch `codex/portable-first-modules` werden zehn experimentelle Portable-Pakete gebaut: FancyZones, Farbwähler, Textextraktor, Bildgrößenänderung, Power Display, Immer im Vordergrund, File Locksmith, Peek, Zuschneiden und Sperren sowie Erweitertes Einfügen mit gesperrter KI. Sie enthalten deutsche grafische Einstellungen und Tray-Steuerung. Der bestehende Minimal-Installer bleibt auf seinem eigenen Branch.
+
+Die Pakete sind vollständige Ordner mit Laufzeitdateien, keine einzelnen EXE-Dateien. Eigene Einstellungen und Protokolle liegen unter `Data/Microsoft/PowerToys` im jeweiligen Ordner. Details zu Start, Build und Grenzen stehen in [tools/portable/README.md](tools/portable/README.md). Die folgende Machbarkeitsuntersuchung beschreibt die ursprüngliche Ausgangslage und die noch nicht herausgelösten Module.
 
 Als aktuelle stabile Vergleichsbasis dient [PowerToys 0.102.3001.0 vom 27. Oktober 2026](https://github.com/microsoft/PowerToys/releases/tag/v0.102.3001), Tag `v0.102.3001`, Commit `a00b2bce7403f0a48efe5cbb6671074e01f27824`.
 Die untersuchten Einstiegspunkte der Arbeitskopie 0.102.2883.0 wurden gezielt gegen diesen Tag verglichen; ihre hier beschriebenen Startbedingungen sind unverändert. Die Angaben beruhen auf Quellprüfung, nicht auf ausgeführten Portable-Paketen oder einem Test auf einem sauberen Zielrechner.

@@ -30,9 +30,7 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
         // Mirror of PowerDisplay.Lib's PathConstants.CrashDetectedFlagPath. Settings UI cannot
         // reference PowerDisplay.Lib, so the path is recomputed here. Keep in sync with that file.
         private static readonly string CrashDetectedFlagPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Microsoft",
-            "PowerToys",
+            PortableMode.DataRoot,
             "PowerDisplay",
             "crash_detected.flag");
 
@@ -117,7 +115,7 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
             // Listen for monitor refresh events from PowerDisplay.exe
             waitForEventLoop(
-                Constants.RefreshPowerDisplayMonitorsEvent(),
+                PortableMode.IsEnabled ? PortableMode.EventName(Constants.RefreshPowerDisplayMonitorsEvent()) : Constants.RefreshPowerDisplayMonitorsEvent(),
                 () =>
                 {
                     Logger.LogInfo("Received refresh monitors event from PowerDisplay.exe");
@@ -667,6 +665,11 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
         private static void SignalNamedEvent(string eventName)
         {
+            if (PortableMode.IsEnabled)
+            {
+                eventName = PortableMode.EventName(eventName);
+            }
+
             try
             {
                 using var handle = new EventWaitHandle(false, EventResetMode.AutoReset, eventName);

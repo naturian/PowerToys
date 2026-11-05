@@ -2,12 +2,16 @@
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#nullable enable
 using System;
+using System.IO;
 using System.Linq;
+using System.Threading;
 
 using ManagedCommon;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using PowerToys.Common;
 
 namespace FileLocksmithUI
 {
@@ -16,6 +20,17 @@ namespace FileLocksmithUI
     /// </summary>
     public partial class App : Application
     {
+        private readonly bool _portable;
+        private readonly string _launchDirectory = string.Empty;
+        private EventWaitHandle? _portableStopEvent;
+        private RegisteredWaitHandle? _portableStopWait;
+
+        /// <summary>
+        /// Gets the portable CLI selection. Null is reserved for an explicit --elevated
+        /// relaunch, which reads the same portable folder's native IPC selection.
+        /// </summary>
+        public static string[]? PortableInputPaths { get; private set; } = Array.Empty<string>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -23,6 +38,14 @@ namespace FileLocksmithUI
         /// </summary>
         public App()
         {
+            _portable = PortableMode.IsEnabled;
+            if (_portable)
+            {
+                _ = PortableMode.DataRoot;
+                _launchDirectory = Directory.GetCurrentDirectory();
+                Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+            }
+
             string appLanguage = LanguageHelper.LoadLanguage();
             if (!string.IsNullOrEmpty(appLanguage))
             {
@@ -50,6 +73,28 @@ namespace FileLocksmithUI
                 return;
             }
 
+            if (_portable)
+            {
+                string[] inputs = Environment.GetCommandLineArgs().Skip(1).ToArray();
+                if (inputs.Length == 1 && inputs[0] == "--elevated")
+                {
+                    PortableInputPaths = null;
+                }
+                else
+                {
+                    try
+                    {
+                        PortableInputPaths = PortableFileArguments.Parse(inputs, _launchDirectory);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError("Invalid portable File Locksmith selection.", ex);
+                        Environment.Exit(2);
+                        return;
+                    }
+                }
+            }
+
             bool isElevated = PowerToys.FileLocksmithLib.Interop.NativeMethods.IsProcessElevated();
 
             if (isElevated)
@@ -62,6 +107,35 @@ namespace FileLocksmithUI
 
             _window = new MainWindow(isElevated);
             _window.Activate();
+            if (_portable)
+            {
+                var queue = _window.DispatcherQueue;
+                _portableStopEvent = new EventWaitHandle(false, EventResetMode.ManualReset, PortableMode.EventName("StopModule"));
+                _portableStopEvent.Reset();
+                _portableStopWait = ThreadPool.RegisterWaitForSingleObject(_portableStopEvent, (_, _) => queue.TryEnqueue(StopPortable), null, Timeout.Infinite, true);
+                _window.Closed += (_, _) => DisposePortableWait();
+            }
+        }
+
+        private void StopPortable()
+        {
+            DisposePortableWait();
+            try
+            {
+                _window?.Close();
+            }
+            finally
+            {
+                Exit();
+            }
+        }
+
+        private void DisposePortableWait()
+        {
+            _portableStopWait?.Unregister(null);
+            _portableStopWait = null;
+            _portableStopEvent?.Dispose();
+            _portableStopEvent = null;
         }
 
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -69,6 +143,6 @@ namespace FileLocksmithUI
             Logger.LogError("Unhandled exception", e.Exception);
         }
 
-        private Window _window;
+        private Window? _window;
     }
 }

@@ -17,9 +17,31 @@ internal static class AdvancedPasteTempFileManager
     private const string OwnershipMarkerName = ".powertoys-advanced-paste-owned";
     private const string OwnershipMarkerContent = "PowerToys Advanced Paste temporary directory";
 
+    internal static string TempRoot
+    {
+        get
+        {
+            if (!PortableMode.IsEnabled)
+            {
+                return Path.GetTempPath();
+            }
+
+            string root = Path.Combine(PortableMode.DataRoot, "AdvancedPaste", "Temp");
+            Directory.CreateDirectory(root);
+            if ((File.GetAttributes(root) & FileAttributes.ReparsePoint) != 0)
+            {
+                throw new IOException("Portable temporary storage cannot be a directory link.");
+            }
+
+            return root;
+        }
+    }
+
     internal static DirectoryInfo CreateDirectory()
     {
-        var directory = Directory.CreateTempSubdirectory(DirectoryPrefix);
+        var directory = PortableMode.IsEnabled
+            ? Directory.CreateDirectory(Path.Combine(TempRoot, DirectoryPrefix + Guid.NewGuid().ToString("N")))
+            : Directory.CreateTempSubdirectory(DirectoryPrefix);
         File.WriteAllText(Path.Combine(directory.FullName, OwnershipMarkerName), OwnershipMarkerContent);
         return directory;
     }
@@ -27,7 +49,7 @@ internal static class AdvancedPasteTempFileManager
     internal static void CleanupStaleDirectories(TimeSpan maximumAge, IEnumerable<string> protectedPaths = null)
     {
         var cutoff = DateTime.UtcNow - maximumAge;
-        var tempDirectory = new DirectoryInfo(Path.GetTempPath());
+        var tempDirectory = new DirectoryInfo(TempRoot);
         var paths = (protectedPaths ?? Array.Empty<string>()).Select(Path.GetFullPath).ToArray();
 
         foreach (var directory in tempDirectory.EnumerateDirectories($"{DirectoryPrefix}*"))

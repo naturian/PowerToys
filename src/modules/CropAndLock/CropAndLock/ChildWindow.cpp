@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ChildWindow.h"
+#include <common/utils/portable_mode.h>
 
 namespace util
 {
@@ -7,7 +8,7 @@ namespace util
     using namespace robmikh::common::desktop::controls;
 }
 
-const std::wstring ChildWindow::ClassName = L"CropAndLock.ChildWindow";
+const std::wstring ChildWindow::ClassName = PowerToysPortable::ScopedName(L"CropAndLock.ChildWindow");
 std::once_flag ChildWindowClassRegistration;
 
 void ChildWindow::RegisterWindowClass()

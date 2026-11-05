@@ -47,22 +47,30 @@ namespace ColorPicker.ViewModels
             _userSettings = userSettings;
             _keyboardMonitor = keyboardMonitor;
 
-            // The three-arg NativeEventWaiter captures the UI-thread DispatcherQueue itself, so it
-            // must be constructed on the UI thread (it is, via DI in App.OnLaunched).
-            NativeEventWaiter.WaitForEventLoop(
-                Constants.TerminateColorPickerSharedEvent(),
-                Shutdown,
-                exitToken);
+            // Portable instances share no activation or termination events with an installed Runner.
+            // NativeEventWaiter captures the current UI-thread DispatcherQueue.
+            if (PortableMode.IsEnabled)
+            {
+                NativeEventWaiter.WaitForEventLoop(App.PortableActivationEventName, _appStateHandler.StartEditorSession, exitToken);
+                NativeEventWaiter.WaitForEventLoop(PortableMode.EventName("StopModule"), Shutdown, exitToken);
+            }
+            else
+            {
+                NativeEventWaiter.WaitForEventLoop(
+                    Constants.TerminateColorPickerSharedEvent(),
+                    Shutdown,
+                    exitToken);
 
-            NativeEventWaiter.WaitForEventLoop(
-                Constants.ShowColorPickerSharedEvent(),
-                _appStateHandler.StartUserSession,
-                exitToken);
+                NativeEventWaiter.WaitForEventLoop(
+                    Constants.ShowColorPickerSharedEvent(),
+                    _appStateHandler.StartUserSession,
+                    exitToken);
 
-            NativeEventWaiter.WaitForEventLoop(
-                Constants.ColorPickerSendSettingsTelemetryEvent(),
-                _userSettings.SendSettingsTelemetry,
-                exitToken);
+                NativeEventWaiter.WaitForEventLoop(
+                    Constants.ColorPickerSendSettingsTelemetryEvent(),
+                    _userSettings.SendSettingsTelemetry,
+                    exitToken);
+            }
 
             if (mouseInfoProvider != null)
             {

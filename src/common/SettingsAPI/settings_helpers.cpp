@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "settings_helpers.h"
+#include "../utils/portable_mode.h"
 
 namespace PTSettingsHelper
 {
@@ -13,6 +14,10 @@ namespace PTSettingsHelper
 
     std::wstring get_root_save_folder_location()
     {
+        if (PowerToysPortable::IsEnabled())
+        {
+            return PowerToysPortable::DataRoot();
+        }
         PWSTR local_app_path;
         winrt::check_hresult(SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &local_app_path));
         std::wstring result{ local_app_path };
@@ -29,6 +34,10 @@ namespace PTSettingsHelper
 
     std::wstring get_local_low_folder_location()
     {
+        if (PowerToysPortable::IsEnabled())
+        {
+            return PowerToysPortable::DataRoot();
+        }
         PWSTR local_app_path;
         winrt::check_hresult(SHGetKnownFolderPath(FOLDERID_LocalAppDataLow, 0, NULL, &local_app_path));
         std::wstring result{ local_app_path };
@@ -160,6 +169,10 @@ namespace PTSettingsHelper
 
     void save_data_diagnostics(bool enabled)
     {
+        if (PowerToysPortable::IsEnabled())
+        {
+            return;
+        }
         HKEY key{};
         if (RegCreateKeyExW(HKEY_CURRENT_USER,
                             DataDiagnosticsRegKey,

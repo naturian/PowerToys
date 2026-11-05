@@ -4,6 +4,9 @@
 #include <common/utils/window.h>
 #include <common/utils/UnhandledExceptionHandler.h>
 #include <common/utils/gpo.h>
+#include <common/utils/portable_mode.h>
+#include <common/interop/shared_constants.h>
+#include <wil/resource.h>
 
 #include <FancyZonesLib/trace.h>
 #include <FancyZonesLib/Generated Files/resource.h>
@@ -27,6 +30,25 @@ const std::wstring instanceMutexName = L"Local\\PowerToys_FancyZones_InstanceMut
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PWSTR lpCmdLine, _In_ int nCmdShow)
 {
+    const bool portable = PowerToysPortable::IsEnabled();
+    if (portable)
+    {
+        const auto executableDirectory = std::filesystem::path(PowerToysPortable::DataRoot()).parent_path().parent_path().parent_path();
+        SetCurrentDirectoryW(executableDirectory.c_str());
+        if (std::wstring_view(lpCmdLine) == L"--stop")
+        {
+            wil::unique_handle exitEvent(OpenEventW(EVENT_MODIFY_STATE, FALSE, PowerToysPortable::ScopedName(CommonSharedConstants::FZE_EXIT_EVENT).c_str()));
+            return !exitEvent || SetEvent(exitEvent.get()) ? 0 : 1;
+        }
+
+        wil::unique_handle installedInstance(OpenMutexW(SYNCHRONIZE, FALSE, instanceMutexName.c_str()));
+        if (installedInstance)
+        {
+            MessageBoxW(nullptr, L"FancyZones wird bereits von PowerToys ausgeführt. Deaktivieren Sie es dort, bevor Sie die portable Ausgabe starten.", L"FancyZones Portable", MB_OK | MB_ICONINFORMATION);
+            return 1;
+        }
+    }
+
     Shared::Trace::ETWTrace trace{};
     trace.UpdateState(true);
 
@@ -41,7 +63,17 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     InitUnhandledExceptionHandler();    
 
-    auto mutex = CreateMutex(nullptr, true, instanceMutexName.c_str());
+    wil::unique_handle portableActivationEvent;
+    if (portable)
+    {
+        portableActivationEvent.reset(CreateEventW(nullptr, FALSE, FALSE, PowerToysPortable::ScopedName(CommonSharedConstants::FANCY_ZONES_EDITOR_TOGGLE_EVENT).c_str()));
+        if (!portableActivationEvent)
+        {
+            return 1;
+        }
+    }
+
+    auto mutex = CreateMutex(nullptr, true, PowerToysPortable::ScopedName(instanceMutexName).c_str());
     if (mutex == nullptr)
     {
         Logger::error(L"Failed to create mutex. {}", get_last_error_or_default(GetLastError()));
@@ -49,6 +81,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     if (GetLastError() == ERROR_ALREADY_EXISTS)
     {
+        if (portableActivationEvent)
+        {
+            SetEvent(portableActivationEvent.get());
+        }
         Logger::warn(L"FancyZones instance is already running");
         return 0;
     }
@@ -61,7 +97,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     }
 
     std::wstring pid = std::wstring(lpCmdLine);
-    if (!pid.empty())
+    if (!portable && !pid.empty())
     {
         auto mainThreadId = GetCurrentThreadId();
         ProcessWaiter::OnProcessTerminate(pid, [mainThreadId](int err) {

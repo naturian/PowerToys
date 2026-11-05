@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.IO;
 using System.Threading;
 
 using ManagedCommon;
@@ -19,6 +20,13 @@ namespace ColorPicker
         [STAThread]
         public static void Main(string[] args)
         {
+            if (PortableMode.IsEnabled)
+            {
+                // Validate the portable data location before logging or loading WinUI resources.
+                _ = PortableMode.DataRoot;
+                Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+            }
+
             Logger.InitializeLogger("\\ColorPicker\\Logs");
             Logger.LogInfo($"Color Picker started with pid={Environment.ProcessId}");
 

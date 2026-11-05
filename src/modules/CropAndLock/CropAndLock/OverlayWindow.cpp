@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "OverlayWindow.h"
+#include <common/utils/portable_mode.h>
 
 namespace winrt
 {
@@ -12,7 +13,7 @@ namespace util
     using namespace robmikh::common::desktop;
 }
 
-const std::wstring OverlayWindow::ClassName = L"CropAndLock.OverlayWindow";
+const std::wstring OverlayWindow::ClassName = PowerToysPortable::ScopedName(L"CropAndLock.OverlayWindow");
 const float OverlayWindow::BorderThickness = 5;
 std::once_flag OverlayWindowClassRegistration;
 

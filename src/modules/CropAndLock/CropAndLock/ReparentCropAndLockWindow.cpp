@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "ReparentCropAndLockWindow.h"
+#include <common/utils/portable_mode.h>
 
-const std::wstring ReparentCropAndLockWindow::ClassName = L"CropAndLock.ReparentCropAndLockWindow";
+const std::wstring ReparentCropAndLockWindow::ClassName = PowerToysPortable::ScopedName(L"CropAndLock.ReparentCropAndLockWindow");
 std::once_flag ReparentCropAndLockWindowClassRegistration;
 
 void ReparentCropAndLockWindow::RegisterWindowClass()
@@ -148,7 +149,9 @@ void ReparentCropAndLockWindow::CropAndLock(HWND windowToCrop, RECT cropRect)
     auto y = -cropRect.top;
     if (0 == SetWindowPos(m_currentTarget, nullptr, x, y, 0, 0, SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER))
     {
-        MessageBoxW(nullptr, L"CropAndLock couldn't properly reparent the target window. It might not handle reparenting well.", L"CropAndLock", MB_ICONERROR);
+        MessageBoxW(nullptr, PowerToysPortable::IsEnabled()
+            ? L"Das Zielfenster konnte nicht korrekt eingebettet werden. Die Anwendung unterstützt diesen Modus möglicherweise nicht. Verwenden Sie alternativ den Miniaturansichtsmodus."
+            : L"CropAndLock couldn't properly reparent the target window. It might not handle reparenting well.", L"CropAndLock", MB_ICONERROR);
     }
 }
 

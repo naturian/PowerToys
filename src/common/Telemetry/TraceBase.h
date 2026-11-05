@@ -1,4 +1,5 @@
 #pragma once
+#include "../utils/portable_mode.h"
 
 #include "ProjectTelemetry.h"
 
@@ -29,6 +30,10 @@ public:
 
     static bool IsDataDiagnosticsEnabled()
     {
+        if (PowerToysPortable::IsEnabled())
+        {
+            return false;
+        }
         HKEY key{};
         if (RegOpenKeyExW(HKEY_CURRENT_USER,
                           DataDiagnosticsRegKey,

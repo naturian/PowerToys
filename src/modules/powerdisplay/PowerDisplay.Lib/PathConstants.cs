@@ -2,8 +2,8 @@
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.IO;
+using ManagedCommon;
 
 namespace PowerDisplay.Common
 {
@@ -18,10 +18,7 @@ namespace PowerDisplay.Common
         /// Example: C:\Users\{User}\AppData\Local\Microsoft\PowerToys
         /// </summary>
         public static string PowerToysBasePath
-            => Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Microsoft",
-                "PowerToys");
+            => PortableMode.DataRoot;
 
         /// <summary>
         /// Gets the PowerDisplay module folder path.

@@ -39,6 +39,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ApplicationDefinition Include="SettingsXAML\App.xaml" />
+		<Compile Include="$(RepoRoot)src\common\Portable\PortableModule.cs" Link="Portable\PortableModule.cs" />
 	</ItemGroup>
 
 

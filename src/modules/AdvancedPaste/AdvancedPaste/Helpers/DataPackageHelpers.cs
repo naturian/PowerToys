@@ -122,7 +122,7 @@ internal static class DataPackageHelpers
                 tempFile.Delete();
                 var tempDirectory = tempFile.Directory;
                 if (tempDirectory is not null &&
-                    NormalizeDirectoryPath(tempDirectory.Parent?.FullName) == NormalizeDirectoryPath(Path.GetTempPath()))
+                    NormalizeDirectoryPath(tempDirectory.Parent?.FullName) == NormalizeDirectoryPath(AdvancedPasteTempFileManager.TempRoot))
                 {
                     AdvancedPasteTempFileManager.RemoveOwnershipMarkerIfDirectoryWillBeEmpty(tempDirectory);
                     tempDirectory.Delete();
@@ -150,13 +150,13 @@ internal static class DataPackageHelpers
         }
 
         FileInfo fileInfo = new(file.Path);
-        var tempPathDirectory = NormalizeDirectoryPath(Path.GetTempPath());
+        var tempPathDirectory = NormalizeDirectoryPath(AdvancedPasteTempFileManager.TempRoot);
 
         var directoryPaths = new[] { fileInfo.Directory, fileInfo.Directory?.Parent }
                             .Where(directory => directory != null)
                             .Select(directory => NormalizeDirectoryPath(directory.FullName));
 
-        return directoryPaths.Contains(NormalizeDirectoryPath(Path.GetTempPath())) ? fileInfo : null;
+        return directoryPaths.Contains(tempPathDirectory) ? fileInfo : null;
     }
 
     private static string NormalizeDirectoryPath(string path) =>

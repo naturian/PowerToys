@@ -62,7 +62,10 @@ namespace ImageResizer.Properties
         private static CompositeFormat ValueMustBeBetween =>
             _valueMustBeBetween ??= System.Text.CompositeFormat.Parse(ResourceLoaderInstance.GetString("ValueMustBeBetween"));
 
-        private static string _settingsPath = _fileSystem.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "Microsoft", "PowerToys", "Image Resizer", "settings.json");
+        private static string _settingsPath = _fileSystem.Path.Combine(
+            PortableMode.IsEnabled ? PortableMode.DataRoot : _fileSystem.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "Microsoft", "PowerToys"),
+            "Image Resizer",
+            "settings.json");
 
         // Watches for external changes to settings file.
         private static IFileSystemWatcher _watcher;
@@ -632,7 +635,7 @@ namespace ImageResizer.Properties
             string oldSettingsDir = _fileSystem.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "Microsoft", "PowerToys", "ImageResizer");
             string settingsDir = _fileSystem.Path.GetDirectoryName(SettingsPath);
 
-            if (_fileSystem.Directory.Exists(oldSettingsDir) && !_fileSystem.Directory.Exists(settingsDir))
+            if (!PortableMode.IsEnabled && _fileSystem.Directory.Exists(oldSettingsDir) && !_fileSystem.Directory.Exists(settingsDir))
             {
                 _fileSystem.Directory.Move(oldSettingsDir, settingsDir);
             }

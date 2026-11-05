@@ -18,6 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\common\Portable\PortableData.cs" Link="Portable\PortableData.cs" />
     <PackageReference Include="Moq" />
     <PackageReference Include="MSTest" />
     <PackageReference Include="System.IO.Abstractions.TestingHelpers" />

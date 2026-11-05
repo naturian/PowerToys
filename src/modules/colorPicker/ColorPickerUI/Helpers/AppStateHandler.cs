@@ -3,10 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics;
+using System.IO;
 
 using ColorPicker.Settings;
 using ColorPicker.ViewModelContracts;
 using Common.UI;
+using ManagedCommon;
+using Microsoft.PowerToys.Settings.UI.Library;
 using Microsoft.PowerToys.Settings.UI.Library.Enumerations;
 using Microsoft.UI.Xaml;
 using WinUIEx;
@@ -104,6 +108,16 @@ namespace ColorPicker.Helpers
             }
         }
 
+        public void StartEditorSession()
+        {
+            EndUserSession();
+            lock (_colorPickerVisibilityLock)
+            {
+                SessionEventHelper.Start(ColorPickerActivationAction.OpenEditor);
+                ShowColorPickerEditor();
+            }
+        }
+
         public void OpenColorEditor()
         {
             lock (_colorPickerVisibilityLock)
@@ -189,6 +203,20 @@ namespace ColorPicker.Helpers
 
         private void ColorEditorViewModel_OpenSettingsRequested(object sender, EventArgs e)
         {
+            if (PortableMode.IsEnabled)
+            {
+                try
+                {
+                    PortableMode.OpenSettings();
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("Failed to open portable Color Picker settings.", ex);
+                }
+
+                return;
+            }
+
             SettingsDeepLink.OpenSettings(SettingsDeepLink.SettingsWindow.ColorPicker);
         }
 

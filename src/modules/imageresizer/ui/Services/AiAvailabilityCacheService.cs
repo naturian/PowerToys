@@ -28,9 +28,7 @@ namespace ImageResizer.Services
         };
 
         private static string CachePath => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Microsoft",
-            "PowerToys",
+            PortableMode.IsEnabled ? PortableMode.DataRoot : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "PowerToys"),
             CacheFileName);
 
         /// <summary>

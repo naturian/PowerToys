@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using PowerToys.Common;
 
 namespace FancyZonesEditorCommon.Data;
 
@@ -13,7 +14,7 @@ namespace FancyZonesEditorCommon.Data;
 public static class FancyZonesPaths
 {
     private static readonly string DataPath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        PortableData.ResolveLocalApplicationDataPath(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)),
         "Microsoft",
         "PowerToys",
         "FancyZones");

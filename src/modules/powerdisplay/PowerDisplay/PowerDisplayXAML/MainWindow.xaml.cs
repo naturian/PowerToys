@@ -125,7 +125,7 @@ namespace PowerDisplay
             // Start the CLI pipe server once, immediately after monitor discovery.
             // Guard against double-start (event fires exactly once per ViewModel lifetime,
             // but be defensive in case of future refactors).
-            if (_cliServerCts is null)
+            if (_cliServerCts is null && !ManagedCommon.PortableMode.IsEnabled)
             {
                 _cliServerCts = new CancellationTokenSource();
                 var handler = new PowerDisplay.Ipc.CliRequestHandler(ViewModel, this.DispatcherQueue);

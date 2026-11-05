@@ -21,6 +21,12 @@ namespace PowerDisplay.Common.Utils
         /// <returns>True if the event was signaled successfully, false otherwise.</returns>
         public static bool SignalEvent(string eventName)
         {
+            // A portable app must not notify or disable the installed Runner.
+            if (PortableMode.IsEnabled)
+            {
+                eventName = PortableMode.EventName(eventName);
+            }
+
             if (string.IsNullOrEmpty(eventName))
             {
                 Logger.LogWarning("[EventHelper] SignalEvent called with null or empty event name");

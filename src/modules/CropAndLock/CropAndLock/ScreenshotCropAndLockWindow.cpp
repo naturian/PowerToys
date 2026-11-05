@@ -1,7 +1,8 @@
 ﻿#include "pch.h"
 #include "ScreenshotCropAndLockWindow.h"
+#include <common/utils/portable_mode.h>
 
-const std::wstring ScreenshotCropAndLockWindow::ClassName = L"CropAndLock.ScreenshotCropAndLockWindow";
+const std::wstring ScreenshotCropAndLockWindow::ClassName = PowerToysPortable::ScopedName(L"CropAndLock.ScreenshotCropAndLockWindow");
 std::once_flag ScreenshotCropAndLockWindowClassRegistration;
 
 void ScreenshotCropAndLockWindow::RegisterWindowClass()

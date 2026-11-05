@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <OutputPath>$(RepoRoot)artifacts\portable-tests\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MSTest" />
+    <Compile Include="$(RepoRoot)src\common\Portable\PortableData.cs" Link="PortableData.cs" />
+    <Compile Include="$(RepoRoot)src\common\Portable\PortableModule.cs" Link="PortableModule.cs" />
+    <Compile Include="$(RepoRoot)src\common\Portable\PortableFileArguments.cs" Link="PortableFileArguments.cs" />
+    <Compile Include="$(RepoRoot)src\settings-ui\Settings.UI.UnitTests\ModelsTests\PortableDataTests.cs" Link="PortableDataTests.cs" />
+  </ItemGroup>
+</Project>

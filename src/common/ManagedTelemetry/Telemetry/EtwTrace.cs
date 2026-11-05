@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Diagnostics.Tracing.Session;
+using PowerToys.Common;
 
 namespace Microsoft.PowerToys.Telemetry
 {
@@ -26,7 +27,7 @@ namespace Microsoft.PowerToys.Telemetry
 
         private readonly bool telemetryEnabled = DataDiagnosticsSettings.GetEnabledValue(); // This is the global telemetry setting on whether to log events
         private readonly bool telemetryRecordingEnabled = DataDiagnosticsSettings.GetViewEnabledValue(); // This is the setting for recording telemetry events to disk for viewing
-        private string etwFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\PowerToys\", "etw");
+        private string etwFolderPath = Path.Combine(PortableData.ResolveLocalApplicationDataPath(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)), @"Microsoft\PowerToys\", "etw");
         private bool disposedValue;
         private string sessionName;
         private string etwFilePath;

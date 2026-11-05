@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 
 using ManagedCommon;
+using Microsoft.PowerToys.Settings.UI.Library;
 
 namespace PowerOCR.Services;
 
@@ -16,6 +17,12 @@ public sealed class SettingsDeepLink
     {
         try
         {
+            if (PortableMode.IsEnabled)
+            {
+                PortableMode.OpenSettings();
+                return;
+            }
+
             string? installPath = PowerToysPathResolver.GetPowerToysInstallPath();
             if (string.IsNullOrWhiteSpace(installPath))
             {

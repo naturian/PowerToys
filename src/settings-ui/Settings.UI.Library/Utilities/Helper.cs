@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Principal;
 
 using Microsoft.PowerToys.Settings.UI.Library.CustomAction;
+using PowerToys.Common;
 
 namespace Microsoft.PowerToys.Settings.UI.Library.Utilities
 {
@@ -98,6 +99,11 @@ namespace Microsoft.PowerToys.Settings.UI.Library.Utilities
 
         public static string LocalApplicationDataFolder()
         {
+            if (PortableData.IsEnabled)
+            {
+                return PortableData.ResolveLocalApplicationDataPath(string.Empty);
+            }
+
             WindowsIdentity currentUser = WindowsIdentity.GetCurrent();
             SecurityIdentifier currentUserSID = currentUser.User;
 

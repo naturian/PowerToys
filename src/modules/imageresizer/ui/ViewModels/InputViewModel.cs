@@ -170,6 +170,12 @@ namespace ImageResizer.ViewModels
         [RelayCommand]
         public static void OpenSettings()
         {
+            if (PortableMode.IsEnabled)
+            {
+                PortableMode.OpenSettings();
+                return;
+            }
+
             SettingsDeepLink.OpenSettings(SettingsDeepLink.SettingsWindow.ImageResizer);
         }
 

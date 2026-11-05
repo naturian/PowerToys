@@ -398,6 +398,16 @@ namespace Microsoft.PowerToys.Settings.UI.Views
 
         private Task UpdateFoundryLocalUIAsync()
         {
+            if (ManagedCommon.PortableMode.IsEnabled)
+            {
+                _foundryModelLoadCts?.Cancel();
+                if (FoundryLocalPanel is not null)
+                {
+                    FoundryLocalPanel.Visibility = Visibility.Collapsed;
+                }
+                return Task.CompletedTask;
+            }
+
             string selectedType = ViewModel?.PasteAIProviderDraft?.ServiceType ?? string.Empty;
             bool isFoundryLocal = string.Equals(selectedType, "FoundryLocal", StringComparison.OrdinalIgnoreCase);
 
@@ -438,6 +448,15 @@ namespace Microsoft.PowerToys.Settings.UI.Views
 
         private async Task UpdatePhiSilicaUIAsync()
         {
+            if (ManagedCommon.PortableMode.IsEnabled)
+            {
+                if (PhiSilicaPanel is not null)
+                {
+                    PhiSilicaPanel.Visibility = Visibility.Collapsed;
+                }
+                return;
+            }
+
             string selectedType = ViewModel?.PasteAIProviderDraft?.ServiceType ?? string.Empty;
             bool isPhiSilica = string.Equals(selectedType, "PhiSilica", StringComparison.OrdinalIgnoreCase);
 

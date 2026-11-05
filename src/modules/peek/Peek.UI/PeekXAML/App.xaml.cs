@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using ManagedCommon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,6 +21,7 @@ using Peek.UI.Models;
 using Peek.UI.Native;
 using Peek.UI.Telemetry.Events;
 using Peek.UI.Views;
+using PowerToys.Common;
 using PowerToys.Interop;
 
 using ClassificationMode = Peek.Common.Helpers.LaunchArgumentsClassifier.ClassificationMode;
@@ -48,6 +50,10 @@ namespace Peek.UI
         private bool _disposed;
         private SelectedItem? _selectedItem;
         private bool _launchedFromCli;
+        private readonly bool _portable;
+        private readonly string _launchDirectory = string.Empty;
+        private EventWaitHandle? _portableStopEvent;
+        private RegisteredWaitHandle? _portableStopWait;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
@@ -56,6 +62,14 @@ namespace Peek.UI
         /// </summary>
         public App()
         {
+            _portable = PortableMode.IsEnabled;
+            if (_portable)
+            {
+                _ = PortableMode.DataRoot;
+                _launchDirectory = Directory.GetCurrentDirectory();
+                Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+            }
+
             string appLanguage = LanguageHelper.LoadLanguage();
             if (!string.IsNullOrEmpty(appLanguage))
             {
@@ -110,6 +124,12 @@ namespace Peek.UI
             }
 
             var cmdArgs = Environment.GetCommandLineArgs();
+            if (_portable)
+            {
+                TryHandlePortableLaunch(cmdArgs[1..]);
+                return;
+            }
+
             if (cmdArgs?.Length > 1)
             {
                 string[] launchArgs = cmdArgs[1..];
@@ -143,6 +163,114 @@ namespace Peek.UI
                 EtwTrace?.Dispose();
                 Environment.Exit(0);
             });
+        }
+
+        private void TryHandlePortableLaunch(string[] arguments)
+        {
+            if (arguments.Length == 0)
+            {
+                Logger.LogInfo("Portable Peek requires an explicit file or folder selection from its tray host.");
+                EtwTrace.Dispose();
+                Environment.Exit(0);
+                return;
+            }
+
+            if (arguments.Length == 1 && arguments[0] == "--selection")
+            {
+                TryHandlePortableExplorerSelection();
+                return;
+            }
+
+            string[] paths;
+            try
+            {
+                paths = PortableFileArguments.Parse(arguments, _launchDirectory);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Invalid portable Peek selection.", ex);
+                EtwTrace.Dispose();
+                Environment.Exit(CliInvalidArgumentsExitCode);
+                return;
+            }
+
+            RegisterPortableStopWait();
+            TryHandleCliLaunch(paths);
+        }
+
+        private void TryHandlePortableExplorerSelection()
+        {
+            // Capture Explorer before any preview window can take foreground focus.
+            var foregroundWindowHandle = Windows.Win32.PInvoke_PeekUI.GetForegroundWindow();
+            try
+            {
+                if (GetService<NeighboringItemsQuery>().GetNeighboringItems(foregroundWindowHandle)?.Count > 0)
+                {
+                    _selectedItem = new SelectedItemByWindowHandle(foregroundWindowHandle);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogDebug($"Portable Peek could not read an Explorer selection: {ex.Message}");
+            }
+
+            if (_selectedItem == null)
+            {
+                EtwTrace.Dispose();
+                Host.Dispose();
+                Environment.Exit(0);
+                return;
+            }
+
+            RegisterPortableStopWait();
+            _launchedFromCli = true; // Reuse the one-preview exit-after-close route.
+            OnShowPeek();
+        }
+
+        private void RegisterPortableStopWait()
+        {
+            // A folder-scoped broadcast stops only this portable folder's preview workers.
+            // The installed ShowPeek/TerminatePeek events and Runner lifetime are never used.
+            var queue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+            _portableStopEvent = new EventWaitHandle(false, EventResetMode.ManualReset, PortableMode.EventName("StopModule"));
+            _portableStopEvent.Reset();
+            _portableStopWait = ThreadPool.RegisterWaitForSingleObject(_portableStopEvent, (_, _) => queue.TryEnqueue(StopPortable), null, Timeout.Infinite, true);
+        }
+
+        private void StopPortable()
+        {
+            DisposePortableWait();
+            try
+            {
+                Window?.Dispose();
+                ShellPreviewHandlerPreviewer.ReleaseHandlerFactories();
+                EtwTrace.Dispose();
+                // CLI previews already implement teardown and exit-after-close in their window.
+                Window?.Close();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Portable Peek cleanup failed; exiting its worker.", ex);
+            }
+            finally
+            {
+                try
+                {
+                    Host.Dispose();
+                }
+                finally
+                {
+                    Exit();
+                }
+            }
+        }
+
+        private void DisposePortableWait()
+        {
+            _portableStopWait?.Unregister(null);
+            _portableStopWait = null;
+            _portableStopEvent?.Dispose();
+            _portableStopEvent = null;
         }
 
         private void TryHandleRunnerLaunch(int powerToysRunnerPid)
@@ -265,7 +393,7 @@ namespace Peek.UI
             {
                 if (disposing)
                 {
-                    // dispose managed state (managed objects)
+                    DisposePortableWait();
                 }
 
                 // free unmanaged resources (unmanaged objects) and override finalizer

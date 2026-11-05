@@ -7,6 +7,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ManagedCommon.Serialization;
+using PowerToys.Common;
 
 namespace ManagedCommon
 {
@@ -23,7 +24,7 @@ namespace ManagedCommon
 
         public static string LoadLanguage()
         {
-            var localAppDataDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var localAppDataDir = PortableData.ResolveLocalApplicationDataPath(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
             var file = localAppDataDir + SettingsFilePath + SettingsFile;
 
             if (File.Exists(file))

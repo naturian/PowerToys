@@ -7,20 +7,24 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AdvancedPaste.Helpers;
 using AdvancedPaste.Models;
 using AdvancedPaste.Services;
+using AdvancedPaste.Settings;
 using AdvancedPaste.ViewModels;
 using ManagedCommon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.PowerToys.Settings.UI.Library;
 using Microsoft.PowerToys.Telemetry;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Windows.Graphics;
 using WinUIEx;
+using WinUIEx.Messaging;
 
 using static AdvancedPaste.Helpers.NativeMethods;
 
@@ -54,6 +58,16 @@ namespace AdvancedPaste
         private nint windowHwnd;
 
         private bool disposedValue;
+
+        private readonly List<RegisteredWaitHandle> portableWaits = [];
+        private readonly Dictionary<int, Func<Task>> portableHotkeys = [];
+        private WindowEx portableLifetimeWindow;
+        private WindowMessageMonitor portableMessageMonitor;
+        private IUserSettings portableUserSettings;
+        private HotkeySettingsControlHook portableWinShiftVHook;
+        private bool portableWinShiftVDown;
+        private int nextPortableHotkeyId = 0x2000;
+        private bool portableStopping;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
@@ -103,6 +117,12 @@ namespace AdvancedPaste
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
+            if (PortableMode.IsEnabled)
+            {
+                InitializePortable();
+                return;
+            }
+
             var cmdArgs = Environment.GetCommandLineArgs();
             if (cmdArgs?.Length > 1)
             {
@@ -124,6 +144,293 @@ namespace AdvancedPaste
                 ProcessNamedPipe(cmdArgs[2]);
             }
         }
+
+        private void InitializePortable()
+        {
+            // A hidden window owns WM_HOTKEY and keeps background launches resident.
+            portableLifetimeWindow = new WindowEx();
+            portableLifetimeWindow.AppWindow.Hide();
+            portableMessageMonitor = new WindowMessageMonitor(portableLifetimeWindow);
+            portableMessageMonitor.WindowMessageReceived += (_, e) =>
+            {
+                const uint wmHotkey = 0x0312;
+                if (e.Message.MessageId == wmHotkey && portableHotkeys.TryGetValue(unchecked((int)e.Message.WParam), out var action))
+                {
+                    e.Handled = true;
+                    QueuePortableAction(action);
+                }
+            };
+
+            portableUserSettings = GetService<IUserSettings>();
+            portableUserSettings.Changed += OnPortableSettingsChanged;
+            RefreshPortableHotkeys();
+
+            foreach (var entry in Program.PortableEvents)
+            {
+                Func<Task> action = entry.Key switch
+                {
+                    "Show" => ShowWindow,
+                    "StopModule" => StopPortableAsync,
+                    "SettingsChanged" => () =>
+                    {
+                        RefreshPortableHotkeys();
+                        return Task.CompletedTask;
+                    },
+                    "PlainText" => () => ExecutePortablePasteAsync(PasteFormats.PlainText),
+                    "Markdown" => () => ExecutePortablePasteAsync(PasteFormats.Markdown),
+                    "Json" => () => ExecutePortablePasteAsync(PasteFormats.Json),
+                    _ => throw new InvalidOperationException("Unknown portable AdvancedPaste command."),
+                };
+
+                portableWaits.Add(ThreadPool.RegisterWaitForSingleObject(
+                    entry.Value,
+                    (_, _) => QueuePortableAction(action),
+                    null,
+                    Timeout.Infinite,
+                    executeOnlyOnce: false));
+            }
+        }
+
+        private void QueuePortableAction(Func<Task> action)
+        {
+            _dispatcherQueue.TryEnqueue(async () =>
+            {
+                if (disposedValue || portableStopping)
+                {
+                    return;
+                }
+
+                try
+                {
+                    await action();
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("Portable AdvancedPaste command failed", ex);
+                }
+            });
+        }
+
+        private void OnPortableSettingsChanged(object sender, EventArgs e)
+        {
+            QueuePortableAction(() =>
+            {
+                RefreshPortableHotkeys();
+                return Task.CompletedTask;
+            });
+        }
+
+        private void RefreshPortableHotkeys()
+        {
+            if (disposedValue || portableStopping)
+            {
+                return;
+            }
+
+            try
+            {
+                var properties = SettingsUtils.Default.GetSettings<AdvancedPasteSettings>(AdvancedPasteSettings.ModuleName).Properties
+                    ?? throw new InvalidOperationException("AdvancedPaste settings have no properties.");
+
+                UnregisterPortableHotkeys();
+                RegisterPortableShortcut(properties.AdvancedPasteUIShortcut, ShowWindow);
+                RegisterPortableShortcut(properties.PasteAsPlainTextShortcut, () => ExecutePortablePasteAsync(PasteFormats.PlainText));
+                RegisterPortableShortcut(properties.PasteAsMarkdownShortcut, () => ExecutePortablePasteAsync(PasteFormats.Markdown));
+                RegisterPortableShortcut(properties.PasteAsJsonShortcut, () => ExecutePortablePasteAsync(PasteFormats.Json));
+
+                var additional = properties.AdditionalActions;
+                (PasteFormats Format, AdvancedPasteAdditionalAction Action, bool ParentShown)[] actions =
+                [
+                    (PasteFormats.ImageToText, additional.ImageToText, true),
+                    (PasteFormats.PasteAsTxtFile, additional.PasteAsFile.PasteAsTxtFile, additional.PasteAsFile.IsShown),
+                    (PasteFormats.PasteAsPngFile, additional.PasteAsFile.PasteAsPngFile, additional.PasteAsFile.IsShown),
+                    (PasteFormats.PasteAsHtmlFile, additional.PasteAsFile.PasteAsHtmlFile, additional.PasteAsFile.IsShown),
+                    (PasteFormats.TranscodeToMp3, additional.Transcode.TranscodeToMp3, additional.Transcode.IsShown),
+                    (PasteFormats.TranscodeToMp4, additional.Transcode.TranscodeToMp4, additional.Transcode.IsShown),
+                ];
+
+                // No AI, grammar, coaching, or custom action shortcuts belong to this process.
+                foreach (var entry in actions.Where(entry => entry.ParentShown && entry.Action.IsShown && !PasteFormat.MetadataDict[entry.Format].RequiresAIService))
+                {
+                    RegisterPortableShortcut(entry.Action.Shortcut, () => ExecutePortablePasteAsync(entry.Format));
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Failed to update portable AdvancedPaste hotkeys", ex);
+            }
+        }
+
+        private void RegisterPortableShortcut(HotkeySettings shortcut, Func<Task> action)
+        {
+            if (shortcut is null || shortcut.Code <= 0 || shortcut.Code > 0xFF)
+            {
+                return;
+            }
+
+            const uint modNoRepeat = 0x4000;
+            uint modifiers = modNoRepeat
+                | (shortcut.Alt ? 0x0001u : 0)
+                | (shortcut.Ctrl ? 0x0002u : 0)
+                | (shortcut.Shift ? 0x0004u : 0)
+                | (shortcut.Win ? 0x0008u : 0);
+            int id = nextPortableHotkeyId++;
+            if (nextPortableHotkeyId > 0xBFFF)
+            {
+                nextPortableHotkeyId = 0x2000;
+            }
+
+            if (RegisterPortableHotKey(portableLifetimeWindow.GetWindowHandle(), id, modifiers, (uint)shortcut.Code))
+            {
+                portableHotkeys.Add(id, action);
+            }
+            else
+            {
+                int error = Marshal.GetLastWin32Error();
+                if (!TryRegisterPortableWinShiftV(shortcut, action))
+                {
+                    Logger.LogWarning($"Failed to register portable AdvancedPaste shortcut {shortcut}: {error}");
+                }
+            }
+        }
+
+        private bool TryRegisterPortableWinShiftV(HotkeySettings shortcut, Func<Task> action)
+        {
+            if (shortcut.Code != 0x56 || !shortcut.Win || !shortcut.Shift || shortcut.Ctrl || shortcut.Alt || portableWinShiftVHook is not null)
+            {
+                return false;
+            }
+
+            // Windows reserves this shortcut, so use the same keyboard hook as the Runner.
+            try
+            {
+                portableWinShiftVHook = new HotkeySettingsControlHook(
+                    _ =>
+                    {
+                        if (portableWinShiftVDown)
+                        {
+                            return;
+                        }
+
+                        portableWinShiftVDown = true;
+                        SendPortableShortcutDummyKey();
+                        QueuePortableAction(action);
+                    },
+                    _ => portableWinShiftVDown = false,
+                    () => !disposedValue && !portableStopping,
+                    FilterPortableWinShiftV);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Failed to create the portable AdvancedPaste shortcut hook", ex);
+                return false;
+            }
+        }
+
+        private bool FilterPortableWinShiftV(int key, UIntPtr extraInfo, bool isKeyDown)
+        {
+            if (key != 0x56 || extraInfo == (UIntPtr)0x110)
+            {
+                return false;
+            }
+
+            // Once V is consumed, consume its repeats and matching release even if a
+            // modifier is released first. Every other key continues through the hook.
+            if (portableWinShiftVDown)
+            {
+                return true;
+            }
+
+            return isKeyDown
+                && ((GetAsyncKeyState(0x5B) | GetAsyncKeyState(0x5C)) & 0x8000) != 0
+                && (GetAsyncKeyState(0x10) & 0x8000) != 0
+                && (GetAsyncKeyState(0x11) & 0x8000) == 0
+                && (GetAsyncKeyState(0x12) & 0x8000) == 0;
+        }
+
+        private static void SendPortableShortcutDummyKey()
+        {
+            INPUT[] inputs =
+            [
+                new()
+                {
+                    type = INPUTTYPE.INPUT_KEYBOARD,
+                    data = new InputUnion
+                    {
+                        ki = new KEYBDINPUT
+                        {
+                            wVk = 0xFF,
+                            dwFlags = (uint)KeyEventF.KeyUp,
+                            dwExtraInfo = (UIntPtr)0x110,
+                        },
+                    },
+                },
+            ];
+            SendInput(1, inputs, INPUT.Size);
+        }
+
+        private void UnregisterPortableHotkeys()
+        {
+            portableWinShiftVHook?.Dispose();
+            portableWinShiftVHook = null;
+            portableWinShiftVDown = false;
+
+            if (portableLifetimeWindow is not null)
+            {
+                foreach (int id in portableHotkeys.Keys)
+                {
+                    UnregisterPortableHotKey(portableLifetimeWindow.GetWindowHandle(), id);
+                }
+            }
+
+            portableHotkeys.Clear();
+        }
+
+        private async Task ExecutePortablePasteAsync(PasteFormats format)
+        {
+            var metadata = PasteFormat.MetadataDict[format];
+            if (metadata.RequiresAIService)
+            {
+                return;
+            }
+
+            if (!metadata.IsCoreAction)
+            {
+                await ShowWindow();
+            }
+
+            await viewModel.ExecutePasteFormatAsync(format, PasteActionSource.GlobalKeyboardShortcut);
+        }
+
+        private async Task StopPortableAsync()
+        {
+            portableStopping = true;
+            UnregisterPortableHotkeys();
+            try
+            {
+                await viewModel.CancelPasteActionAsync();
+            }
+            finally
+            {
+                try
+                {
+                    Dispose();
+                }
+                finally
+                {
+                    Exit();
+                }
+            }
+        }
+
+        [LibraryImport("user32.dll", EntryPoint = "RegisterHotKey", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool RegisterPortableHotKey(nint hwnd, int id, uint modifiers, uint key);
+
+        [LibraryImport("user32.dll", EntryPoint = "UnregisterHotKey", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool UnregisterPortableHotKey(nint hwnd, int id);
 
         private void ProcessNamedPipe(string pipeName)
         {
@@ -259,13 +566,31 @@ namespace AdvancedPaste
         {
             if (!disposedValue)
             {
+                disposedValue = true;
                 if (disposing)
                 {
+                    if (PortableMode.IsEnabled)
+                    {
+                        if (portableUserSettings is not null)
+                        {
+                            portableUserSettings.Changed -= OnPortableSettingsChanged;
+                        }
+
+                        foreach (var wait in portableWaits)
+                        {
+                            wait.Unregister(null);
+                        }
+
+                        portableWaits.Clear();
+                        UnregisterPortableHotkeys();
+                        portableMessageMonitor?.Dispose();
+                        portableLifetimeWindow?.Close();
+                        Host?.Dispose();
+                    }
+
                     EtwTrace?.Dispose();
                     window?.Dispose();
                 }
-
-                disposedValue = true;
             }
         }
 

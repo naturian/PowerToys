@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using PowerToys.Common;
 
 namespace PowerDisplay.Models
 {
@@ -17,13 +18,24 @@ namespace PowerDisplay.Models
     /// </summary>
     public static class ProfileHelper
     {
-        private const string ProfilesMutexName = @"Local\PowerToys_PowerDisplay_Profiles";
+        private static string ProfilesMutexName
+        {
+            get
+            {
+                if (!PortableData.IsEnabled)
+                {
+                    return @"Local\PowerToys_PowerDisplay_Profiles";
+                }
+
+                byte[] pathHash = System.Security.Cryptography.SHA256.HashData(
+                    System.Text.Encoding.UTF8.GetBytes(ProfilesFilePath.ToUpperInvariant()));
+                return @"Local\PowerToys_PowerDisplay_Profiles_Portable_" + Convert.ToHexString(pathHash)[..16];
+            }
+        }
 
         private static readonly Lazy<string> _profilesFilePath = new Lazy<string>(() =>
             Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Microsoft",
-                "PowerToys",
+                PortableData.GetPowerToysDataRoot(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)),
                 "PowerDisplay",
                 "profiles.json"));
 

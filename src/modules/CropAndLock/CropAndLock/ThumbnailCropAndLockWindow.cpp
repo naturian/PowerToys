@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "ThumbnailCropAndLockWindow.h"
+#include <common/utils/portable_mode.h>
 
-const std::wstring ThumbnailCropAndLockWindow::ClassName = L"CropAndLock.ThumbnailCropAndLockWindow";
+const std::wstring ThumbnailCropAndLockWindow::ClassName = PowerToysPortable::ScopedName(L"CropAndLock.ThumbnailCropAndLockWindow");
 std::once_flag ThumbnailCropAndLockWindowClassRegistration;
 
 float ComputeScaleFactor(RECT const& windowRect, RECT const& contentRect)

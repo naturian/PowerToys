@@ -7,6 +7,7 @@
 #include <common/utils/resources.h>
 #include <common/utils/winapi_error.h>
 #include <common/utils/process_path.h>
+#include <common/utils/portable_mode.h>
 
 #include <common/utils/elevation.h>
 #include <Generated Files/resource.h>
@@ -19,10 +20,39 @@
 
 namespace NonLocalizable
 {
-    const static wchar_t* TOOL_WINDOW_CLASS_NAME = L"AlwaysOnTopWindow";
-    const static wchar_t* WINDOW_IS_PINNED_PROP = L"AlwaysOnTop_Pinned";
+    const wchar_t* ToolWindowClassName()
+    {
+        static const auto name = PowerToysPortable::ScopedName(L"AlwaysOnTopWindow");
+        return name.c_str();
+    }
+
+    const wchar_t* WindowIsPinnedProperty()
+    {
+        static const auto name = PowerToysPortable::ScopedName(L"AlwaysOnTop_Pinned");
+        return name.c_str();
+    }
+
     constexpr UINT SYSTEM_MENU_TOGGLE_ALWAYS_ON_TOP_COMMAND = 0xEFE0;
     constexpr ULONG_PTR SYSTEM_MENU_TOGGLE_ALWAYS_ON_TOP_COMMAND_OWNER_TAG = 0x414F5450;
+
+    ULONG_PTR SystemMenuOwnerTag()
+    {
+        static const ULONG_PTR ownerTag = []() -> ULONG_PTR {
+            if (!PowerToysPortable::IsEnabled())
+            {
+                return SYSTEM_MENU_TOGGLE_ALWAYS_ON_TOP_COMMAND_OWNER_TAG;
+            }
+            ULONG_PTR hash = 2166136261U;
+            for (const wchar_t character : PowerToysPortable::ScopedName(L"AlwaysOnTop.SystemMenuOwner"))
+            {
+                hash ^= static_cast<uint16_t>(character);
+                hash *= 16777619U;
+            }
+            return hash == SYSTEM_MENU_TOGGLE_ALWAYS_ON_TOP_COMMAND_OWNER_TAG ? hash ^ 1 : hash;
+        }();
+        return ownerTag;
+    }
+
     constexpr DWORD SYSTEM_EVENT_MENU_POPUP_START = 0x0006;
     constexpr DWORD SYSTEM_EVENT_MENU_POPUP_END = 0x0007;
 }
@@ -62,7 +92,7 @@ namespace
                                 NonLocalizable::SYSTEM_MENU_TOGGLE_ALWAYS_ON_TOP_COMMAND,
                                 FALSE,
                                 &menuItemInfo) &&
-               menuItemInfo.dwItemData == NonLocalizable::SYSTEM_MENU_TOGGLE_ALWAYS_ON_TOP_COMMAND_OWNER_TAG;
+               menuItemInfo.dwItemData == NonLocalizable::SystemMenuOwnerTag();
     }
 }
 
@@ -115,13 +145,23 @@ AlwaysOnTop::~AlwaysOnTop()
     m_running = false;
     m_notificationUtil.reset();
 
-    if (m_hPinEvent)
+    if (m_hPinEvent && m_hPinEvent != INVALID_HANDLE_VALUE)
     {
         // Needed to unblock MsgWaitForMultipleObjects one last time
         SetEvent(m_hPinEvent);
-        CloseHandle(m_hPinEvent);
     }
-    m_thread.join();
+    if (m_thread.joinable())
+    {
+        m_thread.join();
+    }
+    for (HANDLE* event : { &m_hPinEvent, &m_hTerminateEvent, &m_hIncreaseOpacityEvent, &m_hDecreaseOpacityEvent })
+    {
+        if (*event && *event != INVALID_HANDLE_VALUE)
+        {
+            CloseHandle(*event);
+        }
+        *event = nullptr;
+    }
 
     CleanUp();
 }
@@ -132,10 +172,10 @@ bool AlwaysOnTop::InitMainWindow()
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.lpfnWndProc = WndProc_Helper;
     wcex.hInstance = m_hinstance;
-    wcex.lpszClassName = NonLocalizable::TOOL_WINDOW_CLASS_NAME;
+    wcex.lpszClassName = NonLocalizable::ToolWindowClassName();
     RegisterClassExW(&wcex);
 
-    m_window = CreateWindowExW(WS_EX_TOOLWINDOW, NonLocalizable::TOOL_WINDOW_CLASS_NAME, L"", WS_POPUP, 0, 0, 0, 0, nullptr, nullptr, m_hinstance, this);
+    m_window = CreateWindowExW(WS_EX_TOOLWINDOW, NonLocalizable::ToolWindowClassName(), L"", WS_POPUP, 0, 0, 0, 0, nullptr, nullptr, m_hinstance, this);
     if (!m_window)
     {
         Logger::error(L"Failed to create AlwaysOnTop window: {}", get_last_error_or_default(GetLastError()));
@@ -564,7 +604,7 @@ void AlwaysOnTop::UpdateSystemMenuItem(HWND window) const noexcept
     menuItemInfo.wID = NonLocalizable::SYSTEM_MENU_TOGGLE_ALWAYS_ON_TOP_COMMAND;
     menuItemInfo.fState = IsPinned(window) ? MFS_CHECKED : MFS_UNCHECKED;
     menuItemInfo.dwTypeData = text.data();
-    menuItemInfo.dwItemData = NonLocalizable::SYSTEM_MENU_TOGGLE_ALWAYS_ON_TOP_COMMAND_OWNER_TAG;
+    menuItemInfo.dwItemData = NonLocalizable::SystemMenuOwnerTag();
 
     if (!HasMenuCommand(systemMenu, NonLocalizable::SYSTEM_MENU_TOGGLE_ALWAYS_ON_TOP_COMMAND))
     {
@@ -610,7 +650,7 @@ void AlwaysOnTop::CleanUp()
         m_window = nullptr;
     }
 
-    UnregisterClass(NonLocalizable::TOOL_WINDOW_CLASS_NAME, reinterpret_cast<HINSTANCE>(&__ImageBase));
+    UnregisterClass(NonLocalizable::ToolWindowClassName(), reinterpret_cast<HINSTANCE>(&__ImageBase));
 }
 
 bool AlwaysOnTop::IsTopmost(HWND window) const noexcept
@@ -621,13 +661,13 @@ bool AlwaysOnTop::IsTopmost(HWND window) const noexcept
 
 bool AlwaysOnTop::IsPinned(HWND window) const noexcept
 {
-    auto handle = GetProp(window, NonLocalizable::WINDOW_IS_PINNED_PROP);
+    auto handle = GetProp(window, NonLocalizable::WindowIsPinnedProperty());
     return (handle != NULL);
 }
 
 bool AlwaysOnTop::PinTopmostWindow(HWND window) const noexcept
 {
-    if (!SetProp(window, NonLocalizable::WINDOW_IS_PINNED_PROP, reinterpret_cast<HANDLE>(1)))
+    if (!SetProp(window, NonLocalizable::WindowIsPinnedProperty(), reinterpret_cast<HANDLE>(1)))
     {
         Logger::error(L"SetProp failed, {}", get_last_error_or_default(GetLastError()));
     }
@@ -643,7 +683,7 @@ bool AlwaysOnTop::PinTopmostWindow(HWND window) const noexcept
 
 bool AlwaysOnTop::UnpinTopmostWindow(HWND window) const noexcept
 {
-    RemoveProp(window, NonLocalizable::WINDOW_IS_PINNED_PROP);
+    RemoveProp(window, NonLocalizable::WindowIsPinnedProperty());
     auto res = SetWindowPos(window, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
     if (!res)
     {

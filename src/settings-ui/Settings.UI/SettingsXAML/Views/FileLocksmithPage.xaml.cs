@@ -19,6 +19,11 @@ namespace Microsoft.PowerToys.Settings.UI.Views
             ViewModel = new FileLocksmithViewModel(settingsUtils, SettingsRepository<GeneralSettings>.GetInstance(settingsUtils), ShellPage.SendDefaultIPCMessage);
             DataContext = ViewModel;
             InitializeComponent();
+            if (ManagedCommon.PortableMode.IsEnabled)
+            {
+                FileLocksmithToggleContextMenu.IsEnabled = false;
+                FileLocksmithToggleContextMenu.Description = "Dateien und Ordner über die Schaltflächen oben auswählen. Die portable Ausgabe registriert kein Explorer-Kontextmenü.";
+            }
         }
 
         public void RefreshEnabledState()

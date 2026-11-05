@@ -3,6 +3,7 @@
 #include "pch.h"
 
 #include <mmsystem.h> // sound
+#include <common/utils/portable_mode.h>
 
 class Sound
 {
@@ -18,6 +19,20 @@ public:
     void Play(Type type)
     {
         BOOL success = false;
+        if (PowerToysPortable::IsEnabled())
+        {
+            wchar_t windowsDirectory[MAX_PATH]{};
+            if (!GetWindowsDirectoryW(windowsDirectory, ARRAYSIZE(windowsDirectory)))
+            {
+                return;
+            }
+            const wchar_t* file = type == Type::On ? L"Speech On.wav" :
+                type == Type::Off ? L"Speech Sleep.wav" :
+                type == Type::IncreaseOpacity ? L"Windows Hardware Insert.wav" : L"Windows Hardware Remove.wav";
+            const auto path = std::filesystem::path(windowsDirectory) / L"Media" / file;
+            PlaySoundW(path.c_str(), nullptr, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
+            return;
+        }
         switch (type)
         {
         case Type::On:

@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.IO.Abstractions;
 using System.Text.Json;
+using PowerToys.Common;
 
 namespace Microsoft.PowerToys.Settings.UI.Library
 {
@@ -23,7 +24,7 @@ namespace Microsoft.PowerToys.Settings.UI.Library
         public static string LoadSetting()
         {
             FileSystem fileSystem = new FileSystem();
-            var localAppDataDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var localAppDataDir = PortableData.ResolveLocalApplicationDataPath(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
             var file = localAppDataDir + SettingsFilePath + SettingsFile;
 
             if (fileSystem.File.Exists(file))

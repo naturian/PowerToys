@@ -4,6 +4,7 @@
 #include <common/display/dpi_aware.h>
 #include <common/utils/logger_helper.h>
 #include <common/utils/resources.h>
+#include <common/utils/portable_mode.h>
 #include <common/utils/UnhandledExceptionHandler.h>
 #include <common/interop/shared_constants.h>
 
@@ -22,7 +23,7 @@ FancyZonesApp::FancyZonesApp(const std::wstring& appName, const std::wstring& ap
     m_app = MakeFancyZones(reinterpret_cast<HINSTANCE>(&__ImageBase), std::bind(&FancyZonesApp::DisableModule, this));
 
     m_mainThreadId = GetCurrentThreadId();
-    m_exitEventWaiter.start(CommonSharedConstants::FZE_EXIT_EVENT, [&](DWORD err) {
+    m_exitEventWaiter.start(PowerToysPortable::ScopedName(CommonSharedConstants::FZE_EXIT_EVENT), [&](DWORD err) {
         if (err == ERROR_SUCCESS)
         {
             DisableModule();

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "WindowBorder.h"
+#include <common/utils/portable_mode.h>
 
 #include <dwmapi.h>
 #include "winrt/Windows.Foundation.h"
@@ -12,7 +13,7 @@
 // Non-Localizable strings
 namespace NonLocalizable
 {
-    const wchar_t ToolWindowClassName[] = L"AlwaysOnTop_Border";
+    const std::wstring ToolWindowClassName = PowerToysPortable::ScopedName(L"AlwaysOnTop_Border");
 }
 
 std::optional<RECT> GetFrameRect(HWND window)
@@ -91,12 +92,12 @@ bool WindowBorder::Init(HINSTANCE hinstance)
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.lpfnWndProc = s_WndProc;
     wcex.hInstance = hinstance;
-    wcex.lpszClassName = NonLocalizable::ToolWindowClassName;
+    wcex.lpszClassName = NonLocalizable::ToolWindowClassName.c_str();
     wcex.hCursor = LoadCursorW(nullptr, IDC_ARROW);
     RegisterClassExW(&wcex);
 
     m_window = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW
-        , NonLocalizable::ToolWindowClassName
+        , NonLocalizable::ToolWindowClassName.c_str()
         , L""
         , WS_POPUP | WS_DISABLED
         , windowRect.left

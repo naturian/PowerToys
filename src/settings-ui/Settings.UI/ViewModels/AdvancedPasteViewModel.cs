@@ -189,6 +189,11 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
         private void MigrateLegacyAIEnablement()
         {
+            if (ManagedCommon.PortableMode.IsEnabled)
+            {
+                return;
+            }
+
             var properties = _advancedPasteSettings?.Properties;
             if (properties is null)
             {

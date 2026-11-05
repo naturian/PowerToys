@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using PowerToys.Common;
 using PowerToys.Interop;
 
 namespace ManagedCommon
@@ -75,7 +76,11 @@ namespace ManagedCommon
         public static string LogDirectoryPath(string applicationLogPath, bool isLocalLow = false)
         {
             string basePath;
-            if (isLocalLow)
+            if (PortableData.IsEnabled)
+            {
+                basePath = PortableMode.DataRoot + applicationLogPath;
+            }
+            else if (isLocalLow)
             {
                 basePath = Environment.GetEnvironmentVariable("userprofile") + "\\appdata\\LocalLow\\Microsoft\\PowerToys" + applicationLogPath;
             }

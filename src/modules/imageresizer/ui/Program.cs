@@ -3,7 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.IO;
 using System.Threading;
+using ManagedCommon;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 
@@ -14,6 +16,12 @@ namespace ImageResizer
         [STAThread]
         public static void Main(string[] args)
         {
+            if (PortableMode.IsEnabled)
+            {
+                _ = PortableMode.DataRoot;
+                Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+            }
+
             WinRT.ComWrappersSupport.InitializeComWrappers();
             Application.Start((p) =>
             {

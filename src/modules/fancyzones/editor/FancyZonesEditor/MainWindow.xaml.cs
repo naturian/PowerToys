@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -563,6 +565,12 @@ namespace FancyZonesEditor
 
         private void SettingsBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (PortableMode.IsEnabled)
+            {
+                PortableMode.OpenSettings();
+                return;
+            }
+
             SettingsDeepLink.OpenSettings(SettingsDeepLink.SettingsWindow.FancyZones);
         }
 

@@ -5,6 +5,8 @@
 #include <common/utils/window.h>
 #include <common/utils/UnhandledExceptionHandler.h>
 #include <common/utils/gpo.h>
+#include <common/utils/portable_mode.h>
+#include <common/utils/EventWaiter.h>
 
 #include <common/Telemetry/EtwTrace/EtwTrace.h>
 
@@ -18,6 +20,36 @@ const std::wstring instanceMutexName = L"Local\\PowerToys_AlwaysOnTop_InstanceMu
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PWSTR lpCmdLine, _In_ int nCmdShow)
 {
+    bool portable = false;
+    std::wstring portableStopEventName;
+    try
+    {
+        portable = PowerToysPortable::IsEnabled();
+        if (portable)
+        {
+            const auto executableDirectory = std::filesystem::path(PowerToysPortable::DataRoot()).parent_path().parent_path().parent_path();
+            if (!SetCurrentDirectoryW(executableDirectory.c_str()))
+            {
+                throw std::runtime_error("Cannot select the portable executable directory.");
+            }
+            portableStopEventName = PowerToysPortable::ScopedName(L"Local\\PowerToys_AlwaysOnTop_Portable_Stop");
+            if (std::wstring_view(lpCmdLine) == L"--stop")
+            {
+                wil::unique_handle stopEvent(OpenEventW(EVENT_MODIFY_STATE, FALSE, portableStopEventName.c_str()));
+                if (!stopEvent)
+                {
+                    return GetLastError() == ERROR_FILE_NOT_FOUND ? 0 : 1;
+                }
+                return SetEvent(stopEvent.get()) ? 0 : 1;
+            }
+        }
+    }
+    catch (const std::exception&)
+    {
+        MessageBoxW(nullptr, L"Der portable Programmordner oder Datenordner ist nicht zugänglich oder nicht beschreibbar.", L"Always On Top Portable", MB_OK | MB_ICONERROR);
+        return 1;
+    }
+
     Shared::Trace::ETWTrace trace;
     trace.UpdateState(true);
 
@@ -32,20 +64,22 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     InitUnhandledExceptionHandler();
 
-    auto mutex = CreateMutex(nullptr, true, instanceMutexName.c_str());
-    if (mutex == nullptr)
+    wil::unique_handle mutex(CreateMutex(nullptr, true, PowerToysPortable::ScopedName(instanceMutexName).c_str()));
+    const DWORD mutexError = GetLastError();
+    if (!mutex)
     {
-        Logger::error(L"Failed to create mutex. {}", get_last_error_or_default(GetLastError()));
+        Logger::error(L"Failed to create mutex. {}", get_last_error_or_default(mutexError));
+        return 1;
     }
 
-    if (GetLastError() == ERROR_ALREADY_EXISTS)
+    if (mutexError == ERROR_ALREADY_EXISTS)
     {
         return 0;
     }
 
     auto mainThreadId = GetCurrentThreadId();
 
-    std::wstring pid = std::wstring(lpCmdLine);
+    std::wstring pid = portable ? L"" : std::wstring(lpCmdLine);
     if (!pid.empty())
     {
         ProcessWaiter::OnProcessTerminate(pid, [mainThreadId](int err) {
@@ -67,7 +101,28 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     AlwaysOnTop app(!pid.empty(), mainThreadId);
 
+    EventWaiter portableStopWaiter;
+    if (portable)
+    {
+        // Ensure the main thread has a message queue before accepting stop requests.
+        MSG message;
+        PeekMessageW(&message, nullptr, 0, 0, PM_NOREMOVE);
+        if (!portableStopWaiter.start(portableStopEventName, [mainThreadId](DWORD error) {
+                if (error == ERROR_SUCCESS)
+                {
+                    PostThreadMessageW(mainThreadId, WM_QUIT, 0, 0);
+                }
+            }))
+        {
+            Logger::error(L"Failed to create the portable stop event.");
+            Trace::AlwaysOnTop::UnregisterProvider();
+            return 1;
+        }
+    }
+
     run_message_loop();
+
+    portableStopWaiter.stop();
 
     Trace::AlwaysOnTop::UnregisterProvider();
 

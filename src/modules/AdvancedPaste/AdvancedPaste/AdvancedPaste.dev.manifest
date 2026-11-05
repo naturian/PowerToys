@@ -20,6 +20,10 @@
 		</windowsSettings>
 	</application>
 
+	<file name="PowerToys.Interop.dll">
+		<activatableClass xmlns="urn:schemas-microsoft-com:winrt.v1" name="PowerToys.Interop.KeyboardHook" threadingModel="both" />
+	</file>
+
 	<msix xmlns="urn:schemas-microsoft-com:msix.v1"
 		publisher="CN=PowerToys Dev, O=PowerToys, L=Redmond, S=Washington, C=US"
 		packageName="Microsoft.PowerToys.SparseApp"

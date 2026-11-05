@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.IO.Abstractions" />
+    <Compile Include="$(RepoRoot)src\common\Portable\PortableData.cs" Link="PortableData.cs" />
   </ItemGroup>
 
   <PropertyGroup>

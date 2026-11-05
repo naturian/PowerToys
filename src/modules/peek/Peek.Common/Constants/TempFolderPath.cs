@@ -8,6 +8,8 @@ namespace Peek.Common.Constants
 {
     public static class TempFolderPath
     {
-        public static string Path => $"{Environment.GetEnvironmentVariable("USERPROFILE")}\\AppData\\LocalLow\\Microsoft\\PowerToys\\Peek-Temp";
+        public static string Path => ManagedCommon.PortableMode.IsEnabled
+            ? System.IO.Path.Combine(ManagedCommon.PortableMode.DataRoot, "Peek", "Temp")
+            : $"{Environment.GetEnvironmentVariable("USERPROFILE")}\\AppData\\LocalLow\\Microsoft\\PowerToys\\Peek-Temp";
     }
 }

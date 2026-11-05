@@ -87,4 +87,7 @@
     <ProjectReference Include="..\..\..\common\ManagedCommon\ManagedCommon.csproj" />
     <ProjectReference Include="..\FileLocksmithLibInterop\FileLocksmithLibInterop.vcxproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\common\Portable\PortableFileArguments.cs" Link="Portable\PortableFileArguments.cs" />
+  </ItemGroup>
 </Project>

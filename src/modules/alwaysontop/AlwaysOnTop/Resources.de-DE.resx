@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AlwaysOnTop" xml:space="preserve"><value>AlwaysOnTop</value></data>
+  <data name="System_Foreground_Elevated" xml:space="preserve"><value>Eine Anwendung wird mit Administratorrechten ausgef&#xFC;hrt. Dadurch sind bestimmte Interaktionen mit dieser Anwendung nicht m&#xF6;glich.</value></data>
+  <data name="System_Foreground_Elevated_Learn_More" xml:space="preserve"><value>Weitere Informationen</value></data>
+  <data name="System_Foreground_Elevated_Dialog_Dont_Show_Again" xml:space="preserve"><value>Nicht erneut anzeigen</value></data>
+  <data name="System_Menu_Toggle_Always_On_Top" xml:space="preserve"><value>Immer im Vordergrund</value></data>
+</root>

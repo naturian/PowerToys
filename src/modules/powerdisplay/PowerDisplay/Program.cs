@@ -31,6 +31,12 @@ namespace PowerDisplay
         [STAThread]
         public static int Main(string[] args)
         {
+            if (PortableMode.IsEnabled)
+            {
+                _ = PortableMode.DataRoot;
+                System.IO.Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+            }
+
             // Initialize COM wrappers first (needed for AppInstance)
             WinRT.ComWrappersSupport.InitializeComWrappers();
 
@@ -44,7 +50,15 @@ namespace PowerDisplay
             // Single instance check BEFORE logger initialization to avoid creating extra log files
             // Command Palette pattern: check for existing instance first
             var activationArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
-            var keyInstance = AppInstance.FindOrRegisterForKey("PowerToys_PowerDisplay_Instance");
+            string instanceKey = "PowerToys_PowerDisplay_Instance";
+            if (PortableMode.IsEnabled)
+            {
+                byte[] pathHash = System.Security.Cryptography.SHA256.HashData(
+                    System.Text.Encoding.UTF8.GetBytes(PortableMode.DataRoot.ToUpperInvariant()));
+                instanceKey = "PowerToys_PowerDisplay_Portable_" + Convert.ToHexString(pathHash)[..16];
+            }
+
+            var keyInstance = AppInstance.FindOrRegisterForKey(instanceKey);
 
             if (!keyInstance.IsCurrent)
             {
@@ -67,7 +81,7 @@ namespace PowerDisplay
             int runnerPid = -1;
             string? pipeName = null;
 
-            if (args.Length >= 1)
+            if (!PortableMode.IsEnabled && args.Length >= 1)
             {
                 if (int.TryParse(args[0], out int parsedPid))
                 {
@@ -75,7 +89,7 @@ namespace PowerDisplay
                 }
             }
 
-            if (args.Length >= 2)
+            if (!PortableMode.IsEnabled && args.Length >= 2)
             {
                 pipeName = args[1];
             }

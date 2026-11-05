@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
 using FancyZonesEditorCommon.Utils;
+using PowerToys.Common;
 
 namespace FancyZonesEditorCommon.Data
 {
@@ -14,7 +15,7 @@ namespace FancyZonesEditorCommon.Data
     {
         public string GetDataFolder()
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            return PortableData.ResolveLocalApplicationDataPath(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
         }
 
         protected static JsonSerializerOptions JsonOptions => FancyZonesJsonContext.Default.Options;
