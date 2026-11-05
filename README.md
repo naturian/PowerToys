@@ -7,7 +7,7 @@ documentation and release notes use English. Advanced Paste AI features are bloc
   [Release notes](https://github.com/naturian/PowerToys/releases/tag/minimal-main-2026-09-02),
   [MSI download](https://github.com/naturian/PowerToys/releases/download/minimal-main-2026-09-02/PowerToysUserSetup-0.102.3001.0-x64.msi),
   and [source and build instructions](https://github.com/naturian/PowerToys/blob/minimal-installer-main/MINIMAL-INSTALLER.md).
-- **Portable modules 0.102.3001.0** provides ten separate packages with tray controls, including
+- **Portable modules 0.102.3001.0** provide ten separate packages with tray controls, including
   FancyZones, Always On Top, File Locksmith, Peek, Crop And Lock, and Advanced Paste.
   [Downloads](https://github.com/naturian/PowerToys/releases/tag/portable-v0.102.3001.0)
   and [usage and source](https://github.com/naturian/PowerToys/blob/codex/portable-first-modules/tools/portable/README.md).
