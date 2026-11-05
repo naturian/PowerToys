@@ -7,6 +7,11 @@ applyTo: '**'
 
 This is the top-level guidance for AI contributions to PowerToys. Keep changes atomic, follow existing patterns, and cite exact paths in PRs.
 
+## Fork conventions
+
+- Use English for repository documentation, code comments, commit messages, pull requests, release titles, and release notes. This fork's application interface uses German (`de-DE`).
+- Treat permission to hibernate or shut down the computer as applying only to the task in which it was given. Obtain a fresh explicit instruction before a power-state action in a later task.
+
 ## Overview
 
 PowerToys is a set of utilities for power users to tune and streamline their Windows experience.
