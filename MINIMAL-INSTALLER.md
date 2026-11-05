@@ -1,133 +1,129 @@
-# PowerToys – minimierter Installer
+# PowerToys minimal installer
 
-Dieser Branch basiert auf Microsofts offiziellem stabilen Tag `v0.102.3001`
-(`a00b2bce7403f0a48efe5cbb6671074e01f27824`, veröffentlicht am 27. Oktober 2026).
-Die Produktversion `0.102.3001.0` wird unverändert aus diesem Release übernommen;
-der interne Updatekanal bleibt `private`. Dies ist ein eigener, unsignierter Minimal-Build,
-nicht das von Microsoft signierte Installationspaket.
+This branch is based on Microsoft's official stable tag `v0.102.3001`
+(`a00b2bce7403f0a48efe5cbb6671074e01f27824`), released on October 27, 2026.
+It uses product version `0.102.3001.0` and the internal `private` update channel.
+The custom build is unsigned and provides a German (`de-DE`) interface.
 
-Der erzeugte MSI enthält diese 20 Modulgruppen:
+The current x64 per-user MSI is available under the retained release tag
+`minimal-main-2026-09-02`. [Release notes](https://github.com/naturian/PowerToys/releases/tag/minimal-main-2026-09-02)
+and [MSI download](https://github.com/naturian/PowerToys/releases/download/minimal-main-2026-09-02/PowerToysUserSetup-0.102.3001.0-x64.msi).
 
-| Modul | Interner Schlüssel |
-|---|---|
+The generated MSI includes these 20 module groups.
+
+| Module | Internal key |
+| --- | --- |
 | FancyZones | `FancyZones` |
-| Always on Top | `AlwaysOnTop` |
-| Zuschneiden und Sperren | `CropAndLock` |
-| Textextraktor | `TextExtractor` / `PowerOCR` |
-| Arbeitsbereiche | `Workspaces` |
-| Bildgrößenänderung | `ImageResizer` |
+| Always On Top | `AlwaysOnTop` |
+| Crop And Lock | `CropAndLock` |
+| Text Extractor | `TextExtractor` / `PowerOCR` |
+| Workspaces | `Workspaces` |
+| Image Resizer | `ImageResizer` |
 | File Locksmith | `FileLocksmith` |
 | PowerRename | `PowerRename` |
-| Vorschau | `Peek` |
-| Farbauswahl | `ColorPicker` |
-| Bildschirmlineal | `ScreenRuler` / `MeasureTool` |
-| Bildschirmsteuerung | `PowerDisplay` |
-| Automatischer Hell-/Dunkelmodus | `LightSwitch` |
-| Mausdienstprogramme | `MouseUtils` |
+| Peek | `Peek` |
+| Color Picker | `ColorPicker` |
+| Screen Ruler | `ScreenRuler` / `MeasureTool` |
+| Power Display | `PowerDisplay` |
+| Light Switch | `LightSwitch` |
+| Mouse Utilities | `MouseUtils` |
 | Window Hopper | `WindowHopper` / `AltWindowCycle` |
-| Erweitertes Einfügen | `AdvancedPaste` |
+| Advanced Paste | `AdvancedPaste` |
 | New+ | `NewPlus` |
 | ZoomIt | `ZoomIt` |
-| Grab and Move | `GrabAndMove` |
+| Grab And Move | `GrabAndMove` |
 | Shortcut Guide | `ShortcutGuide` |
 
-`MouseUtils` umfasst Cursor Wrap, Find My Mouse, Mouse Highlighter, Mouse Jump und Mouse
-Pointer Crosshairs. Nicht ausgewählte Module werden vor dem WiX-Harvest aus dem Build-Output
-entfernt und nicht installiert.
+`MouseUtils` includes Cursor Wrap, Find My Mouse, Mouse Highlighter, Mouse Jump, and
+Mouse Pointer Crosshairs. The output filter removes unselected modules before WiX harvesting.
 
-In Erweitertes Einfügen ist „Paste with AI“ dauerhaft gesperrt.
-Auch bestehende oder manuell geänderte Einstellungen können die Funktion nicht aktivieren.
-Zusätzlich verweigert die gemeinsame Advanced-Paste-Engine alle KI-Anbieter, einschließlich
-lokaler Modelle. Die neue Advanced-Paste-CLI und die PATH-Shims werden nicht installiert.
-Die neu hinzugekommenen Mausmodule CursorHide und Mouse Button Lock sind nicht ausgewählt.
-ZoomIts neue Offline-Diktierfunktion bleibt gemäß Upstream standardmäßig ausgeschaltet;
-sie kann vom Benutzer aktiviert werden und verwendet dann das Mikrofon.
+Advanced Paste blocks Paste with AI, including attempts to enable it through existing or
+manually edited settings. The shared Advanced Paste engine blocks all AI providers,
+including local models. The Advanced Paste CLI and PATH shims are excluded from the installer.
+CursorHide and Mouse Button Lock are also excluded. ZoomIt's offline dictation follows the
+upstream default of disabled. Users can enable it, which gives it access to the microphone.
 
-## Modulauswahl
+## Module selection
 
-Die Auswahl steht in
-`installer/PowerToysSetupVNext/selected-modules.txt`. Die zentrale Zuordnung liegt in
-`installer/PowerToysSetupVNext/Modules-Database.ps1`.
+The selection is defined in `installer/PowerToysSetupVNext/selected-modules.txt`.
+The central module mapping is in `installer/PowerToysSetupVNext/Modules-Database.ps1`.
 
 ```text
-selected-modules.txt ──▶ Configure-Modules.ps1 ──▶ Runner-Ladeliste
-                                               ├─▶ Settings-Dashboard
-                                               ├─▶ WiX-Komponentengruppen
-                                               └─▶ WiX-Quelldateien
-Modules-Database.ps1 ──▶ filter-minimal-modules.ps1 ──▶ bereinigter Build-Output
+selected-modules.txt --> Configure-Modules.ps1 --> Runner module list
+                                              +-> Settings dashboard
+                                              +-> WiX component groups
+                                              +-> WiX source files
+Modules-Database.ps1 --> filter-minimal-modules.ps1 --> filtered build output
 ```
 
-Nach einer Änderung an `selected-modules.txt` genügt ein neuer Build. `CmdPal`, `CmdNotFound`
-und `Run` sind in der Datenbank bewusst als nicht baubar markiert, weil ihre
-Paketierung noch nicht in die Minimal-Pipeline integriert ist.
+Rebuild after editing `selected-modules.txt`. The database marks `CmdPal`, `CmdNotFound`,
+and `Run` as unavailable for this pipeline because their packaging requires further integration.
 
 ## Build
 
-Aus dem Repo-Wurzelverzeichnis:
+Run from the repository root.
 
 ```powershell
 tools\build\build-minimal-installer.ps1
 ```
 
-Das Skript verwendet die zum oben genannten Microsoft-Release gehörende Version, stellt
-Abhängigkeiten wieder her, baut die Solution ohne Tests, baut die Diagnosewerkzeuge, filtert
-nicht ausgewählte Module und erzeugt einen deutsch lokalisierten Per-User-MSI.
+The script uses the version from the Microsoft release above, restores dependencies, builds
+the solution with test projects excluded, builds the diagnostic tools, filters unselected
+modules, and produces a German per-user MSI.
 
-Nur Filter und Installer erneut ausführen:
+To repeat the filtering and installer stages after a successful solution build, run
 
 ```powershell
 tools\build\build-minimal-installer.ps1 -SkipSolutionBuild
 ```
 
-Ergebnis: `installer/PowerToysSetupVNext/<Platform>/<Configuration>/UserSetup/*.msi`.
+The output is `installer/PowerToysSetupVNext/<Platform>/<Configuration>/UserSetup/*.msi`.
 
-Die Pipeline verwendet den ignorierten Paketcache `.build-cache/nuget` und erzwingt dessen
-Wiederherstellung, damit Restore und Kompilierung dieselben vorhandenen Pakete verwenden.
+The pipeline uses the ignored package cache `.build-cache/nuget` and forces dependency
+restoration so that restore and compilation use the same packages.
 
-Voraussetzungen entsprechen dem Upstream-Repository: Visual Studio 2022 17.4+ oder Visual
-Studio 2026 mit C++-Desktop-Workload, passende Windows- und .NET-SDKs sowie initialisierte
-Submodule.
+Prerequisites follow the upstream repository, including Visual Studio 2022 17.4+ or Visual
+Studio 2026 with the C++ desktop workload, the required Windows and .NET SDKs, and initialized
+submodules. The selected upstream version determines the required toolchain.
 
-## Technischer Ausschluss
+## Module filtering
 
-Der VNext-Installer harvestet den gemeinsamen Release-Ausgabeordner. Daher reichen entfernte
-WiX-Referenzen allein nicht:
+The VNext installer harvests the shared Release output directory. Filtering therefore covers
+the output files as well as the installer definitions.
 
-1. `filter-minimal-modules.ps1` entfernt Dateien und Modulordner nicht ausgewählter Utilities.
-2. `Product.wxs` referenziert nur Infrastruktur und ausgewählte Modulgruppen.
-3. `PowerToysInstallerVNext.wixproj` kompiliert nur die dafür benötigten `.wxs`-Dateien.
-4. `src/runner/main.cpp` lädt nur paketierte Modul-DLLs.
-5. Settings-Dashboard und Navigation zeigen nur installierte Bereiche.
+1. `filter-minimal-modules.ps1` removes files and directories for unselected utilities.
+2. `Product.wxs` references infrastructure and selected module groups.
+3. `PowerToysInstallerVNext.wixproj` compiles the required `.wxs` files.
+4. `src/runner/main.cpp` loads the packaged module DLLs.
+5. The Settings dashboard and navigation expose the installed areas.
 
-Gemeinsam benötigte Settings-Abhängigkeiten bleiben erhalten. Peek aktiviert automatisch die
-Monaco-/File-Explorer-Preview-Komponentengruppen.
+Shared Settings dependencies are included. Selecting Peek also enables the Monaco and
+File Explorer Preview component groups.
 
-## Lokalisierung
+## Localization
 
-Der öffentliche Quellcode enthält standardmäßig nur englische PowerToys-Ressourcen. Für diesen
-Firmen-Build sind vollständige `de-DE`-RESW/RESX-Dateien eingecheckt. Sie wurden mit
-`import-german-localization.ps1` aus dem signierten Microsoft-Build `v0.102.3001` extrahiert und
-auf die Ressourcenschlüssel desselben Quellstands übertragen. Dabei werden ausdrücklich keine
-fremden PRI- oder Satelliten-Binärdateien kopiert; XAML und Assembly-Versionen bleiben konsistent.
+The public source tree provides English PowerToys resources by default. This fork includes
+complete `de-DE` RESW/RESX sources. `import-german-localization.ps1` extracts them from the
+signed Microsoft `v0.102.3001` build and maps them to the resource keys of the corresponding
+source version. It imports resource source text, preserving consistent XAML and assembly versions.
 
-Farbauswahl und Textextraktor verwenden WinUI-RESW/PRI statt WPF-Satelliten.
-Beim Aktualisieren der Microsoft-Basis müssen die deutschen Quellen mit einem möglichst passenden
-offiziellen Paket neu importiert und anschließend geprüft werden:
+Color Picker and Text Extractor use WinUI RESW/PRI resources. When updating the Microsoft
+baseline, import German sources from a closely matching official package and verify the result.
 
 ```powershell
-installer\PowerToysSetupVNext\import-german-localization.ps1 -OfficialRoot <extrahiertes PowerToys-Verzeichnis>
+installer\PowerToysSetupVNext\import-german-localization.ps1 -OfficialRoot <extracted-PowerToys-directory>
 tools\build\test-minimal-release.ps1
 ```
 
-Die Build-Pipeline bricht ab, sobald ein deutscher Schlüssel fehlt. Nach dem Kompilieren prüft sie
-außerdem die tatsächlich erzeugten PRI-Dateien und die WPF-Satellitenassemblies.
+The build stops if a German resource key is missing. After compilation, the pipeline also
+checks the generated PRI files and WPF satellite assemblies.
 
-## Wichtige Dateien
+## Relevant files
 
-- `installer/PowerToysSetupVNext/selected-modules.txt` – aktive Auswahl
-- `installer/PowerToysSetupVNext/Modules-Database.ps1` – zentrale Modulmetadaten
-- `installer/PowerToysSetupVNext/Configure-Modules.ps1` – Generator
-- `installer/PowerToysSetupVNext/filter-minimal-modules.ps1` – Output-Filter
-- `installer/PowerToysSetupVNext/import-german-localization.ps1` – sichere Aktualisierung der deutschen Quellen
-- `tools/build/build-minimal-installer.ps1` – Gesamt-Pipeline
-- `tools/build/test-minimal-release.ps1` – Release- und Lokalisierungsregressionen
+- `installer/PowerToysSetupVNext/selected-modules.txt` defines the active selection.
+- `installer/PowerToysSetupVNext/Modules-Database.ps1` contains the module metadata.
+- `installer/PowerToysSetupVNext/Configure-Modules.ps1` generates the selection-dependent files.
+- `installer/PowerToysSetupVNext/filter-minimal-modules.ps1` filters the build output.
+- `installer/PowerToysSetupVNext/import-german-localization.ps1` updates German resource sources.
+- `tools/build/build-minimal-installer.ps1` runs the complete pipeline.
+- `tools/build/test-minimal-release.ps1` checks release and localization regressions.
