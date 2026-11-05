@@ -10,7 +10,7 @@ if ([Security.Principal.WindowsIdentity]::GetCurrent().User.Value -ne 'S-1-5-18'
     (Get-Content -LiteralPath 'C:\Results\sandbox-test-authorized.txt' -Raw).Trim() -cne $Nonce) {
     throw 'This lifecycle test requires the authorized Windows Sandbox SYSTEM task.'
 }
-$packages = @(Get-Content -LiteralPath 'C:\Packages\sccm-deployment.json' -Raw | ConvertFrom-Json)
+$packages = Get-Content -LiteralPath 'C:\Packages\sccm-deployment.json' -Raw | ConvertFrom-Json
 $results = [Collections.Generic.List[object]]::new()
 $receiptPath = 'C:\Results\system-' + $Phase + '.json'
 

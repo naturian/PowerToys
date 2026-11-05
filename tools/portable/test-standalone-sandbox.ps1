@@ -8,7 +8,7 @@ if ($env:USERNAME -cne 'WDAGUtilityAccount' -or $PSScriptRoot -cne 'C:\Tests' -o
 }
 $nonce = [Guid]::NewGuid().ToString('N')
 $nonce | Set-Content -LiteralPath 'C:\Results\sandbox-test-authorized.txt' -Encoding ascii
-$packages = @(Get-Content -LiteralPath 'C:\Packages\sccm-deployment.json' -Raw | ConvertFrom-Json)
+$packages = Get-Content -LiteralPath 'C:\Packages\sccm-deployment.json' -Raw | ConvertFrom-Json
 $installRoot = Join-Path $env:ProgramFiles 'Naturian\PowerToys Modules'
 $profileRoot = Join-Path $env:LOCALAPPDATA 'Naturian\PowerToysModules'
 $taskName = 'PowerToysStandalone-Test-' + $nonce

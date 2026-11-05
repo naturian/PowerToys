@@ -60,7 +60,8 @@ These custom builds are unsigned prereleases.
 
 ## Build and verify
 
-Build the complete module payload first, then package its successful output.
+Run the build scripts in PowerShell 7. Build the complete module payload first, then package
+its successful output.
 
 ```powershell
 .\tools\portable\build-portable.ps1 -OutputRoot G:\PowerToys\artifacts\portable\standalone-payload
