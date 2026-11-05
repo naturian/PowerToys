@@ -1,0 +1,56 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <?include "$(var.PackageInclude)" ?>
+  <Package Name="PowerToys $(var.ModuleName) Standalone"
+           Manufacturer="naturian"
+           Language="1031"
+           Version="$(var.MsiVersion)"
+           ProductCode="$(var.ProductCode)"
+           UpgradeCode="$(var.UpgradeCode)"
+           InstallerVersion="500"
+           Scope="perMachine">
+    <MajorUpgrade Schedule="afterInstallInitialize"
+                  DowngradeErrorMessage="Eine neuere Version von [ProductName] ist bereits installiert." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="mszip" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+    <Property Id="ARPPRODUCTICON" Value="ModuleIcon.exe" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/naturian/PowerToys" />
+    <Property Id="REBOOT" Value="ReallySuppress" />
+    <Property Id="MSIRESTARTMANAGERCONTROL" Value="DisableShutdown" />
+    <Property Id="WINDOWSBUILDNUMBER" Secure="yes">
+      <RegistrySearch Id="WindowsBuildSearch" Root="HKLM"
+                      Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion"
+                      Name="CurrentBuildNumber" Type="raw" />
+    </Property>
+    <Launch Condition="Installed OR (VersionNT64 AND WINDOWSBUILDNUMBER &gt;= 19041)"
+            Message="Dieses Modul benötigt Windows 10 Version 2004 (Build 19041) oder neuer in der 64-Bit-Ausgabe." />
+    <Icon Id="ModuleIcon.exe" SourceFile="$(var.PayloadRoot)\$(var.EntryPoint)" />
+    <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLFOLDER]"
+                 After="CostFinalize" Sequence="execute" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="PublisherFolder" Name="Naturian">
+        <Directory Id="ModulesFolder" Name="PowerToys Modules">
+          <Directory Id="INSTALLFOLDER" Name="$(var.ModuleId)" />
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ModuleShortcutsFolder" Name="PowerToys Modules" />
+    </StandardDirectory>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="ModuleRegistration" Guid="$(var.RegistrationGuid)" Bitness="always64">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Naturian\PowerToysModules\$(var.ModuleId)">
+          <RegistryValue Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+          <RegistryValue Name="Version" Type="string" Value="$(var.BinaryVersion)" />
+          <RegistryValue Name="ProductCode" Type="string" Value="[ProductCode]" />
+          <RegistryValue Name="InstallLocation" Type="string" Value="[INSTALLFOLDER]" />
+        </RegistryKey>
+      </Component>
+    </DirectoryRef>
+    <Feature Id="StandaloneModule" Title="PowerToys $(var.ModuleName)" Level="1">
+      <ComponentGroupRef Id="PayloadComponents" />
+      <ComponentRef Id="ModuleRegistration" />
+    </Feature>
+  </Package>
+</Wix>

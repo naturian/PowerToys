@@ -854,7 +854,7 @@ void FancyZones::ToggleEditor() noexcept
 
     SHELLEXECUTEINFO sei{ sizeof(sei) };
     const auto editorPath = PowerToysPortable::IsEnabled()
-        ? std::filesystem::path(PowerToysPortable::DataRoot()).parent_path().parent_path().parent_path() / NonLocalizable::FZEditorExecutablePath
+        ? PowerToysPortable::ExecutableDirectory() / NonLocalizable::FZEditorExecutablePath
         : std::filesystem::path(NonLocalizable::FZEditorExecutablePath);
     sei.fMask = { SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_NO_UI };
     sei.lpFile = editorPath.c_str();

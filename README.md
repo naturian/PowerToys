@@ -12,7 +12,12 @@ documentation and release notes use English. Advanced Paste AI features are bloc
   [Downloads](https://github.com/naturian/PowerToys/releases/tag/portable-v0.102.3001.0)
   and [usage and source](https://github.com/naturian/PowerToys/blob/codex/portable-first-modules/tools/portable/README.md).
 
-Both builds are unsigned prereleases. The minimal installer uses the retained tag
+- **Single-module MSI installers 0.102.3001.0** provide the same ten tools as per-machine
+  packages with Start menu entries and Configuration Manager detection metadata.
+  [Downloads](https://github.com/naturian/PowerToys/releases/tag/standalone-msi-v0.102.3001.0)
+  and [deployment instructions](https://github.com/naturian/PowerToys/blob/codex/portable-first-modules/installer/PowerToysStandalone/README.md).
+
+These builds are unsigned prereleases. The minimal installer uses the retained tag
 `minimal-main-2026-09-02`. The documentation below describes the upstream Microsoft project.
 
 ---

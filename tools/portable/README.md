@@ -5,6 +5,14 @@ Experimental Windows x64 packages based on **0.102.3001.0**, developed on branch
 release. [Portable downloads](https://github.com/naturian/PowerToys/releases/tag/portable-v0.102.3001.0)
 and [minimal installer](https://github.com/naturian/PowerToys/releases/tag/minimal-main-2026-09-02).
 
+## MSI installation
+
+The same ten modules can also be packaged as separate per-machine MSI installers with
+Start menu entries and Windows Installer product detection for Configuration Manager.
+Installed modules store settings in each user's profile. Deployment commands, upgrade
+behavior, and packaging instructions are in the [standalone MSI documentation](../../installer/PowerToysStandalone/README.md).
+[MSI downloads](https://github.com/naturian/PowerToys/releases/tag/standalone-msi-v0.102.3001.0).
+
 ## Usage
 
 Extract the complete ZIP into a writable directory. Include `portable-mode`,

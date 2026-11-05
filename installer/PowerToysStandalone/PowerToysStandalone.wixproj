@@ -1,0 +1,16 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+  <PropertyGroup>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <OutputType>Package</OutputType>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <OutputName>PowerToys-$(ModuleId)-Standalone-$(BinaryVersion)-x64</OutputName>
+    <OutputPath>$(MsiOutputRoot)\</OutputPath>
+    <DefineConstants>PackageInclude=$(PackageInclude)</DefineConstants>
+    <!-- The packager normalizes optional language metadata, then runs all ICE checks again. -->
+    <SuppressIces>ICE03</SuppressIces>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Package.wxs" />
+    <Compile Include="$(HarvestFile)" />
+  </ItemGroup>
+</Project>

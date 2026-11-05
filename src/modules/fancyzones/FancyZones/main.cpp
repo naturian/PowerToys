@@ -33,7 +33,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     const bool portable = PowerToysPortable::IsEnabled();
     if (portable)
     {
-        const auto executableDirectory = std::filesystem::path(PowerToysPortable::DataRoot()).parent_path().parent_path().parent_path();
+        const auto executableDirectory = PowerToysPortable::ExecutableDirectory();
         SetCurrentDirectoryW(executableDirectory.c_str());
         if (std::wstring_view(lpCmdLine) == L"--stop")
         {

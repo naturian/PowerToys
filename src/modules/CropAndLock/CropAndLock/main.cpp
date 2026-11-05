@@ -82,7 +82,7 @@ int WINAPI wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PWSTR lpCmdLine, _I
         };
         if (portable)
         {
-            const auto executableDirectory = std::filesystem::path(PowerToysPortable::DataRoot()).parent_path().parent_path().parent_path();
+            const auto executableDirectory = PowerToysPortable::ExecutableDirectory();
             if (!SetCurrentDirectoryW(executableDirectory.c_str()))
             {
                 throw std::runtime_error("Cannot select the portable executable directory.");
