@@ -82,6 +82,15 @@ function Assert-ProfileHashes($Before) {
 }
 
 try {
+    'Cache' | Set-Content -LiteralPath $progressPath -Encoding ascii
+    [void][IO.Directory]::CreateDirectory('C:\SccmContent')
+    foreach ($package in $packages) {
+        $cached = Join-Path 'C:\SccmContent' $package.file
+        Copy-Item -LiteralPath (Join-Path 'C:\Packages' $package.file) -Destination $cached
+        if ((Get-FileHash -LiteralPath $cached -Algorithm SHA256).Hash -ne $package.sha256) {
+            throw 'The copied deployment content differs from its manifest.'
+        }
+    }
     Invoke-SystemPhase 'Install'
     foreach ($package in $packages) { Test-MachineProduct $package $true }
     if (Test-Path -LiteralPath 'C:\Windows\System32\config\systemprofile\AppData\Local\Naturian\PowerToysModules') {

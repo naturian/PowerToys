@@ -31,7 +31,7 @@ try {
         }
         $log = 'C:\Results\' + $package.module + '-' + $Phase + '.log'
         $arguments = switch ($Phase) {
-            'Install' { @('/i', ('"C:\Packages\' + $package.file + '"')) }
+            'Install' { @('/i', ('"C:\SccmContent\' + $package.file + '"')) }
             'Repair' { @('/famus', $package.productCode) }
             default { @('/x', $package.productCode) }
         }
