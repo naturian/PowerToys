@@ -60,10 +60,12 @@ function Invoke-SystemPhase([string]$Phase) {
             Move-Item -LiteralPath $receiptPath -Destination ($receiptPath + '.' + $nonce + '.previous')
         }
         Start-ScheduledTask -TaskName $taskName
-        $deadline = (Get-Date).AddMinutes(60)
+        # Count active polling time so suspending the host does not consume the test timeout.
+        $attempt = 0
         while (-not (Test-Path -LiteralPath $receiptPath)) {
-            if ((Get-Date) -gt $deadline) { throw "SYSTEM phase timed out: $Phase" }
+            if ($attempt -ge 3600) { throw "SYSTEM phase timed out: $Phase" }
             Start-Sleep -Seconds 1
+            $attempt++
         }
         $receipt = Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
         if ($receipt.nonce -cne $nonce -or $receipt.phase -ne $Phase) { throw 'Unexpected SYSTEM phase receipt.' }
