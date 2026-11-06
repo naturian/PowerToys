@@ -1,7 +1,8 @@
 [CmdletBinding()]
-param([switch]$ResumeInstalled)
+param([switch]$ResumeInstalled, [switch]$TestUpgrade)
 
 $ErrorActionPreference = 'Stop'
+if ($ResumeInstalled -and $TestUpgrade) { throw 'Upgrade testing requires a fresh test instance.' }
 if ($env:USERNAME -cne 'WDAGUtilityAccount' -or $PSScriptRoot -cne 'C:\Tests' -or
     -not (Test-Path -LiteralPath 'C:\Packages\sccm-deployment.json')) {
     throw 'Run this lifecycle test only through its Windows Sandbox configuration.'
@@ -74,6 +75,22 @@ function Invoke-SystemPhase([string]$Phase) {
     finally { Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue }
 }
 
+function Test-StartupEntry($Package, [bool]$ExpectedInstalled) {
+    $entryPoint = if ($Package.module -eq 'PowerDisplay') { 'PowerToys.PowerDisplay.exe' } else { 'PowerToys.Portable.exe' }
+    $name = 'Naturian.PowerToys.' + $Package.module
+    $key = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Run')
+    $value = $null
+    if ($key) {
+        try { $value = $key.GetValue($name) }
+        finally { $key.Dispose() }
+    }
+    if ($ExpectedInstalled) {
+        $expected = '"' + (Join-Path $installRoot ($Package.module + '\' + $entryPoint)) + '" --background'
+        if ($value -cne $expected) { throw "Incorrect user-logon command for $($Package.module)." }
+    }
+    elseif ($null -ne $value) { throw "Startup registration remains for $($Package.module)." }
+}
+
 function Get-ProfileHashes {
     $hashes = @{}
     foreach ($file in (Get-ChildItem -LiteralPath $profileRoot -Filter '*.json' -Recurse -File)) {
@@ -100,6 +117,26 @@ try {
             throw 'The copied deployment content differs from its manifest.'
         }
     }
+    if ($TestUpgrade) {
+        $previous = Get-Content -LiteralPath 'C:\PreviousPackages\sccm-deployment.json' -Raw | ConvertFrom-Json
+        $previous = @($previous | Where-Object { $_.module -in @('FancyZones', 'PowerDisplay') })
+        if ($previous.Count -ne 2) { throw 'Upgrade testing requires both previous representative packages.' }
+        foreach ($package in $previous) {
+            $cached = Join-Path 'C:\SccmContent' $package.file
+            Copy-Item -LiteralPath (Join-Path 'C:\PreviousPackages' $package.file) -Destination $cached
+            if ((Get-FileHash -LiteralPath $cached -Algorithm SHA256).Hash -ne $package.sha256) { throw 'Previous package hash mismatch.' }
+        }
+        Invoke-SystemPhase 'InstallPrevious'
+        foreach ($package in $previous) { Test-MachineProduct $package $true }
+        $previousDisplay = Start-Process -FilePath (Join-Path $installRoot 'PowerDisplay\PowerToys.PowerDisplay.exe') -WorkingDirectory (Join-Path $installRoot 'PowerDisplay') -WindowStyle Hidden -PassThru
+        & $startupTest -BuildRoot $installRoot -Modules FancyZones,PowerDisplay -ReceiptPath 'C:\Results\previous-startup.json'
+        if (-not $previousDisplay.WaitForExit(10000)) { throw 'Previous Power Display did not stop.' }
+        foreach ($package in $previous) {
+            $data = Join-Path $profileRoot ($package.module + '\Microsoft\PowerToys')
+            [IO.File]::WriteAllText((Join-Path $data 'upgrade-sentinel.json'), '{"preserve":"existing-user-data"}')
+        }
+        $upgradeHashes = Get-ProfileHashes
+    }
     if ($ResumeInstalled) {
         $installReceipt = Get-Content -LiteralPath 'C:\Results\system-Install.json' -Raw | ConvertFrom-Json
         if (-not $installReceipt.success -or $installReceipt.results.Count -ne $packages.Count) {
@@ -110,15 +147,15 @@ try {
         Invoke-SystemPhase 'Install'
     }
     foreach ($package in $packages) { Test-MachineProduct $package $true }
+    if ($TestUpgrade) {
+        foreach ($package in $previous) { Test-MachineProduct $package $false }
+        Assert-ProfileHashes $upgradeHashes
+    }
     if (Test-Path -LiteralPath 'C:\Windows\System32\config\systemprofile\AppData\Local\Naturian\PowerToysModules') {
         throw 'Installation started module profile initialization as SYSTEM.'
     }
     'Runtime' | Set-Content -LiteralPath $progressPath -Encoding ascii
-    $displayExecutable = Join-Path $installRoot 'PowerDisplay\PowerToys.PowerDisplay.exe'
-    $display = Start-Process -FilePath $displayExecutable -WorkingDirectory ([IO.Path]::GetDirectoryName($displayExecutable)) -WindowStyle Hidden -PassThru
-    & $startupTest -BuildRoot $installRoot -ReceiptPath 'C:\Results\startup.json'
-    if (-not $display.WaitForExit(10000)) { throw 'Power Display did not exit through its portable host.' }
-    if ($display.ExitCode -ne 0) { throw "Power Display failed with exit $($display.ExitCode)." }
+    & $startupTest -BuildRoot $installRoot -ReceiptPath 'C:\Results\startup.json' -Background
 
     foreach ($package in $packages) {
         $directory = Join-Path $installRoot $package.module
@@ -128,6 +165,7 @@ try {
         if ($language.language -ne 'de-DE') { throw 'First-user language is incorrect.' }
         $registration = Get-ItemProperty -LiteralPath ('HKLM:\SOFTWARE\Naturian\PowerToysModules\' + $package.module)
         if ($registration.ProductCode -ne $package.productCode) { throw 'Incorrect module registry identity.' }
+        Test-StartupEntry $package $true
     }
     $shortcuts = @(Get-ChildItem -LiteralPath 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\PowerToys Modules' -Filter '*.lnk' -File)
     if ($shortcuts.Count -ne $packages.Count) { throw 'Incorrect number of Start menu shortcuts.' }
@@ -149,14 +187,18 @@ try {
     Invoke-SystemPhase 'Repair'
     Assert-ProfileHashes $profileHashes
     if (Test-Path -LiteralPath $suiteProfile) { throw 'Standalone modules created a full-suite user profile.' }
-    foreach ($package in $packages) { Test-MachineProduct $package $true }
+    foreach ($package in $packages) { Test-MachineProduct $package $true; Test-StartupEntry $package $true }
     Invoke-SystemPhase 'RemoveFirst'
-    foreach ($package in $packages) { Test-MachineProduct $package ($package.module -ne 'FancyZones') }
+    foreach ($package in $packages) {
+        Test-MachineProduct $package ($package.module -ne 'FancyZones')
+        Test-StartupEntry $package ($package.module -ne 'FancyZones')
+    }
     & $startupTest -BuildRoot $installRoot -Modules Peek -ReceiptPath 'C:\Results\coexistence.json'
     $profileHashes = Get-ProfileHashes
     Invoke-SystemPhase 'RemoveRemaining'
     foreach ($package in $packages) {
         Test-MachineProduct $package $false
+        Test-StartupEntry $package $false
         if (Test-Path -LiteralPath (Join-Path $installRoot ($package.module + '\PowerToys.Portable.exe'))) {
             throw 'An uninstalled application executable remains.'
         }
@@ -171,6 +213,7 @@ try {
         success=$true;modules=$packages.Count;systemInstall=$true;machineDetection=$true
         userStartup=$true;systemRepair=$true;systemUninstall=$true;coexistence=$true
         profileJsonFiles=$profileHashes.Count;profileDataPreserved=$true
+        backgroundStartup=$true;concurrentStartup=$true;startupRegistration=$true;upgradeTested=$TestUpgrade.IsPresent
     } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath 'C:\Results\result.json' -Encoding utf8
     'COMPLETE' | Set-Content -LiteralPath $progressPath -Encoding ascii
 }

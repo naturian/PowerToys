@@ -5,6 +5,11 @@ The binaries install under `%ProgramFiles%\Naturian\PowerToys Modules\<ModuleId>
 Each package adds an entry under **Start > PowerToys Modules** and a Windows Installed apps
 entry. Multiple different modules can be installed together.
 
+Each MSI registers `Naturian.PowerToys.<ModuleId>` under the 64-bit
+`HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run` key. At user sign-in,
+the module starts in the tray with `--background`. Users open Settings from the tray
+or Start menu. Uninstall removes the module's startup entry.
+
 Application settings, layouts, history, caches, and logs are created at first user launch
 under `%LOCALAPPDATA%\Naturian\PowerToysModules\<ModuleId>\Microsoft\PowerToys`.
 The installed `standalone-mode` marker selects this storage. Fresh profiles use German
@@ -28,7 +33,7 @@ upgrade code, version, SHA-256, and installation and removal command.
 For example, install FancyZones silently with logging.
 
 ```cmd
-msiexec.exe /i "PowerToys-FancyZones-Standalone-0.102.3001.0-x64.msi" /qn /norestart /L*v "%WINDIR%\Temp\PowerToys-FancyZones-install.log"
+msiexec.exe /i "PowerToys-FancyZones-Standalone-0.102.3002-x64.msi" /qn /norestart /L*v "%WINDIR%\Temp\PowerToys-FancyZones-install.log"
 ```
 
 Remove it using the product code from the deployment metadata.
@@ -47,7 +52,9 @@ to handle the required reboot. The package suppresses automatic restarts and use
 MSI product and upgrade identities are distinct for each module. Upgrade codes and file
 component GUIDs remain stable across versions. A newer product version performs a transactional
 major upgrade and rejects a downgrade. The binary version is `0.102.3001.0`, and the MSI
-product version is `0.102.3001`. Windows Installer compares three version fields.
+servicing version is `0.102.3002`. This package upgrades the previous `0.102.3001` MSIs.
+Use the new product codes from the deployment metadata for Configuration Manager detection.
+Windows Installer compares three version fields.
 [Microsoft versioning rules](https://learn.microsoft.com/en-us/windows/win32/msi/productversion).
 
 The `HKLM\SOFTWARE\Naturian\PowerToysModules\<ModuleId>` registry key also records the
@@ -67,7 +74,8 @@ its successful output.
 .\tools\portable\build-portable.ps1 -OutputRoot G:\PowerToys\artifacts\portable\standalone-payload
 .\tools\portable\build-standalone-msi.ps1 `
     -BuildRoot G:\PowerToys\artifacts\portable\standalone-payload `
-    -OutputRoot G:\PowerToys\deliverables\standalone-msi
+    -OutputRoot G:\PowerToys\deliverables\standalone-msi `
+    -PackageVersion 0.102.3002
 ```
 
 Use `-Modules FancyZones,Peek` to select a subset. `-Resume` explicitly allows reusing an

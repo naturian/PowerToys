@@ -226,7 +226,7 @@ namespace PowerDisplay
                 bool isStandaloneMode = _powerToysRunnerPid <= 0;
                 Logger.LogInfo($"OnLaunched: isStandaloneMode={isStandaloneMode}");
 
-                if (isStandaloneMode)
+                if (isStandaloneMode && !(PortableMode.IsEnabled && Array.IndexOf(Environment.GetCommandLineArgs(), "--background") >= 0))
                 {
                     // Standalone mode - activate and show window immediately
                     Logger.LogInfo("OnLaunched: Activating window (standalone mode)");

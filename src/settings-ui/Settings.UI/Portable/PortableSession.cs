@@ -40,6 +40,7 @@ internal sealed class PortableSession : IDisposable
     private PortablePeekHotkey peekHotkey;
     private bool ownsMutex;
     private bool shuttingDown;
+    private bool startInBackground;
 
     internal PortableSession()
     {
@@ -98,8 +99,8 @@ internal sealed class PortableSession : IDisposable
 
     internal bool TryAcquire(string[] arguments)
     {
-        string command = arguments.Contains("--stop", StringComparer.Ordinal) ? "StopHost" :
-            arguments.Contains("--open", StringComparer.Ordinal) ? "Open" : "Settings";
+        string command = PortableModule.GetLaunchCommand(arguments);
+        startInBackground = command == "Background";
         // Create events before claiming the mutex so a second launch cannot lose its request.
         foreach (string name in new[] { "Settings", "Open", "StopHost" })
         {
@@ -109,7 +110,10 @@ internal sealed class PortableSession : IDisposable
         mutex = new Mutex(true, PortableMode.EventName("Host"), out ownsMutex);
         if (!ownsMutex)
         {
-            events[command == "Settings" ? 0 : command == "Open" ? 1 : 2].Set();
+            if (!startInBackground)
+            {
+                events[command == "Settings" ? 0 : command == "Open" ? 1 : 2].Set();
+            }
             return false;
         }
 
@@ -142,7 +146,10 @@ internal sealed class PortableSession : IDisposable
             }, RequiresFileSelection);
         }
 
-        ShowSettings();
+        if (!startInBackground)
+        {
+            ShowSettings();
+        }
         if (module.Id == "Peek")
         {
             peekHotkey = new PortablePeekHotkey(window, () =>

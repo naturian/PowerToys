@@ -47,10 +47,17 @@
           <RegistryValue Name="InstallLocation" Type="string" Value="[INSTALLFOLDER]" />
         </RegistryKey>
       </Component>
+      <Component Id="ModuleStartup" Guid="$(var.StartupGuid)" Bitness="always64">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run">
+          <RegistryValue Name="Naturian.PowerToys.$(var.ModuleId)" Type="string"
+                         Value="&quot;[INSTALLFOLDER]$(var.EntryPoint)&quot; --background" KeyPath="yes" />
+        </RegistryKey>
+      </Component>
     </DirectoryRef>
     <Feature Id="StandaloneModule" Title="PowerToys $(var.ModuleName)" Level="1">
       <ComponentGroupRef Id="PayloadComponents" />
       <ComponentRef Id="ModuleRegistration" />
+      <ComponentRef Id="ModuleStartup" />
     </Feature>
   </Package>
 </Wix>

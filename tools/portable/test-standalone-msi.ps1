@@ -119,7 +119,7 @@ try {
         $installedFiles[$relative] = [long]$file.Bytes
     }
     $expectedFiles = @(Get-ChildItem -LiteralPath $PayloadRoot -Recurse -File)
-    if ($files.Count -ne $expectedFiles.Count -or $components.Count -ne $files.Count + 1) {
+    if ($files.Count -ne $expectedFiles.Count -or $components.Count -ne $files.Count + 2) {
         throw 'MSI payload or component count differs from the staged payload.'
     }
     foreach ($file in $expectedFiles) {
@@ -146,13 +146,20 @@ try {
     }
     $registrations = @(Read-MsiRows $database 'SELECT `Root`, `Key`, `Name`, `Value` FROM `Registry`' @('Root', 'Key', 'Name', 'Value'))
     $key = 'SOFTWARE\Naturian\PowerToysModules\' + $ExpectedModule
-    if (@($registrations | Where-Object { $_.Root -ne '2' -or $_.Key -cne $key }).Count) {
-        throw 'Registry writes must belong to this standalone module under HKLM.'
+    $runKey = 'SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
+    if (@($registrations | Where-Object { $_.Root -ne '2' -or $_.Key -cnotin @($key, $runKey) }).Count) {
+        throw 'Registry writes must belong to this module or its machine-wide startup entry.'
     }
     $binaryVersion = @($registrations | Where-Object Name -eq 'Version')[0].Value
-    if (([version]$binaryVersion).ToString(3) -ne $properties.ProductVersion) { throw 'Binary and MSI version fields differ.' }
+    if ([version]$properties.ProductVersion -lt [version](([version]$binaryVersion).ToString(3))) { throw 'MSI package version predates its binaries.' }
     $shortcuts = @(Read-MsiRows $database 'SELECT `Directory_`, `Target`, `WkDir`, `Component_` FROM `Shortcut`' @('Directory', 'Target', 'WorkingDirectory', 'Component'))
     $entryPoint = if ($ExpectedModule -eq 'PowerDisplay') { 'PowerToys.PowerDisplay.exe' } else { 'PowerToys.Portable.exe' }
+    $startup = @($registrations | Where-Object { $_.Key -ceq $runKey })
+    if ($registrations.Count -ne 5 -or $startup.Count -ne 1 -or
+        $startup[0].Name -cne ('Naturian.PowerToys.' + $ExpectedModule) -or
+        $startup[0].Value -cne ('"[INSTALLFOLDER]' + $entryPoint + '" --background')) {
+        throw 'The module must register exactly one quoted, background-only user-logon command.'
+    }
     if ($shortcuts.Count -ne 1 -or $shortcuts[0].Directory -ne 'ModuleShortcutsFolder' -or
         $shortcuts[0].Target -cne 'StandaloneModule' -or $shortcuts[0].WorkingDirectory -ne 'INSTALLFOLDER') {
         throw 'Incorrect Start menu shortcut.'

@@ -2,6 +2,7 @@
 param(
     [Parameter(Mandatory)][string]$BuildRoot,
     [Parameter(Mandatory)][string]$OutputRoot,
+    [ValidateNotNull()][version]$PackageVersion = '0.102.3002',
     [ValidateSet('FancyZones', 'ColorPicker', 'TextExtractor', 'ImageResizer', 'PowerDisplay', 'AlwaysOnTop', 'FileLocksmith', 'Peek', 'CropAndLock', 'AdvancedPaste')]
     [string[]]$Modules = @('FancyZones', 'ColorPicker', 'TextExtractor', 'ImageResizer', 'PowerDisplay', 'AlwaysOnTop', 'FileLocksmith', 'Peek', 'CropAndLock', 'AdvancedPaste'),
     [switch]$Resume
@@ -102,6 +103,14 @@ foreach ($module in $Modules) {
     }
     $binaryVersion = $version.ToString(4)
     $msiVersion = $version.ToString(3)
+    if ($PackageVersion) {
+        if ($PackageVersion.Major -gt 255 -or $PackageVersion.Minor -gt 255 -or
+            $PackageVersion.Build -lt 0 -or $PackageVersion.Build -gt 65535 -or $PackageVersion.Revision -gt 0 -or
+            $PackageVersion -lt [version]$msiVersion) {
+            throw 'The package version must fit MSI version fields and cover the binary version.'
+        }
+        $msiVersion = $PackageVersion.ToString(3)
+    }
     $moduleWork = Join-Path $workRoot $module
     $payload = Join-Path $moduleWork 'Payload'
     [void][IO.Directory]::CreateDirectory($payload)
@@ -134,6 +143,8 @@ foreach ($module in $Modules) {
 PowerToys $($moduleNames[$module]) Standalone $binaryVersion
 
 Launch this module from Start > PowerToys Modules.
+MSI package version $msiVersion.
+At user sign-in, this module starts in the tray using --background.
 The German Settings interface and tray menu configure the selected module.
 User data is stored under %LOCALAPPDATA%\Naturian\PowerToysModules\$module\Microsoft\PowerToys.
 The standalone-mode marker selects per-user storage for this machine-wide installation.
@@ -177,19 +188,20 @@ Source, licenses, and deployment instructions are available at https://github.co
         UpgradeCode = (Get-StableGuid ('upgrade/' + $module))
         ProductCode = (Get-StableGuid ('product/' + $module + '/' + $msiVersion))
         RegistrationGuid = (Get-StableGuid ('registration/' + $module))
+        StartupGuid = (Get-StableGuid ('startup/' + $module))
     }
     $definitions = @($values.Keys | ForEach-Object { '<?define ' + $_ + '="' + $values[$_] + '" ?>' })
     [IO.File]::WriteAllText($includePath, ('<Include xmlns="' + $wixNamespace + '">' + [Environment]::NewLine + ($definitions -join [Environment]::NewLine) + [Environment]::NewLine + '</Include>'), $utf8)
     Push-Location -LiteralPath $projectDirectory
     try {
         & (Join-Path $repoRoot 'tools\build\build.ps1') -Platform x64 -Configuration Release -Path $projectDirectory -ExtraArgs @(
-            '/p:NuGetAudit=false', "/p:ModuleId=$module", "/p:BinaryVersion=$binaryVersion",
+            '/p:NuGetAudit=false', "/p:ModuleId=$module", "/p:BinaryVersion=$binaryVersion", "/p:PackageVersion=$msiVersion",
             "/p:PackageInclude=$includePath", "/p:HarvestFile=$harvestPath", "/p:MsiOutputRoot=$OutputRoot",
             "/p:IntermediateOutputPath=$moduleWork\obj\")
         if ($LASTEXITCODE -ne 0) { throw "MSI build failed for $module (exit $LASTEXITCODE)." }
     }
     finally { Pop-Location }
-    $msiPath = Join-Path $OutputRoot "PowerToys-$module-Standalone-$binaryVersion-x64.msi"
+    $msiPath = Join-Path $OutputRoot "PowerToys-$module-Standalone-$msiVersion-x64.msi"
     $receipt = & (Join-Path $PSScriptRoot 'test-standalone-msi.ps1') -MsiPath $msiPath -PayloadRoot $payload -ExpectedModule $module -NormalizeAndValidate
     $receipt | Add-Member -NotePropertyName sourceCommit -NotePropertyValue $sourceCommit
     $receipt | Add-Member -NotePropertyName payloadRoot -NotePropertyValue $payload

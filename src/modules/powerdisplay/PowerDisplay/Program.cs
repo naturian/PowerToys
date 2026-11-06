@@ -62,6 +62,11 @@ namespace PowerDisplay
 
             if (!keyInstance.IsCurrent)
             {
+                if (PortableMode.IsEnabled && Array.IndexOf(args, "--background") >= 0)
+                {
+                    return 0;
+                }
+
                 // Another instance exists - redirect and exit WITHOUT initializing logger
                 // This prevents creation of extra log files for short-lived redirect processes
                 RedirectActivationTo(activationArgs, keyInstance);

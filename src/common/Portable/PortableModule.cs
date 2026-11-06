@@ -11,6 +11,26 @@ namespace PowerToys.Common;
 /// <summary>Fixed package identities. Package files cannot supply executable or settings paths.</summary>
 internal sealed record PortableModule(string Id, string Name, string SettingsName, string Executable, string OpenLabel)
 {
+    internal static string GetLaunchCommand(string[] arguments)
+    {
+        if (Array.IndexOf(arguments, "--stop") >= 0)
+        {
+            return "StopHost";
+        }
+
+        if (Array.IndexOf(arguments, "--open") >= 0)
+        {
+            return "Open";
+        }
+
+        if (Array.IndexOf(arguments, "--settings") >= 0)
+        {
+            return "Settings";
+        }
+
+        return Array.IndexOf(arguments, "--background") >= 0 ? "Background" : "Settings";
+    }
+
     internal static PortableModule Parse(string json)
     {
         if (json.Length > 1024)

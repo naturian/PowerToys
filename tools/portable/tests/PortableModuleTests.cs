@@ -15,6 +15,19 @@ namespace Portable.UnitTests;
 public class PortableModuleTests
 {
     [TestMethod]
+    [DataRow("", "Settings")]
+    [DataRow("--background", "Background")]
+    [DataRow("--settings --background", "Settings")]
+    [DataRow("--open --background", "Open")]
+    [DataRow("--stop --background", "StopHost")]
+    [DataRow("--stop --open --settings", "StopHost")]
+    [DataRow("--BACKGROUND", "Settings")]
+    public void LaunchCommandsKeepBackgroundStartsSilentAndExplicitActionsAvailable(string arguments, string expected)
+    {
+        Assert.AreEqual(expected, PortableModule.GetLaunchCommand(arguments.Split(' ', StringSplitOptions.RemoveEmptyEntries)));
+    }
+
+    [TestMethod]
     [DataRow("FancyZones", "FancyZones", "PowerToys.FancyZones.exe")]
     [DataRow("ColorPicker", "ColorPicker", "PowerToys.ColorPickerUI.exe")]
     [DataRow("TextExtractor", "TextExtractor", "PowerToys.PowerOCR.exe")]

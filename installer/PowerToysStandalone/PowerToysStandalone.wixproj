@@ -3,7 +3,8 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <OutputType>Package</OutputType>
     <InstallerPlatform>x64</InstallerPlatform>
-    <OutputName>PowerToys-$(ModuleId)-Standalone-$(BinaryVersion)-x64</OutputName>
+    <PackageVersion Condition="'$(PackageVersion)' == ''">$(BinaryVersion)</PackageVersion>
+    <OutputName>PowerToys-$(ModuleId)-Standalone-$(PackageVersion)-x64</OutputName>
     <OutputPath>$(MsiOutputRoot)\</OutputPath>
     <DefineConstants>PackageInclude=$(PackageInclude)</DefineConstants>
     <!-- The packager normalizes optional language metadata, then runs all ICE checks again. -->

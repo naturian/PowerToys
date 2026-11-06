@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory)][ValidateSet('Install', 'Repair', 'RemoveFirst', 'RemoveRemaining')][string]$Phase,
+    [Parameter(Mandatory)][ValidateSet('InstallPrevious', 'Install', 'Repair', 'RemoveFirst', 'RemoveRemaining')][string]$Phase,
     [Parameter(Mandatory)][string]$Nonce
 )
 
@@ -10,7 +10,8 @@ if ([Security.Principal.WindowsIdentity]::GetCurrent().User.Value -ne 'S-1-5-18'
     (Get-Content -LiteralPath 'C:\Results\sandbox-test-authorized.txt' -Raw).Trim() -cne $Nonce) {
     throw 'This lifecycle test requires the authorized Windows Sandbox SYSTEM task.'
 }
-$packages = Get-Content -LiteralPath 'C:\Packages\sccm-deployment.json' -Raw | ConvertFrom-Json
+$packageRoot = if ($Phase -eq 'InstallPrevious') { 'C:\PreviousPackages' } else { 'C:\Packages' }
+$packages = Get-Content -LiteralPath (Join-Path $packageRoot 'sccm-deployment.json') -Raw | ConvertFrom-Json
 $results = [Collections.Generic.List[object]]::new()
 $receiptPath = 'C:\Results\system-' + $Phase + '.json'
 
@@ -23,6 +24,7 @@ function Write-Receipt($Receipt) {
 try {
     [void][IO.Directory]::CreateDirectory('C:\SccmLogs')
     foreach ($package in $packages) {
+        if ($Phase -eq 'InstallPrevious' -and $package.module -notin @('FancyZones', 'PowerDisplay')) { continue }
         if ($package.productCode -notmatch '^\{[0-9A-Fa-f-]{36}\}$' -or
             $package.file -notmatch '^PowerToys-[A-Za-z]+-Standalone-[0-9.]+-x64\.msi$') {
             throw 'Invalid package metadata.'
@@ -34,7 +36,7 @@ try {
         $logName = $package.module + '-' + $Phase + '.log'
         $log = Join-Path 'C:\SccmLogs' $logName
         $arguments = switch ($Phase) {
-            'Install' { @('/i', ('"C:\SccmContent\' + $package.file + '"')) }
+            { $_ -in @('InstallPrevious', 'Install') } { @('/i', ('"C:\SccmContent\' + $package.file + '"')) }
             'Repair' { @('/famus', $package.productCode) }
             default { @('/x', $package.productCode) }
         }
